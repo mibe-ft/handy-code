@@ -10,6 +10,15 @@ SELECT column_name
 FROM ft-bi-team.BI_layer_tables.INFORMATION_SCHEMA.COLUMNS
 WHERE table_name = 'funnels_b2b_nnb_add'
 
+SELECT    table_catalog
+        , table_schema
+        , table_name
+        , column_name
+        , ordinal_position
+        , data_type
+FROM ft-bi-team.BI_layer_tables.INFORMATION_SCHEMA.COLUMNS
+WHERE table_name = 'funnels_b2b_nnb_add'
+
 -- Redshift
 
 --the id in the funnels table in bigquery is the lead_id
