@@ -19,6 +19,12 @@ SELECT    table_catalog
 FROM ft-bi-team.BI_layer_tables.INFORMATION_SCHEMA.COLUMNS
 WHERE table_name = 'funnels_b2b_nnb_add'
 
+-- look at specific opportunity
+SELECT  *
+FROM `ft-bi-team.BI_layer_tables.funnels_b2b_nnb_add`
+where id = '00Q4G00001CQEdzUAH'
+LIMIT 1000
+
 -- Redshift
 
 --the id in the funnels table in bigquery is the lead_id
