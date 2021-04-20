@@ -88,7 +88,7 @@ SELECT
 	c.spoor_id,
 	c.visit_segment_id,
 	c.visit_marketing_campaign_name
-FROM
+FROM -- TODO From statement 1
 	(
 	SELECT
 		a.id,
