@@ -1301,7 +1301,7 @@ FROM
 				ELSE a.nine_closed_won
 			END
 		END AS nine_closed_won_add
-	FROM
+	FROM -- TODO From statement 2
 		(
 		SELECT
 			a.id,
@@ -1369,7 +1369,7 @@ FROM
 				WHEN a.stage_name::text = '_no_opportunity'::character varying::text THEN a.createddate
 				ELSE NULL::timestamp without time zone
 			END) AS _no_opportunity
-		FROM
+		FROM -- TODO From statement 3
 			(
 			SELECT
 				a.id,
@@ -1442,7 +1442,7 @@ FROM
 					WHEN a.current_max_stage_name = '_no_opportunity'::character varying::text THEN a.last_live_stage_number
 					ELSE a.current_max_stage_number
 				END AS lead_status_stage_number
-			FROM
+			FROM -- TODO From statement 4
 				(
 				SELECT
 					a.id,
@@ -1458,7 +1458,7 @@ FROM
 					b.last_live_stage_timestamp,
 					b.last_live_stage_name,
 					b.last_live_stage_number
-				FROM
+				FROM -- TODO From statement 5
 					(
 					SELECT
 						i.id,
@@ -1468,7 +1468,7 @@ FROM
 						i.stage_rank,
 						i.current_max_stage AS current_max_stage_timestamp,
 						e.current_max_stage_live AS last_live_stage_timestamp
-					FROM
+					FROM -- TODO From statement 6
 						(
 						SELECT
 							a.id,
@@ -1491,7 +1491,7 @@ FROM
 							a.min_created_date,
 							a.stage_rank,
 							"max"(b.createddate) AS current_max_stage
-						FROM
+						FROM -- TODO From statement 7
 							(
 							SELECT
 								l.id,
@@ -1501,7 +1501,7 @@ FROM
 							ORDER BY
 								sl.createddate) AS stage_rank,
 								min(sl.createddate) AS min_created_date
-							FROM
+							FROM -- TODO From statement 8
 								ftsfdb.view_sfdc_leads l
 							JOIN ftsfdb.view_sfdc_stage_log sl ON
 								sl.lead_id__c::text = l.id::text
@@ -1523,7 +1523,7 @@ FROM
 							ORDER BY
 								sl.createddate) AS stage_rank,
 								min(sl.createddate) AS min_created_date
-							FROM
+							FROM -- TODO From statement 9
 								ftsfdb.view_sfdc_leads l
 							JOIN ftsfdb.view_sfdc_stage_log sl ON
 								sl.lead_id__c::text = l.id::text
@@ -1566,7 +1566,7 @@ FROM
 						SELECT
 							a.id,
 							"max"(b.createddate) AS current_max_stage_live
-						FROM
+						FROM -- TODO From statement 10
 							(
 							SELECT
 								l.id,
@@ -1576,7 +1576,7 @@ FROM
 							ORDER BY
 								sl.createddate) AS stage_rank,
 								min(sl.createddate) AS min_created_date
-							FROM
+							FROM -- TODO From statement 11
 								ftsfdb.view_sfdc_leads l
 							JOIN ftsfdb.view_sfdc_stage_log sl ON
 								sl.lead_id__c::text = l.id::text
@@ -1598,7 +1598,7 @@ FROM
 							ORDER BY
 								sl.createddate) AS stage_rank,
 								min(sl.createddate) AS min_created_date
-							FROM
+							FROM -- TODO From statement 12
 								ftsfdb.view_sfdc_leads l
 							JOIN ftsfdb.view_sfdc_stage_log sl ON
 								sl.lead_id__c::text = l.id::text
@@ -1659,7 +1659,7 @@ FROM
 							1)::character varying
 							ELSE NULL::character varying
 						END::text) AS last_live_stage_number
-					FROM
+					FROM -- TODO From statement 13
 						(
 						SELECT
 							i.id,
@@ -1669,7 +1669,7 @@ FROM
 							i.stage_rank,
 							i.current_max_stage AS current_max_stage_timestamp,
 							e.current_max_stage_live AS last_live_stage_timestamp
-						FROM
+						FROM -- TODO From statement 14
 							(
 							SELECT
 								a.id,
@@ -1692,7 +1692,7 @@ FROM
 									a.min_created_date,
 									a.stage_rank,
 									"max"(b.createddate) AS current_max_stage
-								FROM
+								FROM -- TODO From statement 15
 									(
 									SELECT
 										l.id,
@@ -1702,7 +1702,7 @@ FROM
 									ORDER BY
 										sl.createddate) AS stage_rank,
 										min(sl.createddate) AS min_created_date
-									FROM
+									FROM -- TODO From statement 16
 										ftsfdb.view_sfdc_leads l
 									JOIN ftsfdb.view_sfdc_stage_log sl ON
 										sl.lead_id__c::text = l.id::text
@@ -1724,7 +1724,7 @@ FROM
 									ORDER BY
 										sl.createddate) AS stage_rank,
 										min(sl.createddate) AS min_created_date
-									FROM
+									FROM -- TODO From statement 17
 										ftsfdb.view_sfdc_leads l
 									JOIN ftsfdb.view_sfdc_stage_log sl ON
 										sl.lead_id__c::text = l.id::text
@@ -1767,7 +1767,7 @@ FROM
 							SELECT
 								a.id,
 								"max"(b.createddate) AS current_max_stage_live
-							FROM
+							FROM -- TODO From statement 18
 								(
 								SELECT
 									l.id,
@@ -1777,7 +1777,7 @@ FROM
 								ORDER BY
 									sl.createddate) AS stage_rank,
 									min(sl.createddate) AS min_created_date
-								FROM
+								FROM -- TODO From statement 19
 									ftsfdb.view_sfdc_leads l
 								JOIN ftsfdb.view_sfdc_stage_log sl ON
 									sl.lead_id__c::text = l.id::text
@@ -1799,7 +1799,7 @@ FROM
 								ORDER BY
 									sl.createddate) AS stage_rank,
 									min(sl.createddate) AS min_created_date
-								FROM
+								FROM -- TODO From statement 20
 									ftsfdb.view_sfdc_leads l
 								JOIN ftsfdb.view_sfdc_stage_log sl ON
 									sl.lead_id__c::text = l.id::text
@@ -3270,12 +3270,12 @@ LEFT JOIN (
 		h.client_type,
 		h.contractnumber,
 		h.contractnumber_c AS sf_contract_number
-	FROM
+	FROM -- TODO From statement 21
 		(
 		SELECT
 			a.id,
 			"max"(b.opportunity__c::text) AS opportunity_c
-		FROM
+		FROM -- TODO From statement 22
 			(
 			SELECT
 				a.id,
@@ -4488,7 +4488,7 @@ LEFT JOIN (
 							ELSE a.nine_closed_won
 						END
 					END AS nine_closed_won_add
-				FROM
+				FROM -- TODO From statement 23
 					(
 					SELECT
 						a.id,
@@ -4556,7 +4556,7 @@ LEFT JOIN (
 							WHEN a.stage_name::text = '_no_opportunity'::character varying::text THEN a.createddate
 							ELSE NULL::timestamp without time zone
 						END) AS _no_opportunity
-					FROM
+					FROM -- TODO From statement 24
 						(
 						SELECT
 							a.id,
@@ -4629,7 +4629,7 @@ LEFT JOIN (
 								WHEN a.current_max_stage_name = '_no_opportunity'::character varying::text THEN a.last_live_stage_number
 								ELSE a.current_max_stage_number
 							END AS lead_status_stage_number
-						FROM
+						FROM -- TODO From statement 25
 							(
 							SELECT
 								a.id,
@@ -4645,7 +4645,7 @@ LEFT JOIN (
 								b.last_live_stage_timestamp,
 								b.last_live_stage_name,
 								b.last_live_stage_number
-							FROM
+							FROM -- TODO From statement 26
 								(
 								SELECT
 									i.id,
@@ -4655,7 +4655,7 @@ LEFT JOIN (
 									i.stage_rank,
 									i.current_max_stage AS current_max_stage_timestamp,
 									e.current_max_stage_live AS last_live_stage_timestamp
-								FROM
+								FROM -- TODO From statement 27
 									(
 									SELECT
 										a.id,
@@ -4678,7 +4678,7 @@ LEFT JOIN (
 											a.min_created_date,
 											a.stage_rank,
 											"max"(b.createddate) AS current_max_stage
-										FROM
+										FROM -- TODO From statement 28
 											(
 											SELECT
 												l.id,
@@ -4688,7 +4688,7 @@ LEFT JOIN (
 											ORDER BY
 												sl.createddate) AS stage_rank,
 												min(sl.createddate) AS min_created_date
-											FROM
+											FROM -- TODO From statement 29
 												ftsfdb.view_sfdc_leads l
 											JOIN ftsfdb.view_sfdc_stage_log sl ON
 												sl.lead_id__c::text = l.id::text
@@ -4710,7 +4710,7 @@ LEFT JOIN (
 											ORDER BY
 												sl.createddate) AS stage_rank,
 												min(sl.createddate) AS min_created_date
-											FROM
+											FROM -- TODO From statement 30
 												ftsfdb.view_sfdc_leads l
 											JOIN ftsfdb.view_sfdc_stage_log sl ON
 												sl.lead_id__c::text = l.id::text
@@ -4753,7 +4753,7 @@ LEFT JOIN (
 									SELECT
 										a.id,
 										"max"(b.createddate) AS current_max_stage_live
-									FROM
+									FROM -- TODO From statement 31
 										(
 										SELECT
 											l.id,
@@ -4763,7 +4763,7 @@ LEFT JOIN (
 										ORDER BY
 											sl.createddate) AS stage_rank,
 											min(sl.createddate) AS min_created_date
-										FROM
+										FROM -- TODO From statement 32
 											ftsfdb.view_sfdc_leads l
 										JOIN ftsfdb.view_sfdc_stage_log sl ON
 											sl.lead_id__c::text = l.id::text
@@ -4785,7 +4785,7 @@ LEFT JOIN (
 										ORDER BY
 											sl.createddate) AS stage_rank,
 											min(sl.createddate) AS min_created_date
-										FROM
+										FROM -- TODO From statement 33
 											ftsfdb.view_sfdc_leads l
 										JOIN ftsfdb.view_sfdc_stage_log sl ON
 											sl.lead_id__c::text = l.id::text
@@ -4846,7 +4846,7 @@ LEFT JOIN (
 										1)::character varying
 										ELSE NULL::character varying
 									END::text) AS last_live_stage_number
-								FROM
+								FROM -- TODO From statement 34
 									(
 									SELECT
 										i.id,
@@ -4856,7 +4856,7 @@ LEFT JOIN (
 										i.stage_rank,
 										i.current_max_stage AS current_max_stage_timestamp,
 										e.current_max_stage_live AS last_live_stage_timestamp
-									FROM
+									FROM -- TODO From statement 35
 										(
 										SELECT
 											a.id,
@@ -4879,7 +4879,7 @@ LEFT JOIN (
 												a.min_created_date,
 												a.stage_rank,
 												"max"(b.createddate) AS current_max_stage
-											FROM
+											FROM -- TODO From statement 36
 												(
 												SELECT
 													l.id,
@@ -4889,7 +4889,7 @@ LEFT JOIN (
 												ORDER BY
 													sl.createddate) AS stage_rank,
 													min(sl.createddate) AS min_created_date
-												FROM
+												FROM -- TODO From statement 37
 													ftsfdb.view_sfdc_leads l
 												JOIN ftsfdb.view_sfdc_stage_log sl ON
 													sl.lead_id__c::text = l.id::text
@@ -4911,7 +4911,7 @@ LEFT JOIN (
 												ORDER BY
 													sl.createddate) AS stage_rank,
 													min(sl.createddate) AS min_created_date
-												FROM
+												FROM -- TODO From statement 38
 													ftsfdb.view_sfdc_leads l
 												JOIN ftsfdb.view_sfdc_stage_log sl ON
 													sl.lead_id__c::text = l.id::text
@@ -4954,7 +4954,7 @@ LEFT JOIN (
 										SELECT
 											a.id,
 											"max"(b.createddate) AS current_max_stage_live
-										FROM
+										FROM -- TODO From statement 39
 											(
 											SELECT
 												l.id,
@@ -4964,7 +4964,7 @@ LEFT JOIN (
 											ORDER BY
 												sl.createddate) AS stage_rank,
 												min(sl.createddate) AS min_created_date
-											FROM
+											FROM -- TODO From statement 40
 												ftsfdb.view_sfdc_leads l
 											JOIN ftsfdb.view_sfdc_stage_log sl ON
 												sl.lead_id__c::text = l.id::text
@@ -4986,7 +4986,7 @@ LEFT JOIN (
 											ORDER BY
 												sl.createddate) AS stage_rank,
 												min(sl.createddate) AS min_created_date
-											FROM
+											FROM -- TODO From statement 41
 												ftsfdb.view_sfdc_leads l
 											JOIN ftsfdb.view_sfdc_stage_log sl ON
 												sl.lead_id__c::text = l.id::text
@@ -6360,7 +6360,7 @@ LEFT JOIN (
 				WHEN t.currencyisocode::text = 'GBP'::character varying::text THEN t.amount
 				ELSE t.amount / x.fxrate
 			END AS gbpamount
-		FROM
+		FROM -- TODO From statement 42
 			(
 			SELECT
 				l.id AS lead_id,
@@ -6370,7 +6370,7 @@ LEFT JOIN (
 				o.amount,
 				o.currencyisocode,
 				o.contract
-			FROM
+			FROM -- TODO From statement 43
 				ftsfdb.view_sfdc_leads l
 			LEFT JOIN (
 				SELECT
@@ -6425,7 +6425,7 @@ LEFT JOIN (
 				WHEN t.currencyisocode::text = 'GBP'::character varying::text THEN t.amount
 				ELSE t.amount / x.fxrate
 			END AS gbpamount
-		FROM
+		FROM -- TODO From statement 44
 			(
 			SELECT
 				view_sfdc_contracts.accountid,
@@ -6434,7 +6434,7 @@ LEFT JOIN (
 				view_sfdc_contracts.startdate) AS contract_start_year,
 				view_sfdc_contracts.amount,
 				view_sfdc_contracts.currencyisocode
-			FROM
+			FROM -- TODO From statement 45
 				ftsfdb.view_sfdc_contracts
 			WHERE
 				view_sfdc_contracts.startdate >= '2018-01-01'::date
@@ -6586,7 +6586,7 @@ LEFT JOIN (
 		df.spoor_id,
 		v.campaign_id AS visit_segment_id,
 		"max"(cs.marketing_campaign__r_name::text) AS visit_marketing_campaign_name
-	FROM
+	FROM -- TODO From statement 46
 		ftsfdb.view_sfdc_leads df
 	LEFT JOIN biteam.conversion_visit c ON
 		df.spoor_id::text = c.device_spoor_id::text
