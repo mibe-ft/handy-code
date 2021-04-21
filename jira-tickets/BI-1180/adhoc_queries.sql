@@ -25,6 +25,14 @@ FROM `ft-bi-team.BI_layer_tables.funnels_b2b_nnb_add`
 where id = '00Q4G00001CQEdzUAH'
 LIMIT 1000
 
+-- look several opportunities using declare
+DECLARE var_ids ARRAY<STRING>;
+SET var_ids = (SELECT ['00Q4G00001CQEdzUAH', '00Q4G00001CvK2WUAV', '00Q4G00001CuKScUAN'] as list);
+SELECT  *
+FROM `ft-bi-team.BI_layer_tables.funnels_b2b_nnb_add`
+WHERE id in (select id from unnest (var_ids) id)
+LIMIT 1000
+
 -- check lead id is same as lead_id
 DECLARE var_lead_id STRING;
 SET var_lead_id = '00Q4G00001CQEdzUAH';
