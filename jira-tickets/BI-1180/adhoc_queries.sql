@@ -25,6 +25,15 @@ FROM `ft-bi-team.BI_layer_tables.funnels_b2b_nnb_add`
 where id = '00Q4G00001CQEdzUAH'
 LIMIT 1000
 
+-- check lead id is same as lead_id
+DECLARE var_lead_id STRING;
+SET var_lead_id = '00Q4G00001CQEdzUAH';
+SELECT  id, lead_id, id = lead_id
+FROM `ft-bi-team.BI_layer_tables.funnels_b2b_nnb_add`
+WHERE id = var_lead_id
+LIMIT 1000
+;
+
 -- Redshift
 
 --the id in the funnels table in bigquery is the lead_id
