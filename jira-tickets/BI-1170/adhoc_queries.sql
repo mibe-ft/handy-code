@@ -123,3 +123,6 @@ AND is_print = True
 ORDER BY user_dkey ASC
 ;
 
+/*
+get zuora info, this can be used later for joins to enrich it with information from other sources
+*/
