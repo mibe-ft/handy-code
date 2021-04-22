@@ -96,3 +96,30 @@ AND user_dkey IN (5403170, 389)
 --AND is_active = True
 
 ;
+
+/*
+ * check for print customers
+ * */
+
+SELECT
+	  dw_inserted_date
+	, userstatus_dtm
+	, is_b2c
+	, is_registered -- what is this?
+	, is_print
+	, user_dkey
+	, ft_user_id
+	, DENSE_RANK() OVER (PARTITION BY ft_user_id ORDER BY ft_user_id ASC) -- lazy check
+	, DENSE_RANK() OVER (PARTITION BY user_dkey ORDER BY user_dkey ASC) -- lazy check
+FROM
+	dwabstraction.fact_userstatus fu
+WHERE
+	userstatus_date_dkey >= 20210415 -- this is the distribution key, makes more sense to use this!
+--AND user_dkey IN (5403170, 389)
+--AND ft_user_id IN ('9d0df5a3-a799-4760-ba33-b3f5ae78650e', 'bbfeef24-7065-4a2b-90c8-67247cdb1b23')
+--AND is_b2c = True
+--AND is_active = True
+AND is_print = True
+ORDER BY user_dkey ASC
+;
+
