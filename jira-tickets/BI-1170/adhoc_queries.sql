@@ -342,3 +342,26 @@ join  dwabstraction.dn_arrangementevent_all daa
 WHERE  daa.to_datasource_dkey = 2 -- Zuora
     and fu.is_b2c is true
 
+/* table: dwabstraction.dn_arrangement_all
+ * get the followinh
+ * - current price
+ * - current offer
+ * - region?
+ * - product name
+ * - product term
+ * */
+-- view all
+SELECT *
+FROM dwabstraction.dn_arrangement_all
+WHERE user_dkey = 389
+;
+
+-- view specific columnms
+SELECT
+to_main_product_code
+, to_main_product_name
+, to_offer_main_product_code
+--, produ
+FROM dwabstraction.dn_arrangement_all
+WHERE user_dkey = 389
+;
