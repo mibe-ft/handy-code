@@ -179,3 +179,26 @@ to_main_product_code
 FROM dwabstraction.dn_arrangement_all
 WHERE user_dkey = 389
 ;
+
+WITH step01 AS (
+-- get user deets from fact user status
+-- user_guid
+-- date
+-- print or digital
+SELECT
+	  ft_user_id AS user_guid
+	, userstatus_dtm AS "date"
+	, CASE WHEN is_print = True  THEN 'Print'
+		   WHEN is_print = False THEN 'Digital'
+		   ELSE NULL END AS print_or_digital
+
+FROM
+	dwabstraction.fact_userstatus fu
+WHERE
+		userstatus_date_dkey = 20210415 -- this is the distribution key, makes more sense to use this!
+	AND user_dkey IN (260, 389, 10799463, 2874, 10807934, 7521, 19114, 20806, 26752, 30489, 32698, 10813871) -- randomly picked b2c users
+	AND is_b2c = True
+)
+
+SELECT * FROM step01
+;
