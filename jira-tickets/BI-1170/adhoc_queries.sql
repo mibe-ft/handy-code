@@ -141,22 +141,6 @@ FROM
 WHERE
 	ftuserguid IN ('9d0df5a3-a799-4760-ba33-b3f5ae78650e');
 
--- query from Maria initial to join tables
--- this uses arrangementevent_all and not arrangement_all
-select distinct fu.ft_user_id as user_guid
-, userstatus_dtm
-, arrangementeventdate_dkey
-, case when is_print then 'Print' else 'Digital' end print_digital
-, daa.b2c_marketing_region
-, daa.to_arrangementtype_name
-, daa.to_arrangementlength_id
-from dwabstraction.fact_userstatus fu
-join  dwabstraction.dn_arrangementevent_all daa
-    on fu.user_dkey = daa.user_dkey
-    and fu.userstatus_date_dkey >= daa.arrangementeventdate_dkey
-WHERE  daa.to_datasource_dkey = 2 -- Zuora
-    and fu.is_b2c is true
-
 /* table: dwabstraction.dn_arrangement_all
  * get the followinh
  * - current price
@@ -274,16 +258,6 @@ select distinct to_datasource, to_datasource_dkey from dwabstraction.dn_arrangem
 select distinct to_arrangementstatus_dkey , to_arrangementstatus_name
 from dwabstraction.dn_arrangement_all daa
 
--- maria new query
-with eventdates as
-(
-    select ft_user_id, arrangementeventdate_dkey fromdate,
-        nvl(lead(arrangementeventdate_dkey) over (partition by ft_user_id order by arrangementevent_dtm asc),'99991231') todate,
-        arrangementeventdate_dkey, b2c_marketing_region, to_arrangementproduct_name, to_arrangementlength_id, user_dkey
-    from dwabstraction.dn_arrangementevent_all daa
-    where arrangementeventdate_dkey >= 20170101  -- min date in fact user status. Have to ask about how long we want to
-
-
 /*
  * -- questions:
  * - write truncate?
@@ -340,6 +314,7 @@ SELECT
 	 , to_offer_price
 	 , to_offer_percent_rrp
 	 , to_offer_rrp
+	 , to_priceinctax
 	 , to_offer_country_code
 	 , to_termstart_dtm
 	 , to_end_dtm
@@ -361,6 +336,8 @@ SELECT uf.* , bsu.*
 FROM user_facts uf
 LEFT JOIN b2c_subscriptions bsu ON uf.user_dkey = bsu.user_dkey_b
 AND (uf.userstatus_date_dkey >= bsu.to_termstartdate_dkey) AND (uf.userstatus_date_dkey <= bsu.to_enddate_dkey)
+WHERE
+	uf.userstatus_date_dkey IN (20171203, 20181203, 20191203, 20201203) -- check specific dates to see join has worked as expected
 --ON (T.Date > RER.DateFrom) AND (T.Date <= RER.DateTo)
 --and fu.userstatus_date_dkey >= daa.arrangementeventdate_dkey
 ;
