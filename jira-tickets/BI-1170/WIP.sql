@@ -88,14 +88,14 @@ WITH user_facts AS (
 SELECT
 	  ft_user_id 									AS ft_user_guid
 	, userstatus_dtm 								AS "date"
-	, to_arrangementproduct_type 					AS print_or_digital
+	, to_arrangementproduct_type 							AS print_or_digital
 	, to_priceinctax 								AS current_price
-	, COALESCE(to_offer_rrp, 9999)					AS rrp_price
-	, 100-COALESCE(to_offer_percent_rrp, 9999)		AS current_discount
+	, COALESCE(to_offer_rrp, 9999)							AS rrp_price
+	, 100-COALESCE(to_offer_percent_rrp, 9999)					AS current_discount
 --	, AS current_offer
-	, b2c_marketing_region 							AS region
-	, to_arrangementproduct_name 					AS product_name
-	, to_arrangementlength_id 						AS product_term
+	, b2c_marketing_region 								AS region
+	, to_arrangementproduct_name 							AS product_name
+	, to_arrangementlength_id 							AS product_term
 FROM final_tbl
 WHERE
 	to_arrangementproduct_type IN ('Print', 'Digital')
