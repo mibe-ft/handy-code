@@ -142,6 +142,7 @@ WHERE
 	ftuserguid IN ('9d0df5a3-a799-4760-ba33-b3f5ae78650e');
 
 -- query from Maria initial to join tables
+-- this uses arrangementevent_all and not arrangement_all
 select distinct fu.ft_user_id as user_guid
 , userstatus_dtm
 , arrangementeventdate_dkey
@@ -180,13 +181,24 @@ FROM dwabstraction.dn_arrangement_all
 WHERE user_dkey = 389
 ;
 
+
+/*
+ * -- questions:
+ * - write truncate?
+ * - arrangementevent_all or arrangement_all
+ *
+ * assumptions:
+ * - active b2c subscribers - given that we want to contact them about renewal
+ * - zuora only
+ * */
 WITH step01 AS (
 -- get user deets from fact user status
 -- user_guid
 -- date
 -- print or digital
 SELECT
-	  ft_user_id AS user_guid
+	  ft_user_id --AS user_guid
+	, user_dkey
 	, userstatus_dtm AS "date"
 	, CASE WHEN is_print = True  THEN 'Print'
 		   WHEN is_print = False THEN 'Digital'
@@ -196,9 +208,68 @@ FROM
 	dwabstraction.fact_userstatus fu
 WHERE
 		userstatus_date_dkey = 20210415 -- this is the distribution key, makes more sense to use this!
-	AND user_dkey IN (260, 389, 10799463, 2874, 10807934, 7521, 19114, 20806, 26752, 30489, 32698, 10813871) -- randomly picked b2c users
+--	AND user_dkey IN (260, 389, 10799463, 2874, 10807934, 7521, 19114, 20806, 26752, 30489, 32698, 10813871) -- randomly picked b2c users
 	AND is_b2c = True
 )
 
-SELECT * FROM step01
+
+, step02 AS (
+SELECT
+	   ft_user_id as ft_user_id_b
+	 , user_dkey as user_dkey_b
+	 , b2c_marketing_region
+	 , to_arrangementstatus_name
+	 , to_arrangementtype_name
+	 , to_arrangementlength_id
+	 , to_arrangementproduct_name
+	 , to_arrangementproduct_type
+	 , to_main_product_code
+	 , to_main_product_name
+	 , to_offer_id
+	 , to_offer_name
+	 , to_offer_main_product_code
+	 , to_offer_main_product_name
+	 , to_offer_price
+	 , to_offer_percent_rrp
+	 , to_offer_rrp
+	 , to_offer_country_code
+	 , to_renewal_dtm
+	 , to_arrangementlength_id
+
+FROM
+	dwabstraction.dn_arrangement_all daa
+WHERE
+		to_arrangementtype_dkey 	= 5 -- B2C Subscription
+	AND to_datasource_dkey 			= 2 -- Zuora
+	AND to_arrangementstatus_dkey 	= 1 -- Active
+)
+
+SELECT a.* , b.*
+FROM step01 a
+INNER JOIN step02 b ON a.user_dkey = b.user_dkey_b
 ;
+
+-- subscription (arrangement types)
+select distinct to_arrangementtype_dkey , to_arrangementtype_name
+from dwabstraction.dn_arrangement_all daa
+
+
+-- this contains the most recent status
+SELECT *
+FROM dwabstraction.dn_arrangement_all
+WHERE user_dkey = 389
+;
+
+-- this contains all the statuses
+SELECT
+*
+FROM dwabstraction.dn_arrangementevent_all daa
+WHERE user_dkey = 389
+;
+
+-- view all diff datasources
+select distinct to_datasource, to_datasource_dkey from dwabstraction.dn_arrangement_all daa
+
+-- view statuses
+select distinct to_arrangementstatus_dkey , to_arrangementstatus_name
+from dwabstraction.dn_arrangement_all daa
