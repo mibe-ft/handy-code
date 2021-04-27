@@ -4,27 +4,31 @@ SELECT
 	, sf_log.createddate 
 	, sf_leads.leadsource
 --	, adjusted_lead_source -- this is derived from a case statement lines 3156 - 3237
---	, lead_industry_sector -- d
---	, salesforce_lead_segment_id --d
---	, salesforce_lead_segment_id_name --de
---	, lead_spoor_id --d
---	, createdbyid -- d
---	, lead_owner_id --d
---	, lead_owner_name --e 
---	, lead_owner_team --e
---	, lead_region --r
---	, lead_subregion --r
---	, lead_country --d
---	, lead_gclid --d
---	, lead_cpc --d
---	, oppo_id --s 
---	, oppo_owner_id --c
---	, oppo_owner_name --ee
---	, oppo_owner_team --ee
---	, oppo_amount_gbp --vo
---	, oppo_closed_lost_reason --c
---	, oppo_closed_date --c
---	, oppo_product_name --c
+	, sf_leads.industry_sector AS lead_industry_sector -- d
+	, sf_leads.segment_id AS salesforce_lead_segment_id --d
+	, sf_cpseg.marketing_campaign__r_name AS salesforce_lead_segment_id_name --de
+	, sf_leads.spoor_id AS lead_spoor_id --d
+	, sf_leads.createdbyid -- d
+	, sf_leads.ownerid AS lead_owner_id --d
+	, (sf_users.firstname::text || ' '::character varying::text) || sf_users.lastname::text AS lead_owner_name --e 
+	, sf_users.team AS lead_owner_team --e
+	, dm_country.b2b_sales_region AS lead_region --r
+	, dm_country.b2b_sales_subregion AS lead_subregion --r
+	, sf_leads.country AS lead_country --d
+	, sf_leads.gclid AS lead_gclid --d
+	, sf_leads.cpccampaign AS lead_cpc --d
+	, sf_log.opportunity__c AS oppo_id --s --line 6342 -- opportunity__c 3277
+	, sf_opps.ownerid AS oppo_owner_id --c
+	, (sf_users.firstname::text || ' '::character varying::text) || sf_users.lastname::text AS oppo_owner_name --ee
+	, sf_users.team AS oppo_owner_team --ee
+--	, vo.gbpamount oppo_amount_gbp --vo
+--	CASE
+--				WHEN t.currencyisocode::text = 'GBP'::character varying::text THEN t.amount
+--				ELSE t.amount / x.fxrate
+--			END AS gbpamount
+	, sf_opps.closed_lost_reason AS oppo_closed_lost_reason --c
+	, sf_opps.closedate AS oppo_closed_date --c
+	, sf_opps."type" AS oppo_product_name --c
 --	, contract_amount_gbp --vc
 --	, contract_start_date --h
 --	, contract_total_core_readers --h
@@ -44,5 +48,9 @@ SELECT
 --	, visit_marketing_campaign_name --cs.marketing_campaign__r_name
 	
 FROM ftsfdb.view_sfdc_stage_log sf_log 
-JOIN ftsfdb.view_sfdc_leads sf_leads ON sf_log.lead_id__c = sf_leads.id
-WHERE lead_id__c = '00Q4G000019UYfAUAW' 
+LEFT JOIN ftsfdb.view_sfdc_leads sf_leads ON sf_log.lead_id__c = sf_leads.id
+LEFT JOIN ftsfdb.view_sfdc_campaign_segments sf_cpseg ON sf_leads.segment_id::text = sf_cpseg.segmentid__c::text
+LEFT JOIN ftsfdb.view_sfdc_users sf_users ON sf_leads.ownerid::text = sf_users.id::text
+LEFT JOIN dwabstraction.dim_country_latest dm_country ON lower(dm_country.country_name::text) = lower(sf_leads.country::text)
+LEFT JOIN ftsfdb.view_sfdc_opportunities sf_opps ON sf_opps.id::text = sf_log.opportunity__c::text
+WHERE sf_log.lead_id__c = '00Q4G000019UYfAUAW' 
