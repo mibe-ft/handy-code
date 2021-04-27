@@ -1,8 +1,8 @@
 SELECT 
-	  vslog.lead_id__c  as lead_id
-	, vslog."name" 
-	, vslog.createddate 
-	, vsl.leadsource
+	  sf_log.lead_id__c  as lead_id
+	, sf_log."name" 
+	, sf_log.createddate 
+	, sf_leads.leadsource
 --	, adjusted_lead_source -- this is derived from a case statement lines 3156 - 3237
 --	, lead_industry_sector -- d
 --	, salesforce_lead_segment_id --d
@@ -43,6 +43,6 @@ SELECT
 --	, visit_segment_id --v.campaign_id 6587
 --	, visit_marketing_campaign_name --cs.marketing_campaign__r_name
 	
-FROM ftsfdb.view_sfdc_stage_log vslog 
-JOIN ftsfdb.view_sfdc_leads vsl ON vslog.lead_id__c = vsl.id
+FROM ftsfdb.view_sfdc_stage_log sf_log 
+JOIN ftsfdb.view_sfdc_leads sf_leads ON sf_log.lead_id__c = sf_leads.id
 WHERE lead_id__c = '00Q4G000019UYfAUAW' 
