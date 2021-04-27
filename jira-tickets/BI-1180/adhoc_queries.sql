@@ -95,3 +95,26 @@ SELECT *
  and contract_start_date IS NOT NULL
  and id = '00Q4G00001BPPN8UAP'
  LIMIT 1000
+ 
+-- write query to understand how many teams there are and how many null VALUES 
+-- the field 'team' is mostly missing - how do we tell who belongs where?
+-- is it already in salesforce but not pulled in?
+select CASE WHEN team IS NULL THEN 'missing' ELSE team END AS team_modified
+, COUNT(COALESCE(team,'9999')) count_users
+, SUM(count_users) OVER() total
+from ftsfdb.view_sfdc_users vsu 
+group by 1
+order by 2 desc
+
+-- how do you define student?
+
+-- pull unique list of leadsource
+
+--Lead sources that do not contain inside and unknown, not equal to Secondary Schools, API Form and Agency
+-- NOT IN ('Unknown','Secondary Schools', 'API Form',  'Agency')
+-- exclude NULL values too?
+-- what is 'inside' is that sales inside?
+select DISTINCT leadsource 
+from ftsfdb.view_sfdc_leads vsl 
+order by 1
+ 
