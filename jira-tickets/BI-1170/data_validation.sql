@@ -17,7 +17,7 @@ WHERE user_dkey = 389
 ORDER BY arrangementevent_dtm
 
 ----
--- one line per customer per day
+-- one line per ft-user per arrangement id per day
 
 -- 001702c0-afb6-4c64-9779-94cd106d4884 - has two entries for 23-04-2021
 -- checking for null values in specific 'important columns'
