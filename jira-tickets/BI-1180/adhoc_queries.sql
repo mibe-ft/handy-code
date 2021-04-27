@@ -111,10 +111,22 @@ order by 2 desc
 -- pull unique list of leadsource
 
 --Lead sources that do not contain inside and unknown, not equal to Secondary Schools, API Form and Agency
--- NOT IN ('Unknown','Secondary Schools', 'API Form',  'Agency')
+-- leadsource NOT IN ('Unknown','Secondary Schools', 'API Form',  'Agency')
 -- exclude NULL values too?
 -- what is 'inside' is that sales inside?
 select DISTINCT leadsource 
 from ftsfdb.view_sfdc_leads vsl 
 order by 1
- 
+
+-- - Lead sources that equal to: Channel Referral, Contact Us Form, Customer Referral, Email Enquiry
+--, Free Trail Request Form, FT Dept Referral, Online Order Form, Phone Enquiry, Web Chat
+
+/*
+ leadsource IN ('Channel Referral', 'Contact Us Form', 'Customer Referral', 'Email Enquiry', 'Free Trial Request Form',
+ FT Dept Referral, 'Online Order Form', 'Phone Enquiry', 'Web chat')
+ include all contact forms?
+ Contact Us Form - Corporate
+ Contact Us Form - Education
+ Contact sales form
+*/
+
