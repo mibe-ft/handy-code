@@ -22,10 +22,9 @@ SELECT
 	, (sf_users.firstname::text || ' '::character varying::text) || sf_users.lastname::text AS oppo_owner_name --ee
 	, sf_users.team AS oppo_owner_team --ee
 --	, vo.gbpamount oppo_amount_gbp --vo
---	CASE
---				WHEN t.currencyisocode::text = 'GBP'::character varying::text THEN t.amount
---				ELSE t.amount / x.fxrate
---			END AS gbpamount
+	, CASE WHEN sf_contracts.currencyisocode::text = 'GBP'::character varying::text THEN sf_contracts.amount
+		    ELSE sf_contracts.amount / x.fxrate
+			END AS oppo_amount_gbp
 	, sf_opps.closed_lost_reason AS oppo_closed_lost_reason --c
 	, sf_opps.closedate AS oppo_closed_date --c
 	, sf_opps."type" AS oppo_product_name --c
@@ -53,4 +52,7 @@ LEFT JOIN ftsfdb.view_sfdc_campaign_segments sf_cpseg ON sf_leads.segment_id::te
 LEFT JOIN ftsfdb.view_sfdc_users sf_users ON sf_leads.ownerid::text = sf_users.id::text
 LEFT JOIN dwabstraction.dim_country_latest dm_country ON lower(dm_country.country_name::text) = lower(sf_leads.country::text)
 LEFT JOIN ftsfdb.view_sfdc_opportunities sf_opps ON sf_opps.id::text = sf_log.opportunity__c::text
+LEFT JOIN ftsfdb.view_sfdc_contracts sf_contracts ON sf_opps.accountid::text = sf_contracts.accountid::text
+LEFT JOIN dwabstraction.dn_currencyexchangerate x ON x.fromcurrency_code = sf_contracts.currencyisocode::character(3) 
+												  AND x.fxyear = sf_contracts.startdate 
 WHERE sf_log.lead_id__c = '00Q4G000019UYfAUAW' 
