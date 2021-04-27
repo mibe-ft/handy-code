@@ -63,3 +63,69 @@ LEFT JOIN dwabstraction.dn_currencyexchangerate x ON x.fromcurrency_code = sf_co
 	LEFT JOIN ftspoordb.visits v ON
 		c.conversion_visit_id = v.visit_id
 WHERE sf_log.lead_id__c = '00Q4G00001BPPN8UAP'--'00Q4G000019UYfAUAW' 
+;
+--
+-- need to get this working because gbpamount is not working 
+SELECT
+			t.lead_id,
+			t.opportunity_id,
+			t.contract,
+			t.amount,
+			t.currencyisocode,
+			x.fxrate,
+			CASE
+				WHEN t.currencyisocode::text = 'GBP'::character varying::text THEN t.amount
+				ELSE t.amount / x.fxrate
+			END AS gbpamount
+		FROM -- TODO From statement 42
+			(
+			SELECT
+				l.id AS lead_id,
+				"date_part"('year'::character varying::text,
+				l.createddate) AS lead_created_year,
+				o.opportunity_id,
+				o.amount,
+				o.currencyisocode,
+				o.contract
+			FROM -- TODO From statement 43
+				ftsfdb.view_sfdc_leads l
+			LEFT JOIN (
+				SELECT
+					sl.lead_id__c,
+					o.id AS opportunity_id,
+					o.amount,
+					o.currencyisocode,
+					o.contract
+				FROM
+					ftsfdb.view_sfdc_stage_log sl
+				LEFT JOIN ftsfdb.view_sfdc_opportunities o ON
+					sl.opportunity__c::text = o.id::text
+				WHERE
+					sl.type__c::text = 'Opportunity'::character varying::text
+				GROUP BY
+					sl.lead_id__c,
+					o.id,
+					o.amount,
+					o.currencyisocode,
+					o.contract) o ON
+				o.lead_id__c::text = l.id::text
+			WHERE
+				l.createddate >= '2018-01-01 00:00:00'::timestamp without time zone
+			GROUP BY
+				l.id,
+				"date_part"('year'::character varying::text,
+				l.createddate),
+				o.opportunity_id,
+				o.amount,
+				o.currencyisocode,
+				o.contract) t
+		LEFT JOIN dwabstraction.dn_currencyexchangerate x ON
+			x.fromcurrency_code = t.currencyisocode::character(3)
+				AND x.fxyear = t.lead_created_year
+			GROUP BY
+				t.lead_id,
+				t.opportunity_id,
+				t.contract,
+				t.amount,
+				t.currencyisocode,
+				x.fxrate
