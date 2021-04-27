@@ -22,14 +22,17 @@ SELECT
 	, sf_opps.ownerid AS oppo_owner_id --c
 	, (sf_users.firstname::text || ' '::character varying::text) || sf_users.lastname::text AS oppo_owner_name --ee
 	, sf_users.team AS oppo_owner_team --ee
-	, CASE WHEN sf_contracts.currencyisocode::text = 'GBP'::character varying::text THEN sf_contracts.amount
-		    ELSE sf_contracts.amount / x.fxrate
-			END AS oppo_amount_gbp --	, vo.gbpamount oppo_amount_gbp --vo
+	, sf_opps.currencyisocode --x
+	, sf_opps.amount --x
+	, x.fxrate --x
+	, CASE WHEN sf_opps.currencyisocode::text = 'GBP'::character varying::text THEN sf_opps.amount
+		    ELSE sf_opps.amount / x.fxrate
+			END AS oppo_amount_gbp --	, vo.gbpamount oppo_amount_gbp --vo TODO doesn't populate
 	, sf_opps.closed_lost_reason AS oppo_closed_lost_reason --c
 	, sf_opps.closedate AS oppo_closed_date --c
 	, sf_opps."type" AS oppo_product_name --c
-	, CASE WHEN sf_contracts.currencyisocode::text = 'GBP'::character varying::text THEN sf_contracts.amount
-		    ELSE sf_contracts.amount / x.fxrate
+	, CASE WHEN sf_opps.currencyisocode::text = 'GBP'::character varying::text THEN sf_opps.amount
+		    ELSE sf_opps.amount / x.fxrate
 			END AS contract_amount_gbp --	, contract_amount_gbp --vc
 	, sf_contracts.startdate AS contract_start_date --h
 	, sf_contracts.total_core_readers AS contract_total_core_readers --h
@@ -55,8 +58,9 @@ LEFT JOIN ftsfdb.view_sfdc_users sf_users ON sf_leads.ownerid::text = sf_users.i
 LEFT JOIN dwabstraction.dim_country_latest dm_country ON lower(dm_country.country_name::text) = lower(sf_leads.country::text)
 LEFT JOIN ftsfdb.view_sfdc_opportunities sf_opps ON sf_opps.id::text = sf_log.opportunity__c::text
 LEFT JOIN ftsfdb.view_sfdc_contracts sf_contracts ON sf_opps.accountid::text = sf_contracts.accountid::text
-LEFT JOIN dwabstraction.dn_currencyexchangerate x ON x.fromcurrency_code = sf_contracts.currencyisocode::character(3) 
-												  AND x.fxyear = sf_contracts.startdate 
+LEFT JOIN dwabstraction.dn_currencyexchangerate x ON x.fromcurrency_code = sf_opps.currencyisocode::character(3) 
+												  AND x.fxyear = "date_part"('year'::character varying::text, sf_contracts.createddate) --"date_part"('year'::character varying::text, sf_contracts.createddate)
+--												  "date_part"('year'::character varying::text, l.createddate) AS lead_created_year
 	LEFT JOIN biteam.conversion_visit c ON
 		sf_leads.spoor_id::text = c.device_spoor_id::text
 		AND c.system_action::text = 'b2b-confirmed'::character varying::text
@@ -64,68 +68,3 @@ LEFT JOIN dwabstraction.dn_currencyexchangerate x ON x.fromcurrency_code = sf_co
 		c.conversion_visit_id = v.visit_id
 WHERE sf_log.lead_id__c = '00Q4G00001BPPN8UAP'--'00Q4G000019UYfAUAW' 
 ;
---
--- need to get this working because gbpamount is not working 
-SELECT
-			t.lead_id,
-			t.opportunity_id,
-			t.contract,
-			t.amount,
-			t.currencyisocode,
-			x.fxrate,
-			CASE
-				WHEN t.currencyisocode::text = 'GBP'::character varying::text THEN t.amount
-				ELSE t.amount / x.fxrate
-			END AS gbpamount
-		FROM -- TODO From statement 42
-			(
-			SELECT
-				l.id AS lead_id,
-				"date_part"('year'::character varying::text,
-				l.createddate) AS lead_created_year,
-				o.opportunity_id,
-				o.amount,
-				o.currencyisocode,
-				o.contract
-			FROM -- TODO From statement 43
-				ftsfdb.view_sfdc_leads l
-			LEFT JOIN (
-				SELECT
-					sl.lead_id__c,
-					o.id AS opportunity_id,
-					o.amount,
-					o.currencyisocode,
-					o.contract
-				FROM
-					ftsfdb.view_sfdc_stage_log sl
-				LEFT JOIN ftsfdb.view_sfdc_opportunities o ON
-					sl.opportunity__c::text = o.id::text
-				WHERE
-					sl.type__c::text = 'Opportunity'::character varying::text
-				GROUP BY
-					sl.lead_id__c,
-					o.id,
-					o.amount,
-					o.currencyisocode,
-					o.contract) o ON
-				o.lead_id__c::text = l.id::text
-			WHERE
-				l.createddate >= '2018-01-01 00:00:00'::timestamp without time zone
-			GROUP BY
-				l.id,
-				"date_part"('year'::character varying::text,
-				l.createddate),
-				o.opportunity_id,
-				o.amount,
-				o.currencyisocode,
-				o.contract) t
-		LEFT JOIN dwabstraction.dn_currencyexchangerate x ON
-			x.fromcurrency_code = t.currencyisocode::character(3)
-				AND x.fxyear = t.lead_created_year
-			GROUP BY
-				t.lead_id,
-				t.opportunity_id,
-				t.contract,
-				t.amount,
-				t.currencyisocode,
-				x.fxrate
