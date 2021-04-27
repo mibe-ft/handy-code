@@ -59,12 +59,9 @@ LEFT JOIN dwabstraction.dim_country_latest dm_country ON lower(dm_country.countr
 LEFT JOIN ftsfdb.view_sfdc_opportunities sf_opps ON sf_opps.id::text = sf_log.opportunity__c::text
 LEFT JOIN ftsfdb.view_sfdc_contracts sf_contracts ON sf_opps.accountid::text = sf_contracts.accountid::text
 LEFT JOIN dwabstraction.dn_currencyexchangerate x ON x.fromcurrency_code = sf_opps.currencyisocode::character(3) 
-												  AND x.fxyear = "date_part"('year'::character varying::text, sf_contracts.createddate) --"date_part"('year'::character varying::text, sf_contracts.createddate)
---												  "date_part"('year'::character varying::text, l.createddate) AS lead_created_year
-	LEFT JOIN biteam.conversion_visit c ON
-		sf_leads.spoor_id::text = c.device_spoor_id::text
-		AND c.system_action::text = 'b2b-confirmed'::character varying::text
-	LEFT JOIN ftspoordb.visits v ON
-		c.conversion_visit_id = v.visit_id
+												  AND x.fxyear = "date_part"('year'::character varying::text, sf_contracts.createddate) 
+LEFT JOIN biteam.conversion_visit c ON sf_leads.spoor_id::text = c.device_spoor_id::text
+									AND c.system_action::text = 'b2b-confirmed'::character varying::text
+LEFT JOIN ftspoordb.visits v ON c.conversion_visit_id = v.visit_id
 WHERE sf_log.lead_id__c = '00Q4G00001BPPN8UAP'--'00Q4G000019UYfAUAW' 
 ;
