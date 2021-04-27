@@ -87,3 +87,11 @@ FROM
 	ftsfdb.sfdc_stage_log_cdc
 where
 	lead_id__c = '00Q4G00001CQEdzUAH' ;
+
+-- for testing against query I've written 
+SELECT *
+ FROM `ft-data.biteam.funnels_b2b_nnb` 
+ WHERE DATE(_PARTITIONTIME) > "2021-04-26" 
+ and contract_start_date IS NOT NULL
+ and id = '00Q4G00001BPPN8UAP'
+ LIMIT 1000
