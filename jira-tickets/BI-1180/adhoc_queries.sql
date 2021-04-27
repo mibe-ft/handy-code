@@ -130,3 +130,6 @@ order by 1
  Contact sales form
 */
 
+-- how to distinguish outbound and inbound leads
+--If possible to include a toggle that filters inbound and outbound leads, the user can select TRUE or FALSE when
+-- filtering data from the NNB Funnel Dashboard.
