@@ -47,6 +47,11 @@ FROM `ft-bi-team.BI_layer_tables.funnels_b2b_nnb_add`
 WHERE id = var_lead_id
 ;
 
+SELECT *
+ FROM `ft-data.biteam.funnels_b2b_nnb` 
+ where id = '00Q4G000019UYfAUAW' 
+ --WHERE DATE(_PARTITIONTIME) = "2021-04-27" LIMIT 1000
+
 /*
 -- =============================================
 -- Author:      Name
