@@ -1,3 +1,12 @@
+/*
+ * Questions:
+ * - write truncate in airflow or write append daily?
+ * - do we need to filter on print and digital only? Bundle is also available in arrangement_all table
+ * - how far back do we need to go with this table?
+ * - do we need flag for active subscribers only? people who haven't initiated cancellation request
+ * - what do we mean by 'current offer' - is this the price they are paying or the %discount compared to the current rrp??
+ * */
+
 WITH user_facts AS (
 -- get b2c subs status for each day
 	SELECT
@@ -22,6 +31,7 @@ WITH user_facts AS (
 		 , user_dkey as user_dkey_b
 		 , b2c_marketing_region
 		 , arrangementevent_dtm
+		 , arrangement_id_dd
 		 , to_arrangementtype_name
 		 , to_arrangementlength_id
 		 , to_arrangementproduct_name
@@ -55,6 +65,7 @@ WITH user_facts AS (
 		, bsu.to_termstart_dtm
 		, bsu.to_end_dtm
 		, bsu.to_renewal_dtm
+		, bsu.arrangement_id_dd
 		, bsu.to_arrangementtype_name -- e.g. b2c subscription
 		, bsu.to_arrangementlength_id -- length of arrangement
 		, bsu.to_arrangementproduct_name -- e.g. Premium FT.com
@@ -80,8 +91,12 @@ SELECT
 	  ft_user_id 									AS ft_user_guid
 	, userstatus_dtm 								AS "date"
 	, to_arrangementproduct_type 					AS print_or_digital
+	, arrangement_id_dd -- 
+	, to_termstart_dtm
+	, to_end_dtm
 	, to_priceinctax 								AS current_price
 	, COALESCE(to_offer_rrp, 9999)					AS rrp_price
+	, to_offer_percent_rrp
 	, 100-COALESCE(to_offer_percent_rrp, 9999)		AS current_discount
 --	, AS current_offer 
 	, b2c_marketing_region 							AS region
@@ -92,5 +107,6 @@ WHERE
 	to_arrangementproduct_type IN ('Print', 'Digital')
 -- AND user_dkey = 389
 -- AND userstatus_date_dkey IN (20171203, 20181203, 20191203, 20201203)
+--	and ft_user_guid = '001702c0-afb6-4c64-9779-94cd106d4884'
 
 ;
