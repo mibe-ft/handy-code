@@ -1,11 +1,14 @@
 /*
  * Questions:
  * - write truncate in airflow or write append daily?
- * - do we need to filter on print and digital only? Bundle is also available in arrangement_all table
+ * - do we need to filter on print and digital only? Bundle is also available in arrangementevent_all table
+ * - do you need all subscription types for B2C or just annual? if so, i need the logic for annual subs
+ * - do you want both active and cancelled customer data?
  * - how far back do we need to go with this table?
- * - do you want both active and cancelled customer data
  * - what do we mean by 'current offer' - is this the price they are paying or the %discount compared to the current rrp??
- * */
+ * - where is the fast stats data? - who do you receive this from or do you pull this yourself?
+ * - how do you calculate the formulated data in yellow?
+ */
 
 WITH user_facts AS (
 -- get b2c subs status for each day
@@ -38,6 +41,7 @@ WITH user_facts AS (
 		 , to_arrangementproduct_name
 		 , to_arrangementproduct_type 
 		 , to_arrangementstatus_name
+		 , to_arrangementproduct_code 
 		 , to_priceinctax 
 		 , to_pricegbpinctax
 		 , start_dtm
@@ -50,6 +54,7 @@ WITH user_facts AS (
 		 , to_currency_code
 		 , to_currency_name
 		 , to_offer_name
+		 , to_offer_price
 		 , to_offer_type
 		 , to_offer_rrp
 		 , to_offer_percent_rrp
@@ -75,6 +80,7 @@ WITH user_facts AS (
 		 , to_arrangementproduct_name
 		 , to_arrangementproduct_type 
 		 , to_arrangementstatus_name
+		 , to_arrangementproduct_code
 		 , to_priceinctax 
 		 , to_pricegbpinctax
 		 , start_dtm
@@ -87,6 +93,7 @@ WITH user_facts AS (
 		 , to_currency_code
 		 , to_currency_name
 		 , to_offer_name
+		 , to_offer_price
 		 , to_offer_type
 		 , to_offer_rrp
 		 , to_offer_percent_rrp
@@ -113,9 +120,11 @@ WITH user_facts AS (
 		, bsu.to_arrangementproduct_name -- e.g. Premium FT.com
 		, bsu.to_arrangementproduct_type -- print or digital or bundle
 		, bsu.to_arrangementstatus_name -- e.g. Active, Cancelled, Pending, Payment Failure
+		, bsu.to_arrangementproduct_code
 		, bsu.to_priceinctax 
 		, bsu.to_pricegbpinctax
 		, bsu.to_offer_name
+		, bsu.to_offer_price
 		, bsu.to_offer_type
 		, bsu.to_offer_rrp
 		, bsu.to_offer_percent_rrp
@@ -129,41 +138,35 @@ WITH user_facts AS (
 		  AND (uf.userstatus_date_dkey <= bsu.to_enddate_dkey)
 
 )
---, dataset AS (
---/*
-
 -- select columns for table out and format field names
 SELECT 
 	  ft_user_id 									AS ft_user_guid
 	, userstatus_dtm 								AS date_
-	, arrangementevent_dtm
+--	, arrangementevent_dtm --X
 	, to_arrangementproduct_type 					AS print_or_digital
-	, to_arrangementstatus_name
+	, to_arrangementstatus_name						AS status
 	, arrangement_id_dd -- 
 	, start_dtm
 	, to_termstart_dtm
-	, to_end_dtm
+	, to_end_dtm -- TODO: create case statement i.e. if status = cancelled then to_cancelrequest_dtm
 	, to_cancelrequest_dtm
-	, to_priceinctax 								AS current_price
-	, to_pricegbpinctax								AS current_price_gbp
+	, to_priceinctax 								
+	, to_pricegbpinctax								
 	, to_offer_name
+	, to_offer_price
 	, to_offer_type
-	, COALESCE(to_offer_rrp, 9999)					AS rrp_price
+	, COALESCE(to_offer_rrp, 9999)					AS rrp_price -- todo sometimes null
 	, to_offer_percent_rrp
 	, 100-COALESCE(to_offer_percent_rrp, 9999)		AS current_discount
 --	, AS current_offer 
 	, b2c_marketing_region 							AS region
+	, to_arrangementproduct_code					AS product_code
 	, to_arrangementproduct_name 					AS product_name
 	, to_arrangementlength_id 						AS product_term
 	, to_currency_code								AS currency_code
-	, to_currency_name								AS currency_name
+--	, to_currency_name								AS currency_name
 FROM final_tbl
 WHERE 
 	to_arrangementproduct_type IN ('Print', 'Digital')
--- AND userstatus_date_dkey IN (20171203, 20181203, 20191203, 20201203)
---	and ft_user_guid = '001702c0-afb6-4c64-9779-94cd106d4884'
---	AND ft_user_guid = '52d08223-b934-41e6-82f8-4d11fccdcfbe'
---*/
---	)
-
+	
 ;
