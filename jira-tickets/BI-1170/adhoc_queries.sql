@@ -244,3 +244,7 @@ where user_dkey IN (16654914,16640122)
 
 SELECT * from dataset
 ;
+
+-- distinct arrangement id
+SELECT DISTINCT to_arrangementlength_id 
+FROM dwabstraction.dn_arrangementevent_all daa 
