@@ -205,9 +205,12 @@ SELECT
 FROM dwabstraction.dn_arrangementevent_all daa 
 WHERE --ft_user_id = '001702c0-afb6-4c64-9779-94cd106d4884'
 /*AND*/ to_arrangementstatus_dkey 	= 1 -- Active
+	AND to_cancelreason_dkey = -1
 ORDER BY arrangementevent_dtm 
 )
-SELECT 
+
+--/*
+ SELECT 
 ft_user_id 
 , user_dkey 
 , arrangement_id_dd 
@@ -217,6 +220,10 @@ FROM dataset
 WHERE arrangementeventdate_dkey >= 20210401
 GROUP BY 1,2,3,4
 HAVING count_ > 1
+--*/
+--select * from dataset
+--where user_dkey IN (16592420,16607654)
+--ORDER BY user_dkey, arrangementevent_dtm
 ;
 
 -- get all cancel reasons
