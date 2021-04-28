@@ -51,7 +51,7 @@ WITH user_facts AS (
 	WHERE
 			to_arrangementtype_dkey 	= 5 -- B2C Subscription
 		AND to_datasource_dkey 			= 2 -- Zuora
-	--	AND to_arrangementstatus_dkey 	= 1 -- Active
+		AND to_arrangementstatus_dkey 	= 1 -- Active
 --		AND user_dkey = 389
 )
 , final_tbl AS (
