@@ -102,11 +102,13 @@ SELECT
 	, b2c_marketing_region 							AS region
 	, to_arrangementproduct_name 					AS product_name
 	, to_arrangementlength_id 						AS product_term
+	, to_currency_code								AS currency_code
+	, to_currency_name								AS currency_name
 FROM final_tbl
 WHERE 
 	to_arrangementproduct_type IN ('Print', 'Digital')
 -- AND user_dkey = 389
 -- AND userstatus_date_dkey IN (20171203, 20181203, 20191203, 20201203)
---	and ft_user_guid = '001702c0-afb6-4c64-9779-94cd106d4884'
+	and ft_user_guid = '001702c0-afb6-4c64-9779-94cd106d4884'
 
 ;
