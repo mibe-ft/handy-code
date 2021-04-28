@@ -232,3 +232,15 @@ select distinct to_cancelreason_dkey
 from dwabstraction.dn_arrangementevent_all daa 
 order by 1
 ;
+
+-- check specific users
+-- check window function
+with dataset AS (
+SELECT *, ROW_NUMBER () OVER(PARTITION BY user_dkey, arrangement_id_dd, DATE(arrangementevent_dtm) ORDER BY arrangementevent_dtm DESC) AS row_num
+FROM dwabstraction.dn_arrangementevent_all daa 
+where user_dkey IN (16654914,16640122)
+--ORDER BY user_dkey, arrangementevent_dtm
+)
+
+SELECT * from dataset
+;
