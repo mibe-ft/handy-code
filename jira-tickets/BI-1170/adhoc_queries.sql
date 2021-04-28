@@ -181,5 +181,12 @@ select distinct to_arrangementstatus_dkey , to_arrangementstatus_name
 from dwabstraction.dn_arrangement_all daa
 ;
 
+-- check user appears to have two arrangements for same time span 
+-- the user has one arrangement, 1 'payment failed record', 1 'active' record
+SELECT *
+FROM dwabstraction.dn_arrangementevent_all daa 
+WHERE ft_user_id = '001702c0-afb6-4c64-9779-94cd106d4884'
+ORDER BY arrangementevent_dtm 
 
+;
 
