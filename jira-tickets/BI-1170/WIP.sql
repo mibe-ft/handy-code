@@ -117,7 +117,7 @@ WITH user_facts AS (
 -- select columns for table out and format field names
 SELECT 
 	  ft_user_id 									AS ft_user_guid
-	, userstatus_dtm 								AS "date"
+	, userstatus_dtm 								AS date_
 	, to_arrangementproduct_type 					AS print_or_digital
 	, arrangement_id_dd -- 
 	, to_termstart_dtm
