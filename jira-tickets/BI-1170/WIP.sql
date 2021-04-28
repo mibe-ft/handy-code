@@ -3,7 +3,7 @@
  * - write truncate in airflow or write append daily?
  * - do we need to filter on print and digital only? Bundle is also available in arrangement_all table
  * - how far back do we need to go with this table?
- * - do we need flag for active subscribers only? people who haven't initiated cancellation request
+ * - do you want both active and cancelled customer data
  * - what do we mean by 'current offer' - is this the price they are paying or the %discount compared to the current rrp??
  * */
 
@@ -26,6 +26,7 @@ WITH user_facts AS (
 -- get additional info on b2c subs
 -- row_number() identifies the latest arrangement event per day, per user, per arrangement
 -- this is to make sure we grab the most recent arrangement details for each day if there are multiple changes in a day
+
 	SELECT
 		   ft_user_id 
 		 , user_dkey 
@@ -35,15 +36,21 @@ WITH user_facts AS (
 		 , to_arrangementtype_name
 		 , to_arrangementlength_id
 		 , to_arrangementproduct_name
-		 , to_arrangementproduct_type -- print or digital or bundle
-		 , to_priceinctax -- more robust, to_offer_price could contain NULL values
+		 , to_arrangementproduct_type 
+		 , to_arrangementstatus_name
+		 , to_priceinctax 
+		 , to_pricegbpinctax
+		 , start_dtm
 		 , to_termstart_dtm
 		 , to_end_dtm
 		 , to_renewal_dtm
+		 , to_cancelrequest_dtm
 		 , to_termstartdate_dkey
 		 , to_enddate_dkey
 		 , to_currency_code
 		 , to_currency_name
+		 , to_offer_name
+		 , to_offer_type
 		 , to_offer_rrp
 		 , to_offer_percent_rrp
 		 , to_cancelreason_dkey
@@ -53,7 +60,7 @@ WITH user_facts AS (
 	WHERE
 			to_arrangementtype_dkey 	= 5 -- B2C Subscription
 		AND to_datasource_dkey 			= 2 -- Zuora
-		AND to_arrangementstatus_dkey 	= 1 -- Active
+		AND to_arrangementstatus_dkey 	IN (1,3) -- 1: Active 3:Cancelled
 		
 )
 , b2c_subscriptions_no_dupes AS (
@@ -66,15 +73,21 @@ WITH user_facts AS (
 		 , to_arrangementtype_name
 		 , to_arrangementlength_id
 		 , to_arrangementproduct_name
-		 , to_arrangementproduct_type -- print or digital or bundle
-		 , to_priceinctax -- more robust, to_offer_price could contain NULL values
+		 , to_arrangementproduct_type 
+		 , to_arrangementstatus_name
+		 , to_priceinctax 
+		 , to_pricegbpinctax
+		 , start_dtm
 		 , to_termstart_dtm
 		 , to_end_dtm
 		 , to_renewal_dtm
+		 , to_cancelrequest_dtm
 		 , to_termstartdate_dkey
 		 , to_enddate_dkey
 		 , to_currency_code
 		 , to_currency_name
+		 , to_offer_name
+		 , to_offer_type
 		 , to_offer_rrp
 		 , to_offer_percent_rrp
 		 , to_cancelreason_dkey
@@ -89,15 +102,21 @@ WITH user_facts AS (
 		, uf.userstatus_date_dkey 
 		, uf.userstatus_dtm
 		, bsu.arrangementevent_dtm
+		, bsu.start_dtm
 		, bsu.to_termstart_dtm
 		, bsu.to_end_dtm
 		, bsu.to_renewal_dtm
+		, bsu.to_cancelrequest_dtm
 		, bsu.arrangement_id_dd
 		, bsu.to_arrangementtype_name -- e.g. b2c subscription
 		, bsu.to_arrangementlength_id -- length of arrangement
 		, bsu.to_arrangementproduct_name -- e.g. Premium FT.com
-		, bsu.to_arrangementproduct_type -- print or digital or bundle,
-		, bsu.to_priceinctax -- more robust, to_offer_price could contain NULL values
+		, bsu.to_arrangementproduct_type -- print or digital or bundle
+		, bsu.to_arrangementstatus_name -- e.g. Active, Cancelled, Pending, Payment Failure
+		, bsu.to_priceinctax 
+		, bsu.to_pricegbpinctax
+		, bsu.to_offer_name
+		, bsu.to_offer_type
 		, bsu.to_offer_rrp
 		, bsu.to_offer_percent_rrp
 		, bsu.to_currency_code
@@ -108,21 +127,27 @@ WITH user_facts AS (
 	LEFT JOIN b2c_subscriptions_no_dupes bsu ON uf.user_dkey = bsu.user_dkey_b
 		  AND (uf.userstatus_date_dkey >= bsu.to_termstartdate_dkey)
 		  AND (uf.userstatus_date_dkey <= bsu.to_enddate_dkey)
-	WHERE
-		bsu.to_cancelreason_dkey = -1 -- 'Unknown' - the assumption is that subs with this code are not cancelling
-	--	uf.userstatus_date_dkey IN (20171203, 20181203, 20191203, 20201203) -- check specific dates to see join has worked as expected
-	--	AND uf.userstatus_date_dkey >= 20170101
+
 )
+--, dataset AS (
 --/*
+
 -- select columns for table out and format field names
 SELECT 
 	  ft_user_id 									AS ft_user_guid
 	, userstatus_dtm 								AS date_
+	, arrangementevent_dtm
 	, to_arrangementproduct_type 					AS print_or_digital
+	, to_arrangementstatus_name
 	, arrangement_id_dd -- 
+	, start_dtm
 	, to_termstart_dtm
 	, to_end_dtm
+	, to_cancelrequest_dtm
 	, to_priceinctax 								AS current_price
+	, to_pricegbpinctax								AS current_price_gbp
+	, to_offer_name
+	, to_offer_type
 	, COALESCE(to_offer_rrp, 9999)					AS rrp_price
 	, to_offer_percent_rrp
 	, 100-COALESCE(to_offer_percent_rrp, 9999)		AS current_discount
@@ -135,8 +160,10 @@ SELECT
 FROM final_tbl
 WHERE 
 	to_arrangementproduct_type IN ('Print', 'Digital')
--- AND user_dkey = 389
 -- AND userstatus_date_dkey IN (20171203, 20181203, 20191203, 20201203)
 --	and ft_user_guid = '001702c0-afb6-4c64-9779-94cd106d4884'
+--	AND ft_user_guid = '52d08223-b934-41e6-82f8-4d11fccdcfbe'
 --*/
+--	)
+
 ;
