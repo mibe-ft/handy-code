@@ -248,3 +248,9 @@ SELECT * from dataset
 -- distinct arrangement id
 SELECT DISTINCT to_arrangementlength_id 
 FROM dwabstraction.dn_arrangementevent_all daa 
+
+-- get offer names
+SELECT distinct to_offer_name
+FROM dwabstraction.dn_arrangementevent_all daa 
+ORDER BY 1
+;
