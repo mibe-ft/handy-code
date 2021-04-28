@@ -18,17 +18,17 @@ WITH user_facts AS (
 	FROM
 		dwabstraction.fact_userstatus fu
 	WHERE
---		    user_dkey = 389
-	--	AND user_dkey IN (260, 389, 10799463, 2874, 10807934, 7521, 19114, 20806, 26752, 30489, 32698, 10813871) -- randomly picked b2c users
-	 	userstatus_date_dkey = 20210423
+	 		userstatus_date_dkey = 20210423 -- TODO question: how far back should we go
 		AND is_b2c = True
 		AND user_dkey IN (SELECT user_dkey FROM dwabstraction.dn_arrangement_all WHERE to_datasource_dkey = 2)-- make sure zuora only
 )
 , b2c_subscriptions AS (
 -- get additional info on b2c subs
+-- row_number() identifies the latest arrangement event per day, per user, per arrangement
+-- this is to make sure we grab the most recent arrangement details for each day if there are multiple changes in a day
 	SELECT
-		   ft_user_id as ft_user_id_b
-		 , user_dkey as user_dkey_b
+		   ft_user_id 
+		 , user_dkey 
 		 , b2c_marketing_region
 		 , arrangementevent_dtm
 		 , arrangement_id_dd
@@ -46,14 +46,41 @@ WITH user_facts AS (
 		 , to_currency_name
 		 , to_offer_rrp
 		 , to_offer_percent_rrp
+		 , to_cancelreason_dkey
+		 , ROW_NUMBER () OVER(PARTITION BY ft_user_id, arrangement_id_dd, DATE(arrangementevent_dtm) ORDER BY event_seq_no DESC, arrangementevent_dtm DESC) AS row_num
 	FROM
 		dwabstraction.dn_arrangementevent_all daa
 	WHERE
 			to_arrangementtype_dkey 	= 5 -- B2C Subscription
 		AND to_datasource_dkey 			= 2 -- Zuora
 		AND to_arrangementstatus_dkey 	= 1 -- Active
---		AND user_dkey = 389
+		
 )
+, b2c_subscriptions_no_dupes AS (
+-- filter out duplicate arrangement events
+	SELECT ft_user_id AS ft_user_id_b
+		 , user_dkey AS user_dkey_b
+		 , b2c_marketing_region
+		 , arrangementevent_dtm
+		 , arrangement_id_dd
+		 , to_arrangementtype_name
+		 , to_arrangementlength_id
+		 , to_arrangementproduct_name
+		 , to_arrangementproduct_type -- print or digital or bundle
+		 , to_priceinctax -- more robust, to_offer_price could contain NULL values
+		 , to_termstart_dtm
+		 , to_end_dtm
+		 , to_renewal_dtm
+		 , to_termstartdate_dkey
+		 , to_enddate_dkey
+		 , to_currency_code
+		 , to_currency_name
+		 , to_offer_rrp
+		 , to_offer_percent_rrp
+		 , to_cancelreason_dkey
+	FROM b2c_subscriptions 
+	WHERE row_num = 1
+) 
 , final_tbl AS (
 -- output for final table
 	SELECT
@@ -78,14 +105,15 @@ WITH user_facts AS (
 		, bsu.b2c_marketing_region
 	
 	FROM user_facts uf
-	LEFT JOIN b2c_subscriptions bsu ON uf.user_dkey = bsu.user_dkey_b
+	LEFT JOIN b2c_subscriptions_no_dupes bsu ON uf.user_dkey = bsu.user_dkey_b
 		  AND (uf.userstatus_date_dkey >= bsu.to_termstartdate_dkey)
 		  AND (uf.userstatus_date_dkey <= bsu.to_enddate_dkey)
---	WHERE
+	WHERE
+		bsu.to_cancelreason_dkey = -1 -- 'Unknown' - the assumption is that subs with this code are not cancelling
 	--	uf.userstatus_date_dkey IN (20171203, 20181203, 20191203, 20201203) -- check specific dates to see join has worked as expected
 	--	AND uf.userstatus_date_dkey >= 20170101
 )
-
+--/*
 -- select columns for table out and format field names
 SELECT 
 	  ft_user_id 									AS ft_user_guid
@@ -109,6 +137,6 @@ WHERE
 	to_arrangementproduct_type IN ('Print', 'Digital')
 -- AND user_dkey = 389
 -- AND userstatus_date_dkey IN (20171203, 20181203, 20191203, 20201203)
-	and ft_user_guid = '001702c0-afb6-4c64-9779-94cd106d4884'
-
+--	and ft_user_guid = '001702c0-afb6-4c64-9779-94cd106d4884'
+--*/
 ;
