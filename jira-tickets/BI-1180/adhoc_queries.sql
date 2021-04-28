@@ -99,9 +99,12 @@ SELECT *
 -- write query to understand how many teams there are and how many null VALUES 
 -- the field 'team' is mostly missing - how do we tell who belongs where?
 -- is it already in salesforce but not pulled in?
+-- TODO calculate running total
 select CASE WHEN team IS NULL THEN 'missing' ELSE team END AS team_modified
 , COUNT(COALESCE(team,'9999')) count_users
 , SUM(count_users) OVER() total
+, (1.0*count_users)/(1.0*total) *100.0 pc_of_total
+
 from ftsfdb.view_sfdc_users vsu 
 group by 1
 order by 2 desc
