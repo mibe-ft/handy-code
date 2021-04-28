@@ -6,7 +6,6 @@
  * - do you want both active and cancelled customer data?
  * - how far back do we need to go with this table?
  * - what do we mean by 'current offer' - is this the price they are paying or the %discount compared to the current rrp??
- * - where is the fast stats data? - who do you receive this from or do you pull this yourself?
  * - how do you calculate the formulated data in yellow?
  */
 
