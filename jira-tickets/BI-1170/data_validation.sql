@@ -29,3 +29,7 @@ HAVING count_of_date > 1
 
 -- 001702c0-afb6-4c64-9779-94cd106d4884 - has two entries for 23-04-2021
 -- checking for null values in specific 'important columns'
+
+--todo create count of unique users and unique arrangements
+select count(distinct ft_user_guid) count_users, count(distinct arrangement_id_dd) count_arrangements
+from dataset
