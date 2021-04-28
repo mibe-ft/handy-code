@@ -1,6 +1,7 @@
 -- get latest status per arrangement per day
 -- person may have multiple changes in one day, we want to filter for the latest change 
 
+-- this is in bigquery
 SELECT
     DATE(ae.arrangementevent_dtm) AS day,
     ae.arrangement_id_dd,
