@@ -190,3 +190,31 @@ ORDER BY arrangementevent_dtm
 
 ;
 
+-- check for users that have multiple changes to one arrangement in one day
+WITH dataset AS (
+SELECT 
+  ft_user_id 
+, user_dkey 
+, arrangement_id_dd 
+, arrangementevent_dkey 
+, arrangementevent_dtm 
+, arrangementeventdate_dkey 
+, arrangementeventtime_dkey 
+, to_termstart_dtm 
+, to_end_dtm 
+FROM dwabstraction.dn_arrangementevent_all daa 
+WHERE --ft_user_id = '001702c0-afb6-4c64-9779-94cd106d4884'
+/*AND*/ to_arrangementstatus_dkey 	= 1 -- Active
+ORDER BY arrangementevent_dtm 
+)
+SELECT 
+ft_user_id 
+, user_dkey 
+, arrangement_id_dd 
+, DATE(arrangementevent_dtm) date_
+, COUNT(arrangement_id_dd) count_
+FROM dataset
+WHERE arrangementeventdate_dkey >= 20210401
+GROUP BY 1,2,3,4
+HAVING count_ > 1
+;
