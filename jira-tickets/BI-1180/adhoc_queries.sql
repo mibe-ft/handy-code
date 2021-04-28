@@ -51,6 +51,14 @@ SELECT *
  FROM `ft-data.biteam.funnels_b2b_nnb` 
  where id = '00Q4G000019UYfAUAW' 
  --WHERE DATE(_PARTITIONTIME) = "2021-04-27" LIMIT 1000
+ 
+ -- for checking against the new query I created
+ SELECT *
+ FROM `ft-data.biteam.funnels_b2b_nnb` 
+ WHERE DATE(_PARTITIONTIME) > "2021-04-26" 
+ and contract_start_date IS NOT NULL
+ and id = '00Q4G00001BPPN8UAP'
+ LIMIT 1000
 
 /*
 -- =============================================
