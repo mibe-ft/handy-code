@@ -218,3 +218,10 @@ WHERE arrangementeventdate_dkey >= 20210401
 GROUP BY 1,2,3,4
 HAVING count_ > 1
 ;
+
+-- get all cancel reasons
+select distinct to_cancelreason_dkey
+, to_cancelreason 
+from dwabstraction.dn_arrangementevent_all daa 
+order by 1
+;
