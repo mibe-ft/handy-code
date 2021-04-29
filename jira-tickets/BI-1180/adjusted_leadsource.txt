@@ -1,0 +1,80 @@
+'Build Batch','Build Batch'
+'Build Final','Build Final'
+'Client Source Batch','Client Source Batch'
+'Client Source Final','Client Source Final'::character varying
+'B2C-Individual Digital','B2C-Individual Digital'::character varying
+'Corporate','Corporate'
+'Registered','Registered'
+'Sales Inside','Sales Inside'
+'2-9ers','2-9ers'
+'Agency','Agency'
+'API Form','API Form'
+'Bloomberg Leads','Bloomberg'
+'Bloomberg Terminal','Bloomberg'
+'Channel Partner','Channel Partner'
+'Channel Referral','Channel Referral'
+'Contact sales form','Contact sales form'
+'Contact support form','Contact support form'
+'Contact Us Form','Contact Us Form'
+'Concurrency','Copyright'::character varying
+'Copyright','Copyright'
+'Email Forwarding','Copyright'
+'Generic Email Address','Copyright'
+'Overcopying','Copyright'
+'Corporate Blog Subscriber','Corporate Blog Subscriber'
+			WHEN d.leadsource::text = 'Current Client'::character varying::text THEN 'Current Client'::character varying
+			WHEN d.leadsource::text = 'Customer Referral'::character varying::text THEN 'Customer Referral'::character varying
+			WHEN d.leadsource::text = 'Existing Client'::character varying::text THEN 'Customer Referral'::character varying
+			WHEN d.leadsource::text = 'Existing Customer'::character varying::text THEN 'Customer Referral'::character varying
+			WHEN d.leadsource::text = 'Case Study Download'::character varying::text THEN 'Document Download'::character varying
+			WHEN d.leadsource::text = 'Document Download'::character varying::text THEN 'Document Download'::character varying
+			WHEN d.leadsource::text = 'FTCorporate asset download'::character varying::text THEN 'Document Download'::character varying
+			WHEN d.leadsource::text = 'Email Enquiry'::character varying::text THEN 'Email Enquiry'::character varying
+			WHEN d.leadsource::text = 'Event'::character varying::text THEN 'Event'::character varying
+			WHEN d.leadsource::text = 'FT Event'::character varying::text THEN 'Event'::character varying
+			WHEN d.leadsource::text = 'Free Trial Form'::character varying::text THEN 'Free Trial Form'::character varying
+			WHEN d.leadsource::text = 'FT Confidential Research'::character varying::text THEN 'FT Confidential Research'::character varying
+			WHEN d.leadsource::text = 'FT Content'::character varying::text THEN 'FT Content'::character varying
+			WHEN d.leadsource::text = 'FT Dept Referral'::character varying::text THEN 'FT Dept Referral'::character varying
+			WHEN d.leadsource::text = 'FT Referral'::character varying::text THEN 'FT Referral'::character varying
+			WHEN d.leadsource::text = 'FT.com'::character varying::text THEN 'FT.com'::character varying
+			WHEN d.leadsource::text = 'Google Research'::character varying::text THEN 'Google Research'::character varying
+			WHEN d.leadsource::text = 'Telephone Research'::character varying::text THEN 'Google Research'::character varying
+			WHEN d.leadsource::text = 'Industry Contacts'::character varying::text THEN 'Industry Contacts'::character varying
+			WHEN d.leadsource::text = 'Lighthouse'::character varying::text THEN 'Lighthouse'::character varying
+			WHEN d.leadsource::text = 'Salesforce'::character varying::text THEN 'Lighthouse'::character varying
+			WHEN d.leadsource::text = 'Linkedin Ads'::character varying::text THEN 'LinkedIn Ads'::character varying
+			WHEN d.leadsource::text = 'LinkedIn Research'::character varying::text THEN 'LinkedIn Research'::character varying
+			WHEN d.leadsource::text = 'Linkedin Search'::character varying::text THEN 'LinkedIn Research'::character varying
+			WHEN d.leadsource::text = 'Manila'::character varying::text THEN 'Manila Research'::character varying
+			WHEN d.leadsource::text = 'Manila Reseach'::character varying::text THEN 'Manila Research'::character varying
+			WHEN d.leadsource::text = 'Manila Reseacrh'::character varying::text THEN 'Manila Research'::character varying
+			WHEN d.leadsource::text = 'Manila Research'::character varying::text THEN 'Manila Research'::character varying
+			WHEN d.leadsource::text = 'Phone Enquiry'::character varying::text THEN 'Phone Enquiry'::character varying
+			WHEN d.leadsource::text = 'Print Customer'::character varying::text THEN 'Print Customer'::character varying
+			WHEN d.leadsource::text = 'Secondary Schools'::character varying::text THEN 'Secondary Schools'::character varying
+			WHEN d.leadsource::text = 'Syndication Sales Plan'::character varying::text THEN 'Syndication'::character varying
+			WHEN d.leadsource::text = 'Telephone Prospecting'::character varying::text THEN 'Telephone Prospecting'::character varying
+			WHEN d.leadsource::text = 'List Research (Company)'::character varying::text THEN 'Third Party'::character varying
+			WHEN d.leadsource::text = 'Marketing/Third Party List'::character varying::text THEN 'Third Party'::character varying
+			WHEN d.leadsource::text = 'Merit Data'::character varying::text THEN 'Third Party'::character varying
+			WHEN d.leadsource::text = 'Merit Research'::character varying::text THEN 'Third Party'::character varying
+			WHEN d.leadsource::text = 'Scout'::character varying::text THEN 'Third Party'::character varying
+			WHEN d.leadsource::text = 'Third Party Data'::character varying::text THEN 'Third Party'::character varying
+			WHEN d.leadsource::text = 'Third Party List'::character varying::text THEN 'Third Party'::character varying
+			WHEN d.leadsource::text = 'Third Party Research'::character varying::text THEN 'Third Party'::character varying
+			WHEN d.leadsource::text = 'Default - Please update'::character varying::text THEN 'Unknown'::character varying
+			WHEN d.leadsource::text = 'Government Intelligence Digest'::character varying::text THEN 'Unknown'::character varying
+'http://thefinlab.com/','Unknown'
+'Other','Unknown'
+'Republishing Africa','Unknown'
+'Restoring Client Trust Report','Unknown'
+'SFDC-IN|Financial Times News Feed','Unknown'
+'Unknown','Unknown'
+'Web chat',Web Chat'
+'Free Trial Request Form','Free Trial Request Form'::character varying
+'Internet Research','Internet Research'
+'Online Order Form','Online Order Form'
+'Sales Navigator','Sales Navigator'
+'Trialist','Trialist'
+--ELSE 'Unknown'::character varying
