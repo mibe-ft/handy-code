@@ -261,3 +261,7 @@ SELECT *
 FROM dwabstraction.dn_arrangementevent_all daa 
 WHERE ft_user_id = '03a4b9df-938e-410e-b41c-f13a12fcefef'
 ORDER BY arrangementevent_dtm 
+
+-- check arrangement event types
+select DISTINCT arrangementevent_name , arrangementevent_dkey 
+from dwabstraction.dn_arrangementevent_all daa 
