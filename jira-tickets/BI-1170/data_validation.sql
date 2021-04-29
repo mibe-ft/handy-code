@@ -33,3 +33,12 @@ HAVING count_of_date > 1
 --todo create count of unique users and unique arrangements
 select count(distinct ft_user_guid) count_users, count(distinct arrangement_id_dd) count_arrangements
 from dataset
+
+-- check final data set has no dupes
+
+SELECT 
+arrangement_id_dd
+, count(arrangement_id_dd)
+FROM final_tbl_no_dupes
+group by 1 
+having count(arrangement_id_dd) > 1
