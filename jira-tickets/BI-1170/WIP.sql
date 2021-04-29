@@ -28,7 +28,7 @@ WITH user_facts AS (
 -- get additional info on b2c subs
 -- row_number() identifies the latest arrangement event per day, per user, per arrangement
 -- this is to make sure we grab the most recent arrangement details for each day if there are multiple changes in a day
--- filter out duplicate arrangement events
+
 	SELECT * FROM (
 		SELECT
 			   ft_user_id 
@@ -68,7 +68,7 @@ WITH user_facts AS (
 			AND to_datasource_dkey 			= 2 -- Zuora
 			AND to_arrangementstatus_dkey 	IN (1,3) -- 1: Active 3:Cancelled
 			)
-		WHERE row_num = 1 
+		WHERE row_num = 1 -- filter out duplicate arrangement events in same day
 ) 
 , final_tbl AS (
 -- output for final table
@@ -112,12 +112,10 @@ WITH user_facts AS (
 			  AND (uf.userstatus_date_dkey <= bsu.to_enddate_dkey)
 		WHERE 
 			bsu.to_arrangementproduct_type IN ('Print', 'Digital')
-			and uf.ft_user_id = 'be6b4c1f-304a-4eca-bf9b-f3410638213e' --x
 		)
 	WHERE row_num = 1
 )
 --TODO remove row num, format column names and column order
 SELECT *
 FROM final_tbl
-
 ;
