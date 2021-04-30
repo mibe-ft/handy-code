@@ -117,7 +117,11 @@ from ftsfdb.view_sfdc_users vsu
 group by 1
 order by 2 desc
 
--- how do you define student?
+-- how do you define student? USE 'SSI' in licencee name as suggested by Srikanth & Elitsa
+-- TODO: make more efficient?
+select distinct licencee_name__c 
+from ftsfdb.sfdc_contracts_cdc scc
+where licencee_name__c ILIKE '%SSI%'
 
 -- pull unique list of leadsource
 
