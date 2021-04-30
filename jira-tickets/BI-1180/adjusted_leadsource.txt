@@ -22,49 +22,49 @@
 'Generic Email Address','Copyright'
 'Overcopying','Copyright'
 'Corporate Blog Subscriber','Corporate Blog Subscriber'
-			WHEN d.leadsource::text = 'Current Client'::character varying::text THEN 'Current Client'::character varying
-			WHEN d.leadsource::text = 'Customer Referral'::character varying::text THEN 'Customer Referral'::character varying
-			WHEN d.leadsource::text = 'Existing Client'::character varying::text THEN 'Customer Referral'::character varying
-			WHEN d.leadsource::text = 'Existing Customer'::character varying::text THEN 'Customer Referral'::character varying
-			WHEN d.leadsource::text = 'Case Study Download'::character varying::text THEN 'Document Download'::character varying
-			WHEN d.leadsource::text = 'Document Download'::character varying::text THEN 'Document Download'::character varying
-			WHEN d.leadsource::text = 'FTCorporate asset download'::character varying::text THEN 'Document Download'::character varying
-			WHEN d.leadsource::text = 'Email Enquiry'::character varying::text THEN 'Email Enquiry'::character varying
-			WHEN d.leadsource::text = 'Event'::character varying::text THEN 'Event'::character varying
-			WHEN d.leadsource::text = 'FT Event'::character varying::text THEN 'Event'::character varying
-			WHEN d.leadsource::text = 'Free Trial Form'::character varying::text THEN 'Free Trial Form'::character varying
-			WHEN d.leadsource::text = 'FT Confidential Research'::character varying::text THEN 'FT Confidential Research'::character varying
-			WHEN d.leadsource::text = 'FT Content'::character varying::text THEN 'FT Content'::character varying
-			WHEN d.leadsource::text = 'FT Dept Referral'::character varying::text THEN 'FT Dept Referral'::character varying
-			WHEN d.leadsource::text = 'FT Referral'::character varying::text THEN 'FT Referral'::character varying
-			WHEN d.leadsource::text = 'FT.com'::character varying::text THEN 'FT.com'::character varying
-			WHEN d.leadsource::text = 'Google Research'::character varying::text THEN 'Google Research'::character varying
-			WHEN d.leadsource::text = 'Telephone Research'::character varying::text THEN 'Google Research'::character varying
-			WHEN d.leadsource::text = 'Industry Contacts'::character varying::text THEN 'Industry Contacts'::character varying
-			WHEN d.leadsource::text = 'Lighthouse'::character varying::text THEN 'Lighthouse'::character varying
-			WHEN d.leadsource::text = 'Salesforce'::character varying::text THEN 'Lighthouse'::character varying
-			WHEN d.leadsource::text = 'Linkedin Ads'::character varying::text THEN 'LinkedIn Ads'::character varying
-			WHEN d.leadsource::text = 'LinkedIn Research'::character varying::text THEN 'LinkedIn Research'::character varying
-			WHEN d.leadsource::text = 'Linkedin Search'::character varying::text THEN 'LinkedIn Research'::character varying
-			WHEN d.leadsource::text = 'Manila'::character varying::text THEN 'Manila Research'::character varying
-			WHEN d.leadsource::text = 'Manila Reseach'::character varying::text THEN 'Manila Research'::character varying
-			WHEN d.leadsource::text = 'Manila Reseacrh'::character varying::text THEN 'Manila Research'::character varying
-			WHEN d.leadsource::text = 'Manila Research'::character varying::text THEN 'Manila Research'::character varying
-			WHEN d.leadsource::text = 'Phone Enquiry'::character varying::text THEN 'Phone Enquiry'::character varying
-			WHEN d.leadsource::text = 'Print Customer'::character varying::text THEN 'Print Customer'::character varying
-			WHEN d.leadsource::text = 'Secondary Schools'::character varying::text THEN 'Secondary Schools'::character varying
-			WHEN d.leadsource::text = 'Syndication Sales Plan'::character varying::text THEN 'Syndication'::character varying
-			WHEN d.leadsource::text = 'Telephone Prospecting'::character varying::text THEN 'Telephone Prospecting'::character varying
-			WHEN d.leadsource::text = 'List Research (Company)'::character varying::text THEN 'Third Party'::character varying
-			WHEN d.leadsource::text = 'Marketing/Third Party List'::character varying::text THEN 'Third Party'::character varying
-			WHEN d.leadsource::text = 'Merit Data'::character varying::text THEN 'Third Party'::character varying
-			WHEN d.leadsource::text = 'Merit Research'::character varying::text THEN 'Third Party'::character varying
-			WHEN d.leadsource::text = 'Scout'::character varying::text THEN 'Third Party'::character varying
-			WHEN d.leadsource::text = 'Third Party Data'::character varying::text THEN 'Third Party'::character varying
-			WHEN d.leadsource::text = 'Third Party List'::character varying::text THEN 'Third Party'::character varying
-			WHEN d.leadsource::text = 'Third Party Research'::character varying::text THEN 'Third Party'::character varying
-			WHEN d.leadsource::text = 'Default - Please update'::character varying::text THEN 'Unknown'::character varying
-			WHEN d.leadsource::text = 'Government Intelligence Digest'::character varying::text THEN 'Unknown'::character varying
+'Current Client','Current Client'
+'Customer Referral','Customer Referral'
+'Existing Client','Customer Referral'
+'Existing Customer','Customer Referral'
+'Case Study Download','Document Download'::character varying
+'Document Download','Document Download'
+'FTCorporate asset download','Document Download'
+'Email Enquiry','Email Enquiry'
+'Event','Event'
+'FT Event','Event'
+'Free Trial Form','Free Trial Form'
+'FT Confidential Research','FT Confidential Research'
+'FT Content','FT Content'
+'FT Dept Referral','FT Dept Referral'
+'FT Referral','FT Referral'
+'FT.com','FT.com'
+'Google Research','Google Research'
+'Telephone Research','Google Research'
+'Industry Contacts','Industry Contacts'
+'Lighthouse','Lighthouse'
+'Salesforce','Lighthouse'
+'Linkedin Ads','LinkedIn Ads'
+'LinkedIn Research','LinkedIn Research'
+'Linkedin Search','LinkedIn Research'
+'Manila','Manila Research'
+'Manila Reseach','Manila Research'
+'Manila Reseacrh','Manila Research'
+'Manila Research','Manila Research'
+'Phone Enquiry','Phone Enquiry'
+'Print Customer','Print Customer'
+'Secondary Schools','Secondary Schools'
+'Syndication Sales Plan','Syndication'
+'Telephone Prospecting','Telephone Prospecting'
+'List Research (Company)','Third Party'
+'Marketing/Third Party List','Third Party'
+'Merit Data','Third Party'
+'Merit Research','Third Party'
+'Scout','Third Party'
+'Third Party Data','Third Party'
+'Third Party List','Third Party'
+'Third Party Research','Third Party'
+'Default - Please update','Unknown'
+'Government Intelligence Digest','Unknown'
 'http://thefinlab.com/','Unknown'
 'Other','Unknown'
 'Republishing Africa','Unknown'
