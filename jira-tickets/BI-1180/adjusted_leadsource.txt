@@ -1,8 +1,8 @@
 'Build Batch','Build Batch'
 'Build Final','Build Final'
 'Client Source Batch','Client Source Batch'
-'Client Source Final','Client Source Final'::character varying
-'B2C-Individual Digital','B2C-Individual Digital'::character varying
+'Client Source Final','Client Source Final'
+'B2C-Individual Digital','B2C-Individual Digital'
 'Corporate','Corporate'
 'Registered','Registered'
 'Sales Inside','Sales Inside'
@@ -16,7 +16,7 @@
 'Contact sales form','Contact sales form'
 'Contact support form','Contact support form'
 'Contact Us Form','Contact Us Form'
-'Concurrency','Copyright'::character varying
+'Concurrency','Copyright'
 'Copyright','Copyright'
 'Email Forwarding','Copyright'
 'Generic Email Address','Copyright'
@@ -26,7 +26,7 @@
 'Customer Referral','Customer Referral'
 'Existing Client','Customer Referral'
 'Existing Customer','Customer Referral'
-'Case Study Download','Document Download'::character varying
+'Case Study Download','Document Download'
 'Document Download','Document Download'
 'FTCorporate asset download','Document Download'
 'Email Enquiry','Email Enquiry'
@@ -72,9 +72,9 @@
 'SFDC-IN|Financial Times News Feed','Unknown'
 'Unknown','Unknown'
 'Web chat',Web Chat'
-'Free Trial Request Form','Free Trial Request Form'::character varying
+'Free Trial Request Form','Free Trial Request Form'
 'Internet Research','Internet Research'
 'Online Order Form','Online Order Form'
 'Sales Navigator','Sales Navigator'
 'Trialist','Trialist'
---ELSE 'Unknown'::character varying
+--ELSE 'Unknown'
