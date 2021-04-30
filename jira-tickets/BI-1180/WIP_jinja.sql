@@ -2,6 +2,20 @@
 SELECT
       sf_log.lead_id__c  as id
     , sf_log."name" 
+    , CASE
+         WHEN sf_log."name" = 'Marketing ready'::character varying::text THEN 'one_marketing_ready_lead'
+         WHEN sf_log."name" = 'Engaged'::character varying::text THEN 'two_marketing_qualified_lead'
+         WHEN sf_log."name" = 'Marketing qualified'::character varying::text THEN 'two_marketing_qualified_lead'
+         WHEN sf_log."name" = 'Sales ready'::character varying::text THEN 'three_sales_ready_lead'
+         WHEN sf_log."name" = 'Qualified'::character varying::text THEN 'four_converted_to_opp'
+         WHEN sf_log."name" = 'Discover'::character varying::text THEN 'five_discover'
+         WHEN sf_log."name" = 'Develop & Prove'::character varying::text THEN 'six_develop_and_prove'
+         WHEN sf_log."name" = 'Proposal/Negotiation'::character varying::text THEN 'seven_proposal_negotiation'
+         WHEN sf_log."name" = 'Agree & Close Contract'::character varying::text THEN 'eight_agree_and_close_contract'
+         WHEN sf_log."name" = 'Closed Won'::character varying::text THEN 'nine_closed_won'
+         WHEN sf_log."name" = 'Closed Lost'::character varying::text THEN '_closed_lost'
+         WHEN sf_log."name" = 'No Opportunity'::character varying::text THEN '_no_opportunity'
+         ELSE sf_log."name" END AS stage_name
     , sf_log.createddate 
     , sf_log.lead_id__c AS lead_id
     , sf_leads.leadsource AS original_lead_source
@@ -83,7 +97,8 @@ SELECT
         WHEN sf_leads.leadsource::text = 'Free Trial Request Form'::character varying::text THEN 'Free Trial Request Form'::character varying
         WHEN sf_leads.leadsource::text = 'Internet Research'::character varying::text THEN 'Internet Research'::character varying
         WHEN sf_leads.leadsource::text = 'Online Order Form'::character varying::text THEN 'Online Order Form'::character varying
-        WHEN sf_leads.leadsource::text = 'Sales Navigator'::character varying::text THEN 'Sales Navigator'::character varying 
+        WHEN sf_leads.leadsource::text = 'Sales Navigator'::character varying::text THEN 'Sales Navigator'::character varying
+        WHEN sf_leads.leadsource::text = 'Trialist'::character varying::text THEN 'Trialist'::character varying 
         ELSE 'Unknown' END AS adjusted_leadsource 
     --, COUNT(leadsource) AS count_
     , sf_leads.industry_sector AS lead_industry_sector -- d
