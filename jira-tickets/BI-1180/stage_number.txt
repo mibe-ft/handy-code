@@ -1,0 +1,18 @@
+'_no_opportunity',0
+'one_marketing_ready_lead',1
+'two_marketing_qualified_lead',2
+'three_sales_ready_lead',3
+'four_converted_to_opp',4
+'five_discover',5
+'six_develop_and_prove',6
+'seven_proposal_negotiation',7
+'eight_agree_and_close_contract',8
+'nine_closed_won',9
+'_closed_lost',10
+'Member',99
+'unknown',99
+'Open',99
+'Marketing qualified',2
+'Financial Services',99
+'Concurrency',99
+'clicked',99
