@@ -15,6 +15,26 @@ SELECT
          WHEN sf_log."name" = 'Closed Lost'::character varying::text THEN '_closed_lost'
          WHEN sf_log."name" = 'No Opportunity'::character varying::text THEN '_no_opportunity'
          ELSE sf_log."name" END AS stage_name
+    , CASE
+        WHEN stage_name = '_no_opportunity'::character varying::text THEN 0
+        WHEN stage_name = 'one_marketing_ready_lead'::character varying::text THEN 1
+        WHEN stage_name = 'two_marketing_qualified_lead'::character varying::text THEN 2
+        WHEN stage_name = 'three_sales_ready_lead'::character varying::text THEN 3
+        WHEN stage_name = 'four_converted_to_opp'::character varying::text THEN 4
+        WHEN stage_name = 'five_discover'::character varying::text THEN 5
+        WHEN stage_name = 'six_develop_and_prove'::character varying::text THEN 6
+        WHEN stage_name = 'seven_proposal_negotiation'::character varying::text THEN 7
+        WHEN stage_name = 'eight_agree_and_close_contract'::character varying::text THEN 8
+        WHEN stage_name = 'nine_closed_won'::character varying::text THEN 9
+        WHEN stage_name = '_closed_lost'::character varying::text THEN 10
+        WHEN stage_name = 'Member'::character varying::text THEN 99
+        WHEN stage_name = 'unknown'::character varying::text THEN 99
+        WHEN stage_name = 'Open'::character varying::text THEN 99
+        WHEN stage_name = 'Marketing qualified'::character varying::text THEN 2
+        WHEN stage_name = 'Financial Services'::character varying::text THEN 99
+        WHEN stage_name = 'Concurrency'::character varying::text THEN 99
+        WHEN stage_name = 'clicked'::character varying::text THEN 99
+        ELSE NULL::integer END AS stage_number
     , sf_log.createddate
     , sf_log.lead_id__c AS lead_id
     , sf_leads.leadsource AS original_lead_source

@@ -6,6 +6,11 @@ SELECT
          WHEN sf_log."name" = '{{k}}'::character varying::text THEN '{{v}}'
     {%- endfor %}
          ELSE sf_log."name" END AS stage_name
+    , CASE
+    {%- for k,v in stage_numbers %}
+        WHEN stage_name = '{{k}}'::character varying::text THEN {{v}}
+    {%- endfor %}
+        ELSE NULL::integer END AS stage_number
     , sf_log.createddate
     , sf_log.lead_id__c AS lead_id
     , sf_leads.leadsource AS original_lead_source
