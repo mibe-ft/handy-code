@@ -88,7 +88,7 @@ WITH user_facts AS (
 			, bsu.to_cancel_dtm
 			, bsu.arrangement_id_dd
 			, bsu.to_arrangementtype_name -- e.g. b2c subscription
-			, bsu.to_arrangementlength_id 					AS product_term-- length of arrangement
+			, bsu.to_arrangementlength_id 					AS product_term --length of arrangement
 			, CASE WHEN bsu.to_arrangementlength_id  = '12M' THEN 'annual'
 				   WHEN bsu.to_arrangementlength_id  = '1M' THEN 'monthly'
 				   ELSE bsu.to_arrangementlength_id END AS product_term_adjusted
@@ -129,8 +129,12 @@ FROM final_tbl f
 LEFT JOIN #stepup_matrix m ON f.product_name_adjusted = m.subs_product
 AND f.product_term_adjusted = m.subs_term
 and f.currency_code = m.currency
-and (f.to_priceinctax >= m.lower_band)
-and (f.to_priceinctax <= m.higher_band)
+--and (f.to_priceinctax >= m.lower_band)
+--and (f.to_priceinctax <= m.higher_band)
+--where
+----and product_name_adjusted = 'standard'
+--f.product_term_adjusted IN ('annual', 'monthly')
+--and f.arrangement_id_dd = 8528594
 
 
 ;
