@@ -18,7 +18,5 @@ INSERT INTO #stepup_matrix VALUES
         ,
     {%- endif -%}
     {%- endfor %}
---('GBP',0.01,146.30,154,'-50%',1,'bb776c53-abdd-280d-4279-cd9aeb0257ff','annual','standard'),
---('GBP',146.31,196.65,207,'-33%',2,'a9582121-87c2-09a7-0cc0-4caf594985d5','annual','standard')
 ;
 select * from #stepup_matrix
