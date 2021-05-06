@@ -43,3 +43,16 @@ arrangement_id_dd
 FROM final_tbl
 group by 1 
 having count(arrangement_id_dd) > 1
+
+-- 277219 in active status 20210506, includes all
+SELECT count(distinct user_dkey)
+FROM dwabstraction.dn_arrangement_all
+WHERE to_datasource_dkey = 2
+AND to_arrangementstatus_dkey 	IN (1)
+
+-- 269,206 in active status 20210506
+SELECT count(distinct user_dkey)
+FROM dwabstraction.dn_arrangement_all daa
+WHERE to_datasource_dkey = 2
+AND to_arrangementstatus_dkey 	IN (1)
+and to_arrangementproduct_type IN ('Print', 'Digital')
