@@ -31,8 +31,8 @@ HAVING count_of_date > 1
 -- checking for null values in specific 'important columns'
 
 --todo create count of unique users and unique arrangements
-select count(distinct ft_user_guid) count_users, count(distinct arrangement_id_dd) count_arrangements
-from dataset
+select count(distinct ft_user_id) count_users, count(distinct arrangement_id_dd) count_arrangements
+from final_tbl
 
 -- check final data set has no dupes
 
