@@ -153,6 +153,7 @@ SELECT  -- *
 	, m.percent_discount AS step_up_percent_discount
 	, CASE WHEN status_key = 3 THEN 1 ELSE 0 END AS is_cancelled
 	, CASE WHEN (to_cancelrequest_dtm IS NOT NULL OR to_cancel_dtm IS NOT NULL) THEN 1 ELSE 0 END AS has_cancel_request
+	, DATEDIFF(days, CURRENT_DATE, f.to_end_dtm) AS days_until_end_of_term
 
 FROM final_tbl f
 LEFT JOIN #step_up_matrix m ON f.product_name_adjusted::CHARACTER VARYING = m.subs_product::CHARACTER VARYING
