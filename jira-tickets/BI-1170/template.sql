@@ -52,6 +52,7 @@ WITH user_facts AS (
 			 , to_arrangementproduct_name
 			 , to_arrangementproduct_type
 			 , to_arrangementstatus_name
+			 , to_arrangementstatus_dkey
 			 , to_arrangementproduct_code
 			 , to_priceinctax
 			 , to_pricegbpinctax
@@ -109,6 +110,7 @@ WITH user_facts AS (
 	   			   ELSE bsu.to_arrangementproduct_name END AS product_name_adjusted
 			, bsu.to_arrangementproduct_type 				AS print_or_digital -- print or digital or bundle
 			, bsu.to_arrangementstatus_name 				AS status_name-- e.g. Active, Cancelled, Pending, Payment Failure
+			, bsu.to_arrangementstatus_dkey					AS status_key
 			, bsu.to_arrangementproduct_code				AS product_code
 			, bsu.to_priceinctax
 			, bsu.to_pricegbpinctax
@@ -143,11 +145,14 @@ SELECT  -- *
 	, f.to_offer_name AS current_offer
 	, f.to_offer_id AS current_offer_id
 	, f.region
+	, f.currency_code
 	, f.product_name_adjusted
 	, f.product_term_adjusted
 	, m.new_price AS step_up_price
 	, m.offer_id AS step_up_offer_id
 	, m.percent_discount AS step_up_percent_discount
+	, CASE WHEN status_key = 3 THEN 1 ELSE 0 END AS is_cancelled
+	, CASE WHEN (to_cancelrequest_dtm IS NOT NULL OR to_cancel_dtm IS NOT NULL) THEN 1 ELSE 0 END AS has_cancel_request
 
 FROM final_tbl f
 LEFT JOIN #step_up_matrix m ON f.product_name_adjusted::CHARACTER VARYING = m.subs_product::CHARACTER VARYING
