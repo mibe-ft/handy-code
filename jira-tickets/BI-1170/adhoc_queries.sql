@@ -295,3 +295,7 @@ distinct to_arrangementproduct_type product_type
 from dwabstraction.dn_arrangementevent_all daa
 order by 1
 
+-- create array of dates
+SELECT CURRENT_DATE::TIMESTAMP  - (i * interval '1 day') as date_datetime
+FROM generate_series(1,31) i
+ORDER BY 1
