@@ -133,10 +133,21 @@ WITH user_facts AS (
 	WHERE row_num = 1
 )
 --TODO remove row num, format column names and column order
-SELECT *
+SELECT  -- *
+	  f.ft_user_id
+	, f.date_
+	, f.print_or_digital
+	, f.to_priceinctax AS current_price
+	, f.to_offer_name AS current_offer
+	, f.region
+	, f.product_name_adjusted
+	, f.product_term_adjusted
+	, m.new_price AS step_up_price
+	, m.offer_id AS step_up_offer_id
+	, m.percent_discount
 
 FROM final_tbl f
-LEFT JOIN #stepup_matrix m ON f.product_name_adjusted = m.subs_product
+LEFT JOIN #stepup_matrix m ON f.product_name_adjusted::CHARACTER VARYING = m.subs_product::CHARACTER VARYING
 AND f.product_term_adjusted::CHARACTER VARYING = m.subs_term::CHARACTER VARYING
 AND f.currency_code::CHARACTER VARYING = m.currency::CHARACTER VARYING
 AND (f.to_priceinctax::FLOAT >= m.lower_band::FLOAT)
@@ -145,6 +156,4 @@ AND (f.to_priceinctax::FLOAT <= m.higher_band::FLOAT)
 ------and product_name_adjusted = 'standard'
 -- f.product_term_adjusted IN ('annual', 'monthly')
 -- and f.arrangement_id_dd = 8528594
-
-
 ;
