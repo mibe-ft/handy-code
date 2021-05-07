@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS #stepup_matrix;
-CREATE TABLE #stepup_matrix (
+DROP TABLE IF EXISTS #step_up_matrix;
+CREATE TABLE #step_up_matrix (
     currency VARCHAR,
     lower_band FLOAT,
     higher_band FLOAT,
@@ -11,7 +11,7 @@ CREATE TABLE #stepup_matrix (
     subs_product VARCHAR
 );
 
-INSERT INTO #stepup_matrix VALUES
+INSERT INTO #step_up_matrix VALUES
     ('GBP', 0.01, 146.3, 154.0, '-50%', 1, 'bb776c53-abdd-280d-4279-cd9aeb0257ff', 'annual', 'standard'),
     ('GBP', 146.31, 196.65, 207.0, '-33%', 2, 'a9582121-87c2-09a7-0cc0-4caf594985d5', 'annual', 'standard'),
     ('GBP', 196.66, 219.45, 231.0, '-25%', 3, 'c1773439-53dc-df3d-9acc-20ce2ecde318', 'annual', 'standard'),
@@ -140,6 +140,7 @@ WITH user_facts AS (
 			 , to_currency_code
 			 , to_currency_name
 			 , to_offer_name
+			 , to_offer_id
 			 , to_offer_price
 			 , to_offer_type
 			 , to_offer_rrp
@@ -187,6 +188,7 @@ WITH user_facts AS (
 			, bsu.to_pricegbpinctax
 			, bsu.to_offer_name
 			, bsu.to_offer_price
+			, bsu.to_offer_id
 			, COALESCE(to_offer_rrp, 9999)					AS rrp_price -- todo sometimes null
 			, bsu.to_offer_type
 			, bsu.to_offer_rrp
@@ -213,15 +215,16 @@ SELECT  -- *
 	, f.print_or_digital
 	, f.to_priceinctax AS current_price
 	, f.to_offer_name AS current_offer
+	, f.to_offer_id AS current_offer_id
 	, f.region
 	, f.product_name_adjusted
 	, f.product_term_adjusted
 	, m.new_price AS step_up_price
 	, m.offer_id AS step_up_offer_id
-	, m.percent_discount
+	, m.percent_discount AS step_up_percent_discount
 
 FROM final_tbl f
-LEFT JOIN #stepup_matrix m ON f.product_name_adjusted::CHARACTER VARYING = m.subs_product::CHARACTER VARYING
+LEFT JOIN #step_up_matrix m ON f.product_name_adjusted::CHARACTER VARYING = m.subs_product::CHARACTER VARYING
 AND f.product_term_adjusted::CHARACTER VARYING = m.subs_term::CHARACTER VARYING
 AND f.currency_code::CHARACTER VARYING = m.currency::CHARACTER VARYING
 AND (f.to_priceinctax::FLOAT >= m.lower_band::FLOAT)
