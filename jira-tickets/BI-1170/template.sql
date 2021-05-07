@@ -127,8 +127,8 @@ WITH user_facts AS (
 			, bsu.b2c_marketing_region						AS region
 			, ROW_NUMBER () OVER(PARTITION BY uf.ft_user_id, bsu.arrangement_id_dd ORDER BY bsu.arrangementevent_dtm DESC) AS row_num
 
-		FROM user_facts uf
-		LEFT JOIN b2c_subscriptions bsu ON uf.user_dkey = bsu.user_dkey
+		FROM b2c_subscriptions bsu
+		LEFT JOIN user_facts uf ON bsu.user_dkey = uf.user_dkey
 			  AND (uf.userstatus_date_dkey >= bsu.to_termstartdate_dkey)
 			  AND (uf.userstatus_date_dkey <= bsu.to_enddate_dkey)
 		WHERE
