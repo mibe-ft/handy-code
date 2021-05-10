@@ -10,6 +10,13 @@
 SELECT  MIN(current_max_stage_timestamp), MAX(current_max_stage_timestamp)
 FROM `ft-bi-team.BI_layer_tables.funnels_b2b_nnb_add` LIMIT 1000
 
+-- check for dupe sf lead ids
+SELECT  id, count(id)
+
+FROM `ft-data.biteam.funnels_b2b_nnb`
+group by 1
+having count(id) >1
+
 -- get column names for redshift table
 SELECT column_name
 FROM ft-data.biteam.INFORMATION_SCHEMA.COLUMNS
