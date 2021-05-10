@@ -10,6 +10,11 @@
 SELECT  MIN(current_max_stage_timestamp), MAX(current_max_stage_timestamp)
 FROM `ft-bi-team.BI_layer_tables.funnels_b2b_nnb_add` LIMIT 1000
 
+-- get column names for redshift table
+SELECT column_name
+FROM ft-data.biteam.INFORMATION_SCHEMA.COLUMNS
+WHERE table_name = 'funnels_b2b_nnb'
+
 -- get column names
 
 SELECT column_name
