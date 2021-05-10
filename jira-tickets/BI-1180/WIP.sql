@@ -220,7 +220,68 @@ WHERE row_num = 1
 , distinct_ids AS (
 SELECT DISTINCT id FROM step01
 )
-
+, stages_01 AS (
+SELECT
+id,
+"max"(
+			CASE
+				WHEN a.stage_name::text = 'one_marketing_ready_lead'::character varying::text THEN a.createddate
+				ELSE NULL::timestamp without time zone
+			END) AS one_marketing_ready_lead,
+			"max"(
+			CASE
+				WHEN a.stage_name::text = 'two_marketing_qualified_lead'::character varying::text THEN a.createddate
+				ELSE NULL::timestamp without time zone
+			END) AS two_marketing_qualified_lead,
+			"max"(
+			CASE
+				WHEN a.stage_name::text = 'three_sales_ready_lead'::character varying::text THEN a.createddate
+				ELSE NULL::timestamp without time zone
+			END) AS three_sales_ready_lead,
+			"max"(
+			CASE
+				WHEN a.stage_name::text = 'four_converted_to_opp'::character varying::text THEN a.createddate
+				ELSE NULL::timestamp without time zone
+			END) AS four_converted_to_opp,
+			"max"(
+			CASE
+				WHEN a.stage_name::text = 'five_discover'::character varying::text THEN a.createddate
+				ELSE NULL::timestamp without time zone
+			END) AS five_discover,
+			"max"(
+			CASE
+				WHEN a.stage_name::text = 'six_develop_and_prove'::character varying::text THEN a.createddate
+				ELSE NULL::timestamp without time zone
+			END) AS six_develop_and_prove,
+			"max"(
+			CASE
+				WHEN a.stage_name::text = 'seven_proposal_negotiation'::character varying::text THEN a.createddate
+				ELSE NULL::timestamp without time zone
+			END) AS seven_proposal_negotiation,
+			"max"(
+			CASE
+				WHEN a.stage_name::text = 'eight_agree_and_close_contract'::character varying::text THEN a.createddate
+				ELSE NULL::timestamp without time zone
+			END) AS eight_agree_and_close_contract,
+			"max"(
+			CASE
+				WHEN a.stage_name::text = 'nine_closed_won'::character varying::text THEN a.createddate
+				ELSE NULL::timestamp without time zone
+			END) AS nine_closed_won,
+			"max"(
+			CASE
+				WHEN a.stage_name::text = '_closed_lost'::character varying::text THEN a.createddate
+				ELSE NULL::timestamp without time zone
+			END) AS _closed_lost,
+			"max"(
+			CASE
+				WHEN a.stage_name::text = '_no_opportunity'::character varying::text THEN a.createddate
+				ELSE NULL::timestamp without time zone
+			END) AS _no_opportunity
+FROM step01 a
+GROUP BY id
+)
+--, wip AS (
 SELECT a.id
 , b.current_max_stage_timestamp
 , b.current_max_stage_name
@@ -240,6 +301,44 @@ SELECT a.id
 	WHEN b.current_max_stage_name = '_no_opportunity'::character varying::text THEN c.last_live_stage_name
 	ELSE b.current_max_stage_name
 	END AS lead_status_stage_name
+, CASE
+					WHEN d.one_marketing_ready_lead IS NULL THEN 0
+					ELSE 1
+				END AS one_marketing_ready_lead_pre
+				, CASE
+					WHEN d.two_marketing_qualified_lead IS NULL THEN 0
+					ELSE 1
+				END AS two_marketing_qualified_lead_pre
+				, CASE
+					WHEN d.three_sales_ready_lead IS NULL THEN 0
+					ELSE 1
+				END AS three_sales_ready_lead_pre
+				,CASE
+					WHEN d.four_converted_to_opp IS NULL THEN 0
+					ELSE 1
+				END AS four_converted_to_opp_pre
+				,CASE
+					WHEN d.five_discover IS NULL THEN 0
+					ELSE 1
+				END AS five_discover_pre
+				,CASE
+					WHEN d.six_develop_and_prove IS NULL THEN 0
+					ELSE 1
+				END AS six_develop_and_prove_pre
+				,CASE
+					WHEN d.seven_proposal_negotiation IS NULL THEN 0
+					ELSE 1
+				END AS seven_proposal_negotiation_pre
+				,CASE
+					WHEN d.eight_agree_and_close_contract IS NULL THEN 0
+					ELSE 1
+				END AS eight_agree_and_close_contract_pre
+				,CASE
+					WHEN d.nine_closed_won IS NULL THEN 0
+					ELSE 1
+				END AS nine_closed_won_pre
 FROM distinct_ids a
 LEFT JOIN current_max_stg b ON a.id = b.id
 LEFT JOIN last_live_stg c ON a.id = c.id
+LEFT JOIN stages_01 d ON a.id = d.id
+--)
