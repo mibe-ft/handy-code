@@ -463,6 +463,42 @@ SELECT a.id
 						AND c.last_live_stage_timestamp IS NOT NULL THEN 0
 						ELSE 1
 					END AS nine_closed_won
+			, CASE
+						WHEN d.one_marketing_ready_lead IS NULL THEN NULL::timestamp without time zone
+						ELSE d.one_marketing_ready_lead
+					END AS one_marketing_ready_lead_pre_timestamp
+			, CASE
+						WHEN d.two_marketing_qualified_lead IS NULL THEN NULL::timestamp without time zone
+						ELSE d.two_marketing_qualified_lead
+					END AS two_marketing_qualified_lead_pre_timestamp
+					,CASE
+						WHEN d.three_sales_ready_lead IS NULL THEN NULL::timestamp without time zone
+						ELSE d.three_sales_ready_lead
+					END AS three_sales_ready_lead_pre_timestamp
+					,CASE
+						WHEN d.four_converted_to_opp IS NULL THEN NULL::timestamp without time zone
+						ELSE d.four_converted_to_opp
+					END AS four_converted_to_opp_pre_timestamp
+					,CASE
+						WHEN d.five_discover IS NULL THEN NULL::timestamp without time zone
+						ELSE d.five_discover
+					END AS five_discover_pre_timestamp
+					,CASE
+						WHEN d.six_develop_and_prove IS NULL THEN NULL::timestamp without time zone
+						ELSE d.six_develop_and_prove
+					END AS six_develop_and_prove_pre_timestamp
+					,CASE
+						WHEN d.seven_proposal_negotiation IS NULL THEN NULL::timestamp without time zone
+						ELSE d.seven_proposal_negotiation
+					END AS seven_proposal_negotiation_pre_timestamp
+					,CASE
+						WHEN d.eight_agree_and_close_contract IS NULL THEN NULL::timestamp without time zone
+						ELSE d.eight_agree_and_close_contract
+					END AS eight_agree_and_close_contract_pre_timestamp
+					,CASE
+						WHEN d.nine_closed_won IS NULL THEN NULL::timestamp without time zone
+						ELSE d.nine_closed_won
+					END AS nine_closed_won_pre_timestamp
 FROM distinct_ids a
 LEFT JOIN current_max_stg b ON a.id = b.id
 LEFT JOIN last_live_stg c ON a.id = c.id
