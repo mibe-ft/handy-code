@@ -167,7 +167,7 @@ SELECT
     , sf_cpseg.marketing_campaign__r_name::text AS visit_marketing_campaign_name --cs.marketing_campaign__r_name
 FROM ftsfdb.view_sfdc_stage_log sf_log
 LEFT JOIN ftsfdb.view_sfdc_leads sf_leads ON sf_log.lead_id__c = sf_leads.id
-LEFT JOIN ftsfdb.view_sfdc_campaign_segments sf_cpseg ON sf_leads.segment_id::text = sf_cpseg.segmentid__c::text
+--LEFT JOIN ftsfdb.view_sfdc_campaign_segments sf_cpseg ON sf_leads.segment_id::text = sf_cpseg.segmentid__c::text -- todo delete me
 LEFT JOIN ftsfdb.view_sfdc_users sf_users ON sf_leads.ownerid::text = sf_users.id::text
 LEFT JOIN dwabstraction.dim_country_latest dm_country ON lower(dm_country.country_name::text) = lower(sf_leads.country::text)
 LEFT JOIN ftsfdb.view_sfdc_opportunities sf_opps ON sf_opps.id::text = sf_log.opportunity__c::text
@@ -177,6 +177,7 @@ LEFT JOIN dwabstraction.dn_currencyexchangerate x ON x.fromcurrency_code = sf_op
 LEFT JOIN biteam.conversion_visit c ON sf_leads.spoor_id::text = c.device_spoor_id::text
 									AND c.system_action::text = 'b2b-confirmed'::character varying::text
 LEFT JOIN ftspoordb.visits v ON c.conversion_visit_id = v.visit_id
+LEFT JOIN ftsfdb.view_sfdc_campaign_segments sf_cpseg ON v.campaign_id::text = sf_cpseg.segmentid__c::text
 WHERE sf_log.lead_id__c IN ('00Q4G00001BPPN8UAP','00Q4G000019UYfAUAW', '00Q4G000019TtFPUA0') -- todo delete me before release to production
 )
 , current_max_stg AS (
