@@ -196,10 +196,11 @@ SELECT id
 FROM step01
 )
 WHERE row_num = 1
-  AND name_ NOT IN ('Recycled', 'Suspect')
+  AND name_ NOT IN ('Recyled', 'Suspect')
 
 )
-
+, last_live_stg AS (
+-- get last live stage
 SELECT id
 	 , createddate AS last_live_stage_timestamp
 	 , stage_name AS last_live_stage_name
@@ -214,4 +215,31 @@ SELECT id
 FROM step01
 )
 WHERE row_num = 1
-  AND name_ NOT IN ('Recycled', 'Suspect', 'Closed Lost', 'No Opportunity' )
+  AND name_ NOT IN ('Recyled', 'Suspect', 'Closed Lost', 'No Opportunity' )
+  )
+, distinct_ids AS (
+SELECT DISTINCT id FROM step01
+)
+
+SELECT a.id
+, b.current_max_stage_timestamp
+, b.current_max_stage_name
+, b.current_max_stage_number
+, c.last_live_stage_timestamp
+, c.last_live_stage_name
+, c.last_live_stage_number
+, CASE
+	WHEN b.current_max_stage_name = 'nine_closed_won'::character varying::text THEN 'closed_won'::character varying
+	WHEN b.current_max_stage_name = '_closed_lost'::character varying::text THEN 'closed_lost'::character varying
+	WHEN b.current_max_stage_name = '_no_opportunity'::character varying::text THEN 'no_opportunity'::character varying
+	ELSE 'live'::character varying
+	END AS lead_status
+, CASE
+	WHEN b.current_max_stage_name = 'nine_closed_won'::character varying::text THEN b.current_max_stage_name
+	WHEN b.current_max_stage_name = '_closed_lost'::character varying::text THEN c.last_live_stage_name
+	WHEN b.current_max_stage_name = '_no_opportunity'::character varying::text THEN c.last_live_stage_name
+	ELSE b.current_max_stage_name
+	END AS lead_status_stage_name
+FROM distinct_ids a
+LEFT JOIN current_max_stg b ON a.id = b.id
+LEFT JOIN last_live_stg c ON a.id = c.id
