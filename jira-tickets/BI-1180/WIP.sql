@@ -337,6 +337,132 @@ SELECT a.id
 					WHEN d.nine_closed_won IS NULL THEN 0
 					ELSE 1
 				END AS nine_closed_won_pre
+	,
+	CASE
+					WHEN d.one_marketing_ready_lead IS NOT NULL THEN 1
+					WHEN d.one_marketing_ready_lead IS NULL
+						AND (lead_status_stage_name = 'two_marketing_qualified_lead'::character varying::text
+							OR lead_status_stage_name = 'three_sales_ready_lead'::character varying::text
+							OR lead_status_stage_name = 'four_converted_to_opp'::character varying::text
+							OR lead_status_stage_name = 'five_discover'::character varying::text
+							OR lead_status_stage_name = 'six_develop_and_prove'::character varying::text
+							OR lead_status_stage_name = 'seven_proposal_negotiation'::character varying::text
+							OR lead_status_stage_name = 'eight_agree_and_close_contract'::character varying::text
+							OR lead_status_stage_name = 'nine_closed_won'::character varying::text
+							OR lead_status_stage_name = NULL::character varying::text
+							OR lead_status_stage_name = 'clicked'::character varying::text
+							OR lead_status_stage_name = 'Member'::character varying::text)
+						AND c.last_live_stage_timestamp IS NOT NULL THEN 1
+						ELSE 0
+					END AS one_marketing_ready_lead
+					, CASE
+						WHEN d.two_marketing_qualified_lead IS NULL
+						AND lead_status_stage_name IS NULL THEN 0
+						WHEN d.two_marketing_qualified_lead IS NULL
+						AND (lead_status_stage_name = 'one_marketing_ready_lead'::character varying::text
+							OR lead_status_stage_name = 'clicked'::character varying::text
+							OR lead_status_stage_name = 'Member'::character varying::text)
+						AND c.last_live_stage_timestamp IS NOT NULL THEN 0
+						ELSE 1
+					END AS two_marketing_qualified_lead
+					,CASE
+						WHEN d.three_sales_ready_lead IS NULL
+						AND lead_status_stage_name IS NULL THEN 0
+						WHEN d.three_sales_ready_lead IS NULL
+						AND (lead_status_stage_name = 'one_marketing_ready_lead'::character varying::text
+							OR lead_status_stage_name = 'two_marketing_qualified_lead'::character varying::text
+							OR lead_status_stage_name = 'clicked'::character varying::text
+							OR lead_status_stage_name = 'Member'::character varying::text)
+						AND c.last_live_stage_timestamp IS NOT NULL THEN 0
+						ELSE 1
+					END AS three_sales_ready_lead
+					,CASE
+						WHEN d.four_converted_to_opp IS NULL
+						AND lead_status_stage_name IS NULL THEN 0
+						WHEN d.four_converted_to_opp IS NULL
+						AND (lead_status_stage_name = 'one_marketing_ready_lead'::character varying::text
+							OR lead_status_stage_name = 'two_marketing_qualified_lead'::character varying::text
+							OR lead_status_stage_name = 'three_sales_ready_lead'::character varying::text
+							OR lead_status_stage_name = 'clicked'::character varying::text
+							OR lead_status_stage_name = 'Member'::character varying::text)
+						AND c.last_live_stage_timestamp IS NOT NULL THEN 0
+						ELSE 1
+					END AS four_converted_to_opp
+					,CASE
+						WHEN d.five_discover IS NULL
+						AND lead_status_stage_name IS NULL THEN 0
+						WHEN d.five_discover IS NULL
+						AND (lead_status_stage_name = 'one_marketing_ready_lead'::character varying::text
+							OR lead_status_stage_name = 'two_marketing_qualified_lead'::character varying::text
+							OR lead_status_stage_name = 'three_sales_ready_lead'::character varying::text
+							OR lead_status_stage_name = 'four_converted_to_opp'::character varying::text
+							OR lead_status_stage_name = 'clicked'::character varying::text
+							OR lead_status_stage_name = 'Member'::character varying::text)
+						AND c.last_live_stage_timestamp IS NOT NULL THEN 0
+						ELSE 1
+					END AS five_discover
+					,CASE
+						WHEN d.six_develop_and_prove IS NULL
+						AND lead_status_stage_name IS NULL THEN 0
+						WHEN d.six_develop_and_prove IS NULL
+						AND (lead_status_stage_name = 'one_marketing_ready_lead'::character varying::text
+							OR lead_status_stage_name = 'two_marketing_qualified_lead'::character varying::text
+							OR lead_status_stage_name = 'three_sales_ready_lead'::character varying::text
+							OR lead_status_stage_name = 'four_converted_to_opp'::character varying::text
+							OR lead_status_stage_name = 'five_discover'::character varying::text
+							OR lead_status_stage_name = 'clicked'::character varying::text
+							OR lead_status_stage_name = 'Member'::character varying::text)
+						AND last_live_stage_timestamp IS NOT NULL THEN 0
+						ELSE 1
+					END AS six_develop_and_prove
+					,CASE
+						WHEN d.seven_proposal_negotiation IS NULL
+						AND lead_status_stage_name IS NULL THEN 0
+						WHEN d.seven_proposal_negotiation IS NULL
+						AND (lead_status_stage_name = 'one_marketing_ready_lead'::character varying::text
+							OR lead_status_stage_name = 'two_marketing_qualified_lead'::character varying::text
+							OR lead_status_stage_name = 'three_sales_ready_lead'::character varying::text
+							OR lead_status_stage_name = 'four_converted_to_opp'::character varying::text
+							OR lead_status_stage_name = 'five_discover'::character varying::text
+							OR lead_status_stage_name = 'six_develop_and_prove'::character varying::text
+							OR lead_status_stage_name = 'clicked'::character varying::text
+							OR lead_status_stage_name = 'Member'::character varying::text)
+						AND c.last_live_stage_timestamp IS NOT NULL THEN 0
+						ELSE 1
+					END AS seven_proposal_negotiation
+					,CASE
+						WHEN d.eight_agree_and_close_contract IS NULL
+						AND lead_status_stage_name IS NULL THEN 0
+						WHEN d.eight_agree_and_close_contract IS NULL
+						AND (lead_status_stage_name = 'one_marketing_ready_lead'::character varying::text
+							OR lead_status_stage_name = 'two_marketing_qualified_lead'::character varying::text
+							OR lead_status_stage_name = 'three_sales_ready_lead'::character varying::text
+							OR lead_status_stage_name = 'four_converted_to_opp'::character varying::text
+							OR lead_status_stage_name = 'five_discover'::character varying::text
+							OR lead_status_stage_name = 'six_develop_and_prove'::character varying::text
+							OR lead_status_stage_name = 'seven_proposal_negotiation'::character varying::text
+							OR lead_status_stage_name = 'clicked'::character varying::text
+							OR lead_status_stage_name = 'Member'::character varying::text)
+						AND c.last_live_stage_timestamp IS NOT NULL THEN 0
+						ELSE 1
+					END AS eight_agree_and_close_contract
+					,CASE
+						WHEN d.nine_closed_won IS NULL
+						AND lead_status_stage_name IS NULL THEN 0
+						WHEN d.nine_closed_won IS NULL
+						AND (lead_status_stage_name = 'one_marketing_ready_lead'::character varying::text
+							OR lead_status_stage_name = 'two_marketing_qualified_lead'::character varying::text
+							OR lead_status_stage_name = 'three_sales_ready_lead'::character varying::text
+							OR lead_status_stage_name = 'four_converted_to_opp'::character varying::text
+							OR lead_status_stage_name = 'five_discover'::character varying::text
+							OR lead_status_stage_name = 'six_develop_and_prove'::character varying::text
+							OR lead_status_stage_name = 'seven_proposal_negotiation'::character varying::text
+							OR lead_status_stage_name = 'eight_agree_and_close_contract'::character varying::text
+							OR lead_status_stage_name = 'clicked'::character varying::text
+							OR lead_status_stage_name = 'Member'::character varying::text)
+						AND c.last_live_stage_timestamp IS NOT NULL THEN 0
+						ELSE 1
+					END AS nine_closed_won
 FROM distinct_ids a
 LEFT JOIN current_max_stg b ON a.id = b.id
 LEFT JOIN last_live_stg c ON a.id = c.id
