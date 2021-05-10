@@ -15,6 +15,10 @@ SELECT column_name
 FROM ft-data.biteam.INFORMATION_SCHEMA.COLUMNS
 WHERE table_name = 'funnels_b2b_nnb'
 
+SELECT *
+FROM ft-data.biteam.INFORMATION_SCHEMA.COLUMNS
+WHERE table_name = 'funnels_b2b_nnb'
+
 -- get column names
 
 SELECT column_name
