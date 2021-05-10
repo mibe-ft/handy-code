@@ -1,7 +1,7 @@
 WITH step01 AS (
 SELECT
       sf_log.lead_id__c  as id
-    , sf_log."name"
+    , sf_log."name" AS name_
     , CASE
          WHEN sf_log."name" = 'Marketing ready'::character varying::text THEN 'one_marketing_ready_lead'
          WHEN sf_log."name" = 'Engaged'::character varying::text THEN 'two_marketing_qualified_lead'
@@ -179,6 +179,7 @@ LEFT JOIN biteam.conversion_visit c ON sf_leads.spoor_id::text = c.device_spoor_
 LEFT JOIN ftspoordb.visits v ON c.conversion_visit_id = v.visit_id
 WHERE sf_log.lead_id__c IN ('00Q4G00001BPPN8UAP','00Q4G000019UYfAUAW')
 )
+, current_max_stg AS (
 
 -- getting current max stage nums
 SELECT id
@@ -190,9 +191,27 @@ SELECT id
 , createddate
 , stage_name
 , stage_number
+, name_
 , ROW_NUMBER () OVER(PARTITION BY id ORDER BY createddate DESC) row_num
 FROM step01
-) 
+)
 WHERE row_num = 1
-  AND stage_name NOT IN ('Recyled', 'Suspect')
+  AND name_ NOT IN ('Recycled', 'Suspect')
 
+)
+
+SELECT id
+	 , createddate AS last_live_stage_timestamp
+	 , stage_name AS last_live_stage_name
+	 , stage_number AS last_live_stage_number
+FROM (
+SELECT id
+, createddate
+, stage_name
+, stage_number
+, name_
+, ROW_NUMBER () OVER(PARTITION BY id ORDER BY createddate DESC) row_num
+FROM step01
+)
+WHERE row_num = 1
+  AND name_ NOT IN ('Recycled', 'Suspect', 'Closed Lost', 'No Opportunity' )
