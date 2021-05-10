@@ -119,7 +119,7 @@ SELECT
         WHEN sf_leads.leadsource::text = 'Online Order Form'::character varying::text THEN 'Online Order Form'::character varying
         WHEN sf_leads.leadsource::text = 'Sales Navigator'::character varying::text THEN 'Sales Navigator'::character varying
         WHEN sf_leads.leadsource::text = 'Trialist'::character varying::text THEN 'Trialist'::character varying
-        ELSE 'Unknown' END AS adjusted_leadsource
+        ELSE 'Unknown' END AS adjusted_lead_source
     , sf_leads.industry_sector AS lead_industry_sector -- d
     , sf_leads.segment_id AS salesforce_lead_segment_id --d
     , sf_cpseg.marketing_campaign__r_name AS salesforce_lead_segment_id_name --de
@@ -177,7 +177,7 @@ LEFT JOIN dwabstraction.dn_currencyexchangerate x ON x.fromcurrency_code = sf_op
 LEFT JOIN biteam.conversion_visit c ON sf_leads.spoor_id::text = c.device_spoor_id::text
 									AND c.system_action::text = 'b2b-confirmed'::character varying::text
 LEFT JOIN ftspoordb.visits v ON c.conversion_visit_id = v.visit_id
-WHERE sf_log.lead_id__c IN ('00Q4G00001BPPN8UAP','00Q4G000019UYfAUAW')
+WHERE sf_log.lead_id__c IN ('00Q4G00001BPPN8UAP','00Q4G000019UYfAUAW', '00Q4G000019TtFPUA0') -- todo delete me before release to production
 )
 , current_max_stg AS (
 
@@ -218,7 +218,50 @@ WHERE row_num = 1
   AND name_ NOT IN ('Recyled', 'Suspect', 'Closed Lost', 'No Opportunity' )
   )
 , distinct_ids AS (
-SELECT DISTINCT id FROM step01
+SELECT
+ id
+ , original_lead_source
+ , adjusted_lead_source
+ , lead_industry_sector
+ , salesforce_lead_segment_id_name
+ , lead_spoor_id
+ , createdbyid
+ , lead_owner_id
+ , lead_owner_name
+ , lead_owner_team
+ , lead_region
+ , lead_subregion
+ , lead_country
+ , lead_gclid
+ , lead_cpc
+ , oppo_id
+ , oppo_owner_id
+ , oppo_owner_name
+ , oppo_owner_team
+ , oppo_amount_gbp
+ , oppo_closed_lost_reason
+ , oppo_closed_date
+ , oppo_product_name
+ , contract_amount_gbp
+ , contract_start_date
+ , contract_total_core_readers
+ , contract_total_licenced_readers
+ , contract_licence_type
+ , contract_licence_name
+ , contract_licence_solution
+ , contract_type
+ , contract_owner_id
+ , contract_owner_name
+ , contract_owner_team
+ , client_type
+ , contractnumber
+ , sf_contract_number
+ , spoor_id
+ , visit_segment_id
+ , visit_marketing_campaign_name
+ , ROW_NUMBER() OVER(PARTITION BY id, visit_segment_id ORDER BY createddate DESC) AS row_num
+
+FROM step01
 )
 , stages_01 AS (
 SELECT
@@ -281,6 +324,7 @@ id,
 FROM step01 a
 GROUP BY id
 )
+
 --, wip AS (
 SELECT a.id
 , b.current_max_stage_timestamp
@@ -1503,8 +1547,49 @@ SELECT a.id
 							ELSE d.nine_closed_won
 						END
 					END AS nine_closed_won_add
+	, a.id AS lead_id
+	, a.original_lead_source
+ , a.adjusted_lead_source
+ , a.lead_industry_sector
+ , a.salesforce_lead_segment_id_name
+ , a.lead_spoor_id
+ , a.createdbyid
+ , a.lead_owner_id
+ , a.lead_owner_name
+ , a.lead_owner_team
+ , a.lead_region
+ , a.lead_subregion
+ , a.lead_country
+ , a.lead_gclid
+ , a.lead_cpc
+ , a.oppo_id
+ , a.oppo_owner_id
+ , a.oppo_owner_name
+ , a.oppo_owner_team
+ , a.oppo_amount_gbp
+ , a.oppo_closed_lost_reason
+ , a.oppo_closed_date
+ , a.oppo_product_name
+ , a.contract_amount_gbp
+ , a.contract_start_date
+ , a.contract_total_core_readers
+ , a.contract_total_licenced_readers
+ , a.contract_licence_type
+ , a.contract_licence_name
+ , a.contract_licence_solution
+ , a.contract_type
+ , a.contract_owner_id
+ , a.contract_owner_name
+ , a.contract_owner_team
+ , a.client_type
+ , a.contractnumber
+ , a.sf_contract_number
+ , a.spoor_id
+ , a.visit_segment_id
+ , a.visit_marketing_campaign_name
 FROM distinct_ids a
 LEFT JOIN current_max_stg b ON a.id = b.id
 LEFT JOIN last_live_stg c ON a.id = c.id
 LEFT JOIN stages_01 d ON a.id = d.id
+WHERE a.row_num = 1
 --)
