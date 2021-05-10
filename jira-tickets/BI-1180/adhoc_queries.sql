@@ -164,3 +164,1001 @@ order by 1
 -- how to distinguish outbound and inbound leads
 --If possible to include a toggle that filters inbound and outbound leads, the user can select TRUE or FALSE when
 -- filtering data from the NNB Funnel Dashboard.
+
+-- fixing the timestamp
+					CASE
+						WHEN
+						CASE
+							WHEN a.one_marketing_ready_lead IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.two_marketing_qualified_lead IS NULL THEN 0
+							ELSE 1
+						END <> 0 THEN
+						CASE
+							WHEN a.two_marketing_qualified_lead IS NULL THEN NULL::timestamp without time zone
+							ELSE a.two_marketing_qualified_lead
+						END - '00:00:01'::interval
+						WHEN
+						CASE
+							WHEN a.one_marketing_ready_lead IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.two_marketing_qualified_lead IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.three_sales_ready_lead IS NULL THEN 0
+							ELSE 1
+						END <> 0 THEN
+						CASE
+							WHEN a.three_sales_ready_lead IS NULL THEN NULL::timestamp without time zone
+							ELSE a.three_sales_ready_lead
+						END - '00:00:01'::interval
+						WHEN
+						CASE
+							WHEN a.one_marketing_ready_lead IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.two_marketing_qualified_lead IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.three_sales_ready_lead IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.four_converted_to_opp IS NULL THEN 0
+							ELSE 1
+						END <> 0 THEN
+						CASE
+							WHEN a.four_converted_to_opp IS NULL THEN NULL::timestamp without time zone
+							ELSE a.four_converted_to_opp
+						END - '00:00:01'::interval
+						WHEN
+						CASE
+							WHEN a.one_marketing_ready_lead IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.two_marketing_qualified_lead IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.three_sales_ready_lead IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.four_converted_to_opp IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.five_discover IS NULL THEN 0
+							ELSE 1
+						END <> 0 THEN
+						CASE
+							WHEN a.five_discover IS NULL THEN NULL::timestamp without time zone
+							ELSE a.five_discover
+						END - '00:00:01'::interval
+						WHEN
+						CASE
+							WHEN a.one_marketing_ready_lead IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.two_marketing_qualified_lead IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.three_sales_ready_lead IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.four_converted_to_opp IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.five_discover IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.six_develop_and_prove IS NULL THEN 0
+							ELSE 1
+						END <> 0 THEN
+						CASE
+							WHEN a.six_develop_and_prove IS NULL THEN NULL::timestamp without time zone
+							ELSE a.six_develop_and_prove
+						END - '00:00:01'::interval
+						WHEN
+						CASE
+							WHEN a.one_marketing_ready_lead IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.two_marketing_qualified_lead IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.three_sales_ready_lead IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.four_converted_to_opp IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.five_discover IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.six_develop_and_prove IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.seven_proposal_negotiation IS NULL THEN 0
+							ELSE 1
+						END <> 0 THEN
+						CASE
+							WHEN a.seven_proposal_negotiation IS NULL THEN NULL::timestamp without time zone
+							ELSE a.seven_proposal_negotiation
+						END - '00:00:01'::interval
+						WHEN
+						CASE
+							WHEN a.one_marketing_ready_lead IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.two_marketing_qualified_lead IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.three_sales_ready_lead IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.four_converted_to_opp IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.five_discover IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.six_develop_and_prove IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.seven_proposal_negotiation IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.eight_agree_and_close_contract IS NULL THEN 0
+							ELSE 1
+						END <> 0 THEN
+						CASE
+							WHEN a.eight_agree_and_close_contract IS NULL THEN NULL::timestamp without time zone
+							ELSE a.eight_agree_and_close_contract
+						END - '00:00:01'::interval
+						WHEN
+						CASE
+							WHEN a.one_marketing_ready_lead IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.two_marketing_qualified_lead IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.three_sales_ready_lead IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.four_converted_to_opp IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.five_discover IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.six_develop_and_prove IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.seven_proposal_negotiation IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.eight_agree_and_close_contract IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.nine_closed_won IS NULL THEN 0
+							ELSE 1
+						END <> 0 THEN
+						CASE
+							WHEN a.nine_closed_won IS NULL THEN NULL::timestamp without time zone
+							ELSE a.nine_closed_won
+						END - '00:00:01'::interval
+						ELSE
+						CASE
+							WHEN a.one_marketing_ready_lead IS NULL THEN NULL::timestamp without time zone
+							ELSE a.one_marketing_ready_lead
+						END
+					END AS one_marketing_ready_lead_add,
+					CASE
+						WHEN
+						CASE
+							WHEN a.two_marketing_qualified_lead IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.three_sales_ready_lead IS NULL THEN 0
+							ELSE 1
+						END <> 0 THEN
+						CASE
+							WHEN a.three_sales_ready_lead IS NULL THEN NULL::timestamp without time zone
+							ELSE a.three_sales_ready_lead
+						END - '00:00:01'::interval
+						WHEN
+						CASE
+							WHEN a.two_marketing_qualified_lead IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.three_sales_ready_lead IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.four_converted_to_opp IS NULL THEN 0
+							ELSE 1
+						END <> 0 THEN
+						CASE
+							WHEN a.four_converted_to_opp IS NULL THEN NULL::timestamp without time zone
+							ELSE a.four_converted_to_opp
+						END - '00:00:01'::interval
+						WHEN
+						CASE
+							WHEN a.two_marketing_qualified_lead IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.three_sales_ready_lead IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.four_converted_to_opp IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.five_discover IS NULL THEN 0
+							ELSE 1
+						END <> 0 THEN
+						CASE
+							WHEN a.five_discover IS NULL THEN NULL::timestamp without time zone
+							ELSE a.five_discover
+						END - '00:00:01'::interval
+						WHEN
+						CASE
+							WHEN a.two_marketing_qualified_lead IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.three_sales_ready_lead IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.four_converted_to_opp IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.five_discover IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.six_develop_and_prove IS NULL THEN 0
+							ELSE 1
+						END <> 0 THEN
+						CASE
+							WHEN a.six_develop_and_prove IS NULL THEN NULL::timestamp without time zone
+							ELSE a.six_develop_and_prove
+						END - '00:00:01'::interval
+						WHEN
+						CASE
+							WHEN a.two_marketing_qualified_lead IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.three_sales_ready_lead IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.four_converted_to_opp IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.five_discover IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.six_develop_and_prove IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.seven_proposal_negotiation IS NULL THEN 0
+							ELSE 1
+						END <> 0 THEN
+						CASE
+							WHEN a.seven_proposal_negotiation IS NULL THEN NULL::timestamp without time zone
+							ELSE a.seven_proposal_negotiation
+						END - '00:00:01'::interval
+						WHEN
+						CASE
+							WHEN a.two_marketing_qualified_lead IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.three_sales_ready_lead IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.four_converted_to_opp IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.five_discover IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.six_develop_and_prove IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.seven_proposal_negotiation IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.eight_agree_and_close_contract IS NULL THEN 0
+							ELSE 1
+						END <> 0 THEN
+						CASE
+							WHEN a.eight_agree_and_close_contract IS NULL THEN NULL::timestamp without time zone
+							ELSE a.eight_agree_and_close_contract
+						END - '00:00:01'::interval
+						WHEN
+						CASE
+							WHEN a.two_marketing_qualified_lead IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.three_sales_ready_lead IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.four_converted_to_opp IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.five_discover IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.six_develop_and_prove IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.seven_proposal_negotiation IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.eight_agree_and_close_contract IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.nine_closed_won IS NULL THEN 0
+							ELSE 1
+						END <> 0 THEN
+						CASE
+							WHEN a.nine_closed_won IS NULL THEN NULL::timestamp without time zone
+							ELSE a.nine_closed_won
+						END - '00:00:01'::interval
+						ELSE
+						CASE
+							WHEN a.two_marketing_qualified_lead IS NULL THEN NULL::timestamp without time zone
+							ELSE a.two_marketing_qualified_lead
+						END
+					END AS two_marketing_qualified_lead_add,
+					CASE
+						WHEN
+						CASE
+							WHEN a.three_sales_ready_lead IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.four_converted_to_opp IS NULL THEN 0
+							ELSE 1
+						END <> 0 THEN
+						CASE
+							WHEN a.four_converted_to_opp IS NULL THEN NULL::timestamp without time zone
+							ELSE a.four_converted_to_opp
+						END - '00:00:01'::interval
+						WHEN
+						CASE
+							WHEN a.three_sales_ready_lead IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.four_converted_to_opp IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.five_discover IS NULL THEN 0
+							ELSE 1
+						END <> 0 THEN
+						CASE
+							WHEN a.five_discover IS NULL THEN NULL::timestamp without time zone
+							ELSE a.five_discover
+						END - '00:00:01'::interval
+						WHEN
+						CASE
+							WHEN a.three_sales_ready_lead IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.four_converted_to_opp IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.five_discover IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.six_develop_and_prove IS NULL THEN 0
+							ELSE 1
+						END <> 0 THEN
+						CASE
+							WHEN a.six_develop_and_prove IS NULL THEN NULL::timestamp without time zone
+							ELSE a.six_develop_and_prove
+						END - '00:00:01'::interval
+						WHEN
+						CASE
+							WHEN a.three_sales_ready_lead IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.four_converted_to_opp IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.five_discover IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.six_develop_and_prove IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.seven_proposal_negotiation IS NULL THEN 0
+							ELSE 1
+						END <> 0 THEN
+						CASE
+							WHEN a.seven_proposal_negotiation IS NULL THEN NULL::timestamp without time zone
+							ELSE a.seven_proposal_negotiation
+						END - '00:00:01'::interval
+						WHEN
+						CASE
+							WHEN a.three_sales_ready_lead IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.four_converted_to_opp IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.five_discover IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.six_develop_and_prove IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.seven_proposal_negotiation IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.eight_agree_and_close_contract IS NULL THEN 0
+							ELSE 1
+						END <> 0 THEN
+						CASE
+							WHEN a.eight_agree_and_close_contract IS NULL THEN NULL::timestamp without time zone
+							ELSE a.eight_agree_and_close_contract
+						END - '00:00:01'::interval
+						WHEN
+						CASE
+							WHEN a.three_sales_ready_lead IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.four_converted_to_opp IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.five_discover IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.six_develop_and_prove IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.seven_proposal_negotiation IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.eight_agree_and_close_contract IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.nine_closed_won IS NULL THEN 0
+							ELSE 1
+						END <> 0 THEN
+						CASE
+							WHEN a.nine_closed_won IS NULL THEN NULL::timestamp without time zone
+							ELSE a.nine_closed_won
+						END - '00:00:01'::interval
+						ELSE
+						CASE
+							WHEN a.three_sales_ready_lead IS NULL THEN NULL::timestamp without time zone
+							ELSE a.three_sales_ready_lead
+						END
+					END AS three_sales_ready_lead_add,
+					CASE
+						WHEN
+						CASE
+							WHEN a.four_converted_to_opp IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.five_discover IS NULL THEN 0
+							ELSE 1
+						END <> 0 THEN
+						CASE
+							WHEN a.five_discover IS NULL THEN NULL::timestamp without time zone
+							ELSE a.five_discover
+						END - '00:00:01'::interval
+						WHEN
+						CASE
+							WHEN a.four_converted_to_opp IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.five_discover IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.six_develop_and_prove IS NULL THEN 0
+							ELSE 1
+						END <> 0 THEN
+						CASE
+							WHEN a.six_develop_and_prove IS NULL THEN NULL::timestamp without time zone
+							ELSE a.six_develop_and_prove
+						END - '00:00:01'::interval
+						WHEN
+						CASE
+							WHEN a.four_converted_to_opp IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.five_discover IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.six_develop_and_prove IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.seven_proposal_negotiation IS NULL THEN 0
+							ELSE 1
+						END <> 0 THEN
+						CASE
+							WHEN a.seven_proposal_negotiation IS NULL THEN NULL::timestamp without time zone
+							ELSE a.seven_proposal_negotiation
+						END - '00:00:01'::interval
+						WHEN
+						CASE
+							WHEN a.four_converted_to_opp IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.five_discover IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.six_develop_and_prove IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.seven_proposal_negotiation IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.eight_agree_and_close_contract IS NULL THEN 0
+							ELSE 1
+						END <> 0 THEN
+						CASE
+							WHEN a.eight_agree_and_close_contract IS NULL THEN NULL::timestamp without time zone
+							ELSE a.eight_agree_and_close_contract
+						END - '00:00:01'::interval
+						WHEN
+						CASE
+							WHEN a.four_converted_to_opp IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.five_discover IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.six_develop_and_prove IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.seven_proposal_negotiation IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.eight_agree_and_close_contract IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.nine_closed_won IS NULL THEN 0
+							ELSE 1
+						END <> 0 THEN
+						CASE
+							WHEN a.nine_closed_won IS NULL THEN NULL::timestamp without time zone
+							ELSE a.nine_closed_won
+						END - '00:00:01'::interval
+						ELSE
+						CASE
+							WHEN a.four_converted_to_opp IS NULL THEN NULL::timestamp without time zone
+							ELSE a.four_converted_to_opp
+						END
+					END AS four_converted_to_opp_add,
+					CASE
+						WHEN
+						CASE
+							WHEN a.five_discover IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.six_develop_and_prove IS NULL THEN 0
+							ELSE 1
+						END <> 0 THEN
+						CASE
+							WHEN a.six_develop_and_prove IS NULL THEN NULL::timestamp without time zone
+							ELSE a.six_develop_and_prove
+						END - '00:00:01'::interval
+						WHEN
+						CASE
+							WHEN a.five_discover IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.six_develop_and_prove IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.seven_proposal_negotiation IS NULL THEN 0
+							ELSE 1
+						END <> 0 THEN
+						CASE
+							WHEN a.seven_proposal_negotiation IS NULL THEN NULL::timestamp without time zone
+							ELSE a.seven_proposal_negotiation
+						END - '00:00:01'::interval
+						WHEN
+						CASE
+							WHEN a.five_discover IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.six_develop_and_prove IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.seven_proposal_negotiation IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.eight_agree_and_close_contract IS NULL THEN 0
+							ELSE 1
+						END <> 0 THEN
+						CASE
+							WHEN a.eight_agree_and_close_contract IS NULL THEN NULL::timestamp without time zone
+							ELSE a.eight_agree_and_close_contract
+						END - '00:00:01'::interval
+						WHEN
+						CASE
+							WHEN a.five_discover IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.six_develop_and_prove IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.seven_proposal_negotiation IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.eight_agree_and_close_contract IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.nine_closed_won IS NULL THEN 0
+							ELSE 1
+						END <> 0 THEN
+						CASE
+							WHEN a.nine_closed_won IS NULL THEN NULL::timestamp without time zone
+							ELSE a.nine_closed_won
+						END - '00:00:01'::interval
+						ELSE
+						CASE
+							WHEN a.five_discover IS NULL THEN NULL::timestamp without time zone
+							ELSE a.five_discover
+						END
+					END AS five_discover_add,
+					CASE
+						WHEN
+						CASE
+							WHEN a.six_develop_and_prove IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.seven_proposal_negotiation IS NULL THEN 0
+							ELSE 1
+						END <> 0 THEN
+						CASE
+							WHEN a.seven_proposal_negotiation IS NULL THEN NULL::timestamp without time zone
+							ELSE a.seven_proposal_negotiation
+						END - '00:00:01'::interval
+						WHEN
+						CASE
+							WHEN a.six_develop_and_prove IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.seven_proposal_negotiation IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.eight_agree_and_close_contract IS NULL THEN 0
+							ELSE 1
+						END <> 0 THEN
+						CASE
+							WHEN a.eight_agree_and_close_contract IS NULL THEN NULL::timestamp without time zone
+							ELSE a.eight_agree_and_close_contract
+						END - '00:00:01'::interval
+						WHEN
+						CASE
+							WHEN a.six_develop_and_prove IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.seven_proposal_negotiation IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.eight_agree_and_close_contract IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.nine_closed_won IS NULL THEN 0
+							ELSE 1
+						END <> 0 THEN
+						CASE
+							WHEN a.nine_closed_won IS NULL THEN NULL::timestamp without time zone
+							ELSE a.nine_closed_won
+						END - '00:00:01'::interval
+						ELSE
+						CASE
+							WHEN a.six_develop_and_prove IS NULL THEN NULL::timestamp without time zone
+							ELSE a.six_develop_and_prove
+						END
+					END AS six_develop_and_prove_add,
+					CASE
+						WHEN
+						CASE
+							WHEN a.seven_proposal_negotiation IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.eight_agree_and_close_contract IS NULL THEN 0
+							ELSE 1
+						END <> 0 THEN
+						CASE
+							WHEN a.eight_agree_and_close_contract IS NULL THEN NULL::timestamp without time zone
+							ELSE a.eight_agree_and_close_contract
+						END - '00:00:01'::interval
+						WHEN
+						CASE
+							WHEN a.seven_proposal_negotiation IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.eight_agree_and_close_contract IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.nine_closed_won IS NULL THEN 0
+							ELSE 1
+						END <> 0 THEN
+						CASE
+							WHEN a.nine_closed_won IS NULL THEN NULL::timestamp without time zone
+							ELSE a.nine_closed_won
+						END - '00:00:01'::interval
+						ELSE
+						CASE
+							WHEN a.seven_proposal_negotiation IS NULL THEN NULL::timestamp without time zone
+							ELSE a.seven_proposal_negotiation
+						END
+					END AS seven_proposal_negotiation_add,
+					CASE
+						WHEN
+						CASE
+							WHEN a.eight_agree_and_close_contract IS NULL THEN 0
+							ELSE 1
+						END = 0
+						AND
+						CASE
+							WHEN a.nine_closed_won IS NULL THEN 0
+							ELSE 1
+						END <> 0 THEN
+						CASE
+							WHEN a.nine_closed_won IS NULL THEN NULL::timestamp without time zone
+							ELSE a.nine_closed_won
+						END - '00:00:01'::interval
+						ELSE
+						CASE
+							WHEN a.eight_agree_and_close_contract IS NULL THEN NULL::timestamp without time zone
+							ELSE a.eight_agree_and_close_contract
+						END
+					END AS eight_agree_and_close_contract_add,
+					CASE
+						WHEN
+						CASE
+							WHEN a.nine_closed_won IS NULL THEN 0
+							ELSE 1
+						END <> 0 THEN
+						CASE
+							WHEN a.nine_closed_won IS NULL THEN NULL::timestamp without time zone
+							ELSE a.nine_closed_won
+						END
+						ELSE
+						CASE
+							WHEN a.nine_closed_won IS NULL THEN NULL::timestamp without time zone
+							ELSE a.nine_closed_won
+						END
+					END AS nine_closed_won_add
