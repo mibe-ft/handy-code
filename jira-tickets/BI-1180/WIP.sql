@@ -178,6 +178,7 @@ LEFT JOIN biteam.conversion_visit c ON sf_leads.spoor_id::text = c.device_spoor_
 LEFT JOIN ftspoordb.visits v ON c.conversion_visit_id = v.visit_id
 LEFT JOIN ftsfdb.view_sfdc_campaign_segments sf_cpseg ON v.campaign_id::text = sf_cpseg.segmentid__c::text
 WHERE sf_log.lead_id__c IN ('00Q4G00001BPPN8UAP','00Q4G000019UYfAUAW', '00Q4G000019TtFPUA0') -- todo delete me before release to production
+  AND sf_leads.createddate >= '2018-01-01 00:00:00'::timestamp without time zone
 )
 , current_max_stg AS (
 
