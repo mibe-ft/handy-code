@@ -499,6 +499,14 @@ SELECT a.id
 						WHEN d.nine_closed_won IS NULL THEN NULL::timestamp without time zone
 						ELSE d.nine_closed_won
 					END AS nine_closed_won_pre_timestamp
+		, CASE
+						WHEN d._closed_lost IS NULL THEN NULL::timestamp without time zone
+						ELSE d._closed_lost
+					END AS _closed_lost
+		, CASE
+						WHEN d._no_opportunity IS NULL THEN NULL::timestamp without time zone
+						ELSE d._no_opportunity
+					END AS _no_opportunity
 FROM distinct_ids a
 LEFT JOIN current_max_stg b ON a.id = b.id
 LEFT JOIN last_live_stg c ON a.id = c.id
