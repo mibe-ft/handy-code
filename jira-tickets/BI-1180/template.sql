@@ -375,11 +375,11 @@ SELECT a.id
         WHEN d._closed_lost IS NULL THEN NULL::timestamp without time zone
         ELSE d._closed_lost
         END AS _closed_lost
-    , CASE --todo case 1
+    , CASE
         WHEN d._no_opportunity IS NULL THEN NULL::timestamp without time zone
         ELSE d._no_opportunity
         END AS _no_opportunity
-    , CASE
+    , CASE --todo case 1
         WHEN
         CASE
             WHEN d.one_marketing_ready_lead IS NULL THEN 0
