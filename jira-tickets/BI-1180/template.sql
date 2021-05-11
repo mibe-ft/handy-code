@@ -192,24 +192,11 @@ SELECT a.id
         WHEN b.current_max_stage_name = '_no_opportunity'::character varying::text THEN c.last_live_stage_name
         ELSE b.current_max_stage_name
         END AS lead_status_stage_name
+
+      {%- for v in stage_name_3 %}
     , CASE
-        WHEN d.one_marketing_ready_lead IS NULL THEN 0 ELSE 1 END AS one_marketing_ready_lead_pre
-    , CASE
-        WHEN d.two_marketing_qualified_lead IS NULL THEN 0 ELSE 1 END AS two_marketing_qualified_lead_pre
-    , CASE
-        WHEN d.three_sales_ready_lead IS NULL THEN 0 ELSE 1 END AS three_sales_ready_lead_pre
-    , CASE
-        WHEN d.four_converted_to_opp IS NULL THEN 0 ELSE 1 END AS four_converted_to_opp_pre
-    , CASE
-        WHEN d.five_discover IS NULL THEN 0 ELSE 1 END AS five_discover_pre
-    , CASE
-        WHEN d.six_develop_and_prove IS NULL THEN 0 ELSE 1 END AS six_develop_and_prove_pre
-    , CASE
-        WHEN d.seven_proposal_negotiation IS NULL THEN 0 ELSE 1 END AS seven_proposal_negotiation_pre
-    , CASE
-        WHEN d.eight_agree_and_close_contract IS NULL THEN 0 ELSE 1 END AS eight_agree_and_close_contract_pre
-    , CASE
-        WHEN d.nine_closed_won IS NULL THEN 0 ELSE 1 END AS nine_closed_won_pre
+        WHEN d.{{v}}  IS NULL THEN 0 ELSE 1 END AS {{v}}_pre
+      {%- endfor %}
     , CASE
         WHEN d.one_marketing_ready_lead IS NOT NULL THEN 1
         WHEN d.one_marketing_ready_lead IS NULL
