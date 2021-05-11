@@ -1,84 +1,84 @@
 WITH step01 AS (
-SELECT
-      sf_log.lead_id__c  as id
-    , sf_log."name" AS name_
-	, CASE
-	    {%- for k,v in stage_names %}
-	         WHEN sf_log."name" = '{{k}}'::character varying::text THEN '{{v}}'
-	    {%- endfor %}
-	         ELSE sf_log."name" END AS stage_name
-	, CASE
-		{%- for k,v in stage_numbers %}
-			 WHEN stage_name = '{{k}}'::character varying::text THEN {{v}}
-		{%- endfor %}
-			 ELSE NULL::integer END AS stage_number
-    , sf_log.createddate
-    , sf_log.lead_id__c AS lead_id
-    , sf_leads.leadsource AS original_lead_source
-    , CASE
-    {%- for k,v in leadsource_types %}
-        WHEN sf_leads.leadsource::text = '{{k}}'::character varying::text THEN '{{v}}'::character varying
-    {%- endfor %}
-        ELSE 'Unknown' END AS adjusted_lead_source
-    , sf_leads.industry_sector AS lead_industry_sector -- d
-    , sf_leads.segment_id AS salesforce_lead_segment_id --d
-    , sf_cpseg.marketing_campaign__r_name AS salesforce_lead_segment_id_name --de
-    , sf_leads.spoor_id AS lead_spoor_id --d
-    , sf_leads.createdbyid -- d
-    , sf_leads.ownerid AS lead_owner_id --d
-    , (sf_users.firstname::text || ' '::character varying::text) || sf_users.lastname::text AS lead_owner_name --e
-    , sf_users.team AS lead_owner_team --e
-    , dm_country.b2b_sales_region AS lead_region --r
-    , dm_country.b2b_sales_subregion AS lead_subregion --r
-    , sf_leads.country AS lead_country --d
-    , sf_leads.gclid AS lead_gclid --d
-    , sf_leads.cpccampaign AS lead_cpc --d
-    , sf_log.opportunity__c AS oppo_id --s --line 6342 -- opportunity__c 3277
-    , sf_opps.ownerid AS oppo_owner_id --c
-    , (sf_users.firstname::text || ' '::character varying::text) || sf_users.lastname::text AS oppo_owner_name --ee
-    , sf_users.team AS oppo_owner_team --ee
-    , sf_opps.currencyisocode --x
-    , sf_opps.amount --x
-    , x.fxrate --x
-    , CASE WHEN sf_opps.currencyisocode::text = 'GBP'::character varying::text THEN sf_opps.amount
-            ELSE sf_opps.amount / x.fxrate
-            END AS oppo_amount_gbp --	, vo.gbpamount oppo_amount_gbp --vo TODO doesn't populate
-    , sf_opps.closed_lost_reason AS oppo_closed_lost_reason --c
-    , sf_opps.closedate AS oppo_closed_date --c
-    , sf_opps."type" AS oppo_product_name --c
-    , CASE WHEN sf_opps.currencyisocode::text = 'GBP'::character varying::text THEN sf_opps.amount
-            ELSE sf_opps.amount / x.fxrate
-            END AS contract_amount_gbp --	, contract_amount_gbp --vc
-    , sf_contracts.startdate AS contract_start_date --h
-    , sf_contracts.total_core_readers AS contract_total_core_readers --h
-    , sf_contracts.total_licenced_readers AS contract_total_licenced_readers --h
-    , sf_contracts.licencetype AS contract_licence_type --h
-    , sf_contracts.licencee_name AS contract_licence_name --h
-    , sf_contracts.licence_solution AS contract_licence_solution --h
-    , sf_contracts."type" AS contract_type --h
-    , sf_contracts.ownerid AS contract_owner_id --h
-    , (sf_users.firstname::text || ' '::character varying::text) || sf_users.lastname::text AS contract_owner_name --f
-    , sf_users.team AS contract_owner_team --f
-    , sf_contracts.client_type  --h
-    , sf_contracts.contractnumber --h
-    , sf_contracts.contractnumber_c AS sf_contract_number --h
-    , sf_leads.spoor_id --d line 6551
-    , v.campaign_id AS visit_segment_id --v.campaign_id 6587
-    , sf_cpseg.marketing_campaign__r_name::text AS visit_marketing_campaign_name --cs.marketing_campaign__r_name
-FROM ftsfdb.view_sfdc_stage_log sf_log
-LEFT JOIN ftsfdb.view_sfdc_leads sf_leads ON sf_log.lead_id__c = sf_leads.id
-LEFT JOIN ftsfdb.view_sfdc_users sf_users ON sf_leads.ownerid::text = sf_users.id::text
-LEFT JOIN dwabstraction.dim_country_latest dm_country ON LOWER(dm_country.country_name::text) = LOWER(sf_leads.country::text)
-LEFT JOIN ftsfdb.view_sfdc_opportunities sf_opps ON sf_opps.id::text = sf_log.opportunity__c::text
-LEFT JOIN ftsfdb.view_sfdc_contracts sf_contracts ON sf_opps.accountid::text = sf_contracts.accountid::text
-LEFT JOIN dwabstraction.dn_currencyexchangerate x ON x.fromcurrency_code = sf_opps.currencyisocode::CHARACTER(3)
-												  AND x.fxyear = "date_part"('year'::CHARACTER VARYING::text, sf_contracts.createddate)
-LEFT JOIN biteam.conversion_visit c ON sf_leads.spoor_id::text = c.device_spoor_id::text
-									AND c.system_action::text = 'b2b-confirmed'::CHARACTER VARYING::text
-LEFT JOIN ftspoordb.visits v ON c.conversion_visit_id = v.visit_id
-LEFT JOIN ftsfdb.view_sfdc_campaign_segments sf_cpseg ON v.campaign_id::text = sf_cpseg.segmentid__c::text
-WHERE sf_log.lead_id__c IN ('00Q4G00001BPPN8UAP','00Q4G000019UYfAUAW', '00Q4G000019TtFPUA0') -- todo delete me before release to production
-  AND sf_leads.createddate >= '2018-01-01 00:00:00'::timestamp without time zone
+    SELECT
+          sf_log.lead_id__c  as id
+        , sf_log."name" AS name_
+        , CASE
+            {%- for k,v in stage_names %}
+                 WHEN sf_log."name" = '{{k}}'::character varying::text THEN '{{v}}'
+            {%- endfor %}
+                 ELSE sf_log."name" END AS stage_name
+        , CASE
+            {%- for k,v in stage_numbers %}
+                 WHEN stage_name = '{{k}}'::character varying::text THEN {{v}}
+            {%- endfor %}
+                 ELSE NULL::integer END AS stage_number
+        , sf_log.createddate
+        , sf_log.lead_id__c AS lead_id
+        , sf_leads.leadsource AS original_lead_source
+        , CASE
+        {%- for k,v in leadsource_types %}
+            WHEN sf_leads.leadsource::text = '{{k}}'::character varying::text THEN '{{v}}'::character varying
+        {%- endfor %}
+            ELSE 'Unknown' END AS adjusted_lead_source
+        , sf_leads.industry_sector AS lead_industry_sector -- d
+        , sf_leads.segment_id AS salesforce_lead_segment_id --d
+        , sf_cpseg.marketing_campaign__r_name AS salesforce_lead_segment_id_name --de
+        , sf_leads.spoor_id AS lead_spoor_id --d
+        , sf_leads.createdbyid -- d
+        , sf_leads.ownerid AS lead_owner_id --d
+        , (sf_users.firstname::text || ' '::character varying::text) || sf_users.lastname::text AS lead_owner_name --e
+        , sf_users.team AS lead_owner_team --e
+        , dm_country.b2b_sales_region AS lead_region --r
+        , dm_country.b2b_sales_subregion AS lead_subregion --r
+        , sf_leads.country AS lead_country --d
+        , sf_leads.gclid AS lead_gclid --d
+        , sf_leads.cpccampaign AS lead_cpc --d
+        , sf_log.opportunity__c AS oppo_id --s --line 6342 -- opportunity__c 3277
+        , sf_opps.ownerid AS oppo_owner_id --c
+        , (sf_users.firstname::text || ' '::character varying::text) || sf_users.lastname::text AS oppo_owner_name --ee
+        , sf_users.team AS oppo_owner_team --ee
+        , sf_opps.currencyisocode --x
+        , sf_opps.amount --x
+        , x.fxrate --x
+        , CASE WHEN sf_opps.currencyisocode::text = 'GBP'::character varying::text THEN sf_opps.amount
+                ELSE sf_opps.amount / x.fxrate
+                END AS oppo_amount_gbp --	, vo.gbpamount oppo_amount_gbp --vo TODO doesn't populate
+        , sf_opps.closed_lost_reason AS oppo_closed_lost_reason --c
+        , sf_opps.closedate AS oppo_closed_date --c
+        , sf_opps."type" AS oppo_product_name --c
+        , CASE WHEN sf_opps.currencyisocode::text = 'GBP'::character varying::text THEN sf_opps.amount
+                ELSE sf_opps.amount / x.fxrate
+                END AS contract_amount_gbp --	, contract_amount_gbp --vc
+        , sf_contracts.startdate AS contract_start_date --h
+        , sf_contracts.total_core_readers AS contract_total_core_readers --h
+        , sf_contracts.total_licenced_readers AS contract_total_licenced_readers --h
+        , sf_contracts.licencetype AS contract_licence_type --h
+        , sf_contracts.licencee_name AS contract_licence_name --h
+        , sf_contracts.licence_solution AS contract_licence_solution --h
+        , sf_contracts."type" AS contract_type --h
+        , sf_contracts.ownerid AS contract_owner_id --h
+        , (sf_users.firstname::text || ' '::character varying::text) || sf_users.lastname::text AS contract_owner_name --f
+        , sf_users.team AS contract_owner_team --f
+        , sf_contracts.client_type  --h
+        , sf_contracts.contractnumber --h
+        , sf_contracts.contractnumber_c AS sf_contract_number --h
+        , sf_leads.spoor_id --d line 6551
+        , v.campaign_id AS visit_segment_id --v.campaign_id 6587
+        , sf_cpseg.marketing_campaign__r_name::text AS visit_marketing_campaign_name --cs.marketing_campaign__r_name
+    FROM ftsfdb.view_sfdc_stage_log sf_log
+    LEFT JOIN ftsfdb.view_sfdc_leads sf_leads ON sf_log.lead_id__c = sf_leads.id
+    LEFT JOIN ftsfdb.view_sfdc_users sf_users ON sf_leads.ownerid::text = sf_users.id::text
+    LEFT JOIN dwabstraction.dim_country_latest dm_country ON LOWER(dm_country.country_name::text) = LOWER(sf_leads.country::text)
+    LEFT JOIN ftsfdb.view_sfdc_opportunities sf_opps ON sf_opps.id::text = sf_log.opportunity__c::text
+    LEFT JOIN ftsfdb.view_sfdc_contracts sf_contracts ON sf_opps.accountid::text = sf_contracts.accountid::text
+    LEFT JOIN dwabstraction.dn_currencyexchangerate x ON x.fromcurrency_code = sf_opps.currencyisocode::CHARACTER(3)
+                                                      AND x.fxyear = "date_part"('year'::CHARACTER VARYING::text, sf_contracts.createddate)
+    LEFT JOIN biteam.conversion_visit c ON sf_leads.spoor_id::text = c.device_spoor_id::text
+                                        AND c.system_action::text = 'b2b-confirmed'::CHARACTER VARYING::text
+    LEFT JOIN ftspoordb.visits v ON c.conversion_visit_id = v.visit_id
+    LEFT JOIN ftsfdb.view_sfdc_campaign_segments sf_cpseg ON v.campaign_id::text = sf_cpseg.segmentid__c::text
+    WHERE sf_log.lead_id__c IN ('00Q4G00001BPPN8UAP','00Q4G000019UYfAUAW', '00Q4G000019TtFPUA0') -- todo delete me before release to production
+      AND sf_leads.createddate >= '2018-01-01 00:00:00'::timestamp without time zone
 )
 , current_max_stg AS (
 
@@ -95,10 +95,9 @@ WHERE sf_log.lead_id__c IN ('00Q4G00001BPPN8UAP','00Q4G000019UYfAUAW', '00Q4G000
             , name_
             , ROW_NUMBER () OVER(PARTITION BY id ORDER BY createddate DESC) row_num
             FROM step01
+            WHERE name_ NOT IN ('Recycled', 'Suspect')
             )
     WHERE row_num = 1
-      AND name_ NOT IN ('Recyled', 'Suspect')
-
 )
 , last_live_stg AS (
 -- get last live stage
@@ -114,9 +113,9 @@ WHERE sf_log.lead_id__c IN ('00Q4G00001BPPN8UAP','00Q4G000019UYfAUAW', '00Q4G000
             , name_
             , ROW_NUMBER () OVER(PARTITION BY id ORDER BY createddate DESC) row_num
             FROM step01
+            WHERE name_ NOT IN ('Recycled', 'Suspect', 'Closed Lost', 'No Opportunity' )
             )
     WHERE row_num = 1
-      AND name_ NOT IN ('Recyled', 'Suspect', 'Closed Lost', 'No Opportunity' )
   )
 , distinct_ids AS (
     SELECT
@@ -165,44 +164,11 @@ WHERE sf_log.lead_id__c IN ('00Q4G00001BPPN8UAP','00Q4G000019UYfAUAW', '00Q4G000
 )
 , stages_01 AS (
     SELECT
-      id,
+      id
 	  {%- for v in stage_name_2 %}
 	  , "max"(CASE WHEN stage_name::text = '{{v}}'::character varying::text THEN createddate ELSE NULL::timestamp without time zone END) AS {{v}}
-        {%- endfor %}
-    -- , "max"(CASE
-    --             WHEN a.stage_name::text = 'one_marketing_ready_lead'::character varying::text THEN a.createddate
-    --             ELSE NULL::timestamp without time zone END) AS one_marketing_ready_lead
-    -- , "max"(CASE
-    --             WHEN a.stage_name::text = 'two_marketing_qualified_lead'::character varying::text THEN a.createddate
-    --             ELSE NULL::timestamp without time zone END) AS two_marketing_qualified_lead
-    -- , "max"(CASE
-    --             WHEN a.stage_name::text = 'three_sales_ready_lead'::character varying::text THEN a.createddate
-    --             ELSE NULL::timestamp without time zone END) AS three_sales_ready_lead
-    -- , "max"(CASE
-    --             WHEN a.stage_name::text = 'four_converted_to_opp'::character varying::text THEN a.createddate
-    --             ELSE NULL::timestamp without time zone END) AS four_converted_to_opp
-    -- , "max"(CASE
-    --             WHEN a.stage_name::text = 'five_discover'::character varying::text THEN a.createddate
-    --             ELSE NULL::timestamp without time zone END) AS five_discover
-    -- , "max"(CASE
-    --             WHEN a.stage_name::text = 'six_develop_and_prove'::character varying::text THEN a.createddate
-    --             ELSE NULL::timestamp without time zone END) AS six_develop_and_prove
-    -- , "max"(CASE
-    --             WHEN a.stage_name::text = 'seven_proposal_negotiation'::character varying::text THEN a.createddate
-    --             ELSE NULL::timestamp without time zone END) AS seven_proposal_negotiation
-    -- , "max"(CASE
-    --             WHEN a.stage_name::text = 'eight_agree_and_close_contract'::character varying::text THEN a.createddate
-    --             ELSE NULL::timestamp without time zone END) AS eight_agree_and_close_contract
-    -- , "max"(CASE
-    --             WHEN a.stage_name::text = 'nine_closed_won'::character varying::text THEN a.createddate
-    --             ELSE NULL::timestamp without time zone END) AS nine_closed_won
-    -- , "max"(CASE
-    --             WHEN a.stage_name::text = '_closed_lost'::character varying::text THEN a.createddate
-    --             ELSE NULL::timestamp without time zone END) AS _closed_lost
-    -- , "max"(CASE
-    --             WHEN a.stage_name::text = '_no_opportunity'::character varying::text THEN a.createddate
-    --             ELSE NULL::timestamp without time zone END) AS _no_opportunity
-    FROM step01 --a
+      {%- endfor %}
+    FROM step01
     GROUP BY id
 )
 
