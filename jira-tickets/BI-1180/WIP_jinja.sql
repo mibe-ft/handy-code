@@ -142,7 +142,7 @@ WITH step01 AS (
         , x.fxrate --x
         , CASE WHEN sf_opps.currencyisocode::text = 'GBP'::character varying::text THEN sf_opps.amount
                 ELSE sf_opps.amount / x.fxrate
-                END AS oppo_amount_gbp --	, vo.gbpamount oppo_amount_gbp --vo TODO doesn't populate
+                END AS oppo_amount_gbp --	, vo.gbpamount oppo_amount_gbp --vo
         , sf_opps.closed_lost_reason AS oppo_closed_lost_reason --c
         , sf_opps.closedate AS oppo_closed_date --c
         , sf_opps."type" AS oppo_product_name --c
@@ -177,8 +177,7 @@ WITH step01 AS (
                                         AND c.system_action::text = 'b2b-confirmed'::CHARACTER VARYING::text
     LEFT JOIN ftspoordb.visits v ON c.conversion_visit_id = v.visit_id
     LEFT JOIN ftsfdb.view_sfdc_campaign_segments sf_cpseg ON v.campaign_id::text = sf_cpseg.segmentid__c::text
-    WHERE sf_log.lead_id__c IN ('00Q4G00001BPPN8UAP','00Q4G000019UYfAUAW', '00Q4G000019TtFPUA0') -- todo delete me before release to production
-      AND sf_leads.createddate >= '2018-01-01 00:00:00'::timestamp without time zone
+    WHERE sf_leads.createddate >= '2018-01-01 00:00:00'::timestamp without time zone
 )
 , current_max_stg AS (
 
