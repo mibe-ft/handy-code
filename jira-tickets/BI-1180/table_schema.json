@@ -1,0 +1,442 @@
+[
+    {
+        "name": "id",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "current_max_stage_timestamp",
+        "type": "TIMESTAMP",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "current_max_stage_name",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "current_max_stage_number",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "last_live_stage_timestamp",
+        "type": "TIMESTAMP",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "last_live_stage_name",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "last_live_stage_number",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "lead_status",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "lead_status_stage_name",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "one_marketing_ready_lead_pre",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "two_marketing_qualified_lead_pre",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "three_sales_ready_lead_pre",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "four_converted_to_opp_pre",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "five_discover_pre",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "six_develop_and_prove_pre",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "seven_proposal_negotiation_pre",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "eight_agree_and_close_contract_pre",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "nine_closed_won_pre",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "one_marketing_ready_lead",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "two_marketing_qualified_lead",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "three_sales_ready_lead",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "four_converted_to_opp",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "five_discover",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "six_develop_and_prove",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "seven_proposal_negotiation",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "eight_agree_and_close_contract",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "nine_closed_won",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "one_marketing_ready_lead_pre_timestamp",
+        "type": "TIMESTAMP",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "two_marketing_qualified_lead_pre_timestamp",
+        "type": "TIMESTAMP",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "three_sales_ready_lead_pre_timestamp",
+        "type": "TIMESTAMP",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "four_converted_to_opp_pre_timestamp",
+        "type": "TIMESTAMP",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "five_discover_pre_timestamp",
+        "type": "TIMESTAMP",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "six_develop_and_prove_pre_timestamp",
+        "type": "TIMESTAMP",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "seven_proposal_negotiation_pre_timestamp",
+        "type": "TIMESTAMP",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "eight_agree_and_close_contract_pre_timestamp",
+        "type": "TIMESTAMP",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "nine_closed_won_pre_timestamp",
+        "type": "TIMESTAMP",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "_closed_lost",
+        "type": "TIMESTAMP",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "_no_opportunity",
+        "type": "TIMESTAMP",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "one_marketing_ready_lead_add",
+        "type": "TIMESTAMP",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "two_marketing_qualified_lead_add",
+        "type": "TIMESTAMP",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "three_sales_ready_lead_add",
+        "type": "TIMESTAMP",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "four_converted_to_opp_add",
+        "type": "TIMESTAMP",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "five_discover_add",
+        "type": "TIMESTAMP",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "six_develop_and_prove_add",
+        "type": "TIMESTAMP",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "seven_proposal_negotiation_add",
+        "type": "TIMESTAMP",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "eight_agree_and_close_contract_add",
+        "type": "TIMESTAMP",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "nine_closed_won_add",
+        "type": "TIMESTAMP",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "lead_id",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "original_lead_source",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "adjusted_lead_source",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "lead_industry_sector",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "salesforce_lead_segment_id",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "salesforce_lead_segment_id_name",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "lead_spoor_id",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "createdbyid",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "lead_owner_id",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "lead_owner_name",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "lead_owner_team",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "lead_region",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "lead_subregion",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "lead_country",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "lead_gclid",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "lead_cpc",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "oppo_id",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "oppo_owner_id",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "oppo_owner_name",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "oppo_owner_team",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "oppo_amount_gbp",
+        "type": "FLOAT",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "oppo_closed_lost_reason",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "oppo_closed_date",
+        "type": "DATE",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "oppo_product_name",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "contract_amount_gbp",
+        "type": "FLOAT",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "contract_start_date",
+        "type": "DATE",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "contract_total_core_readers",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "contract_total_licenced_readers",
+        "type": "INTEGER",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "contract_licence_type",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "contract_licence_name",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "contract_licence_solution",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "contract_type",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "contract_owner_id",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "contract_owner_name",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "contract_owner_team",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "client_type",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "contractnumber",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "sf_contract_number",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "spoor_id",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "visit_segment_id",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    },
+    {
+        "name": "visit_marketing_campaign_name",
+        "type": "STRING",
+        "mode": "NULLABLE"
+    }
+]
