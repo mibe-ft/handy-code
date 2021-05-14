@@ -1255,3 +1255,15 @@ spoor_id STRING,
 visit_segment_id STRING,
 visit_marketing_campaign_name STRING,
 )
+
+---
+-- get schema for table
+SELECT column_name AS name
+, CASE WHEN data_type = 'INT64' THEN 'INTEGER'
+    WHEN data_type = 'FLOAT64' THEN 'FLOAT'
+    ELSE data_type END AS type
+, 'NULLABLE' AS mode
+FROM ft-data.biteam.INFORMATION_SCHEMA.COLUMNS
+WHERE table_name = 'funnels_b2b_nnb'
+and column_name != '_PARTITIONTIME'
+AND is_nullable = 'YES'
