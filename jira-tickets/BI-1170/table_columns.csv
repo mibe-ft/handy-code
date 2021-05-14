@@ -1,0 +1,17 @@
+name,type,mode
+ft_user_id,STRING,REQUIRED
+date_,TIMESTAMP,NULLABLE
+print_or_digital,STRING,NULLABLE
+current_price,FLOAT,NULLABLE
+current_offer,STRING,NULLABLE
+current_offer_id,STRING,NULLABLE
+region,STRING,NULLABLE
+currency_code,STRING,NULLABLE
+product_name_adjusted,STRING,NULLABLE
+product_term_adjusted,STRING,NULLABLE
+step_up_price,FLOAT,NULLABLE
+step_up_offer_id,STRING,NULLABLE
+step_up_percent_discount,STRING,NULLABLE
+is_cancelled,BOOLEAN,NULLABLE
+has_cancel_request,BOOLEAN,NULLABLE
+days_until_end_of_term,INTEGER,NULLABLE
