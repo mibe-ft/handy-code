@@ -134,11 +134,13 @@ SELECT  -- *
 	, DATEDIFF(days, CURRENT_DATE, f.to_end_dtm) AS days_until_end_of_term
 
 FROM final_tbl f
-LEFT JOIN #step_up_matrix m ON f.product_name_adjusted::CHARACTER VARYING = m.subs_product::CHARACTER VARYING
-AND f.product_term_adjusted::CHARACTER VARYING = m.subs_term::CHARACTER VARYING
+LEFT JOIN biteam.step_up_matrix m ON f.product_name_adjusted::CHARACTER VARYING = m.product_name::CHARACTER VARYING
+AND f.product_term_adjusted::CHARACTER VARYING = m.product_term::CHARACTER VARYING
 AND f.currency_code::CHARACTER VARYING = m.currency::CHARACTER VARYING
 AND (f.to_priceinctax::FLOAT >= m.lower_band::FLOAT)
 AND (f.to_priceinctax::FLOAT <= m.higher_band::FLOAT)
+AND (f.date_::DATE >= m.valid_from)
+AND (f.date_::DATE <= m.valid_to)
 --WHERE
 ------and product_name_adjusted = 'standard'
 -- f.product_term_adjusted IN ('annual', 'monthly')
