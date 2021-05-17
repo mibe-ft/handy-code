@@ -1,15 +1,3 @@
-/*
- * Questions:
- * - write truncate in airflow or write append daily?
- * - do we need to filter on print and digital only? Bundle is also available in arrangementevent_all table
- * - do you need all subscription types for B2C or just annual? if so, i need the logic for annual subs
- * - do you want both active and cancelled customer data?
- * - how far back do we need to go with this table?
- * - what do we mean by 'current offer' - is this the price they are paying or the %discount compared to the current rrp??
- * - how do you calculate the formulated data in yellow?
- */
-
-
 WITH user_facts AS (
 -- get b2c subs status for each day
 	SELECT
@@ -42,6 +30,7 @@ WITH user_facts AS (
 			 , to_arrangementproduct_name
 			 , to_arrangementproduct_type
 			 , to_arrangementstatus_name
+			 , to_arrangementstatus_dkey
 			 , to_arrangementproduct_code
 			 , to_priceinctax
 			 , to_pricegbpinctax
@@ -56,6 +45,7 @@ WITH user_facts AS (
 			 , to_currency_code
 			 , to_currency_name
 			 , to_offer_name
+			 , to_offer_id
 			 , to_offer_price
 			 , to_offer_type
 			 , to_offer_rrp
@@ -88,7 +78,7 @@ WITH user_facts AS (
 			, bsu.to_cancel_dtm
 			, bsu.arrangement_id_dd
 			, bsu.to_arrangementtype_name -- e.g. b2c subscription
-			, bsu.to_arrangementlength_id 					AS product_term --length of arrangement
+			, bsu.to_arrangementlength_id 					AS product_term-- length of arrangement
 			, CASE WHEN bsu.to_arrangementlength_id  = '12M' THEN 'annual'
 				   WHEN bsu.to_arrangementlength_id  = '1M' THEN 'monthly'
 				   ELSE bsu.to_arrangementlength_id END AS product_term_adjusted
@@ -98,11 +88,13 @@ WITH user_facts AS (
 	   			   ELSE bsu.to_arrangementproduct_name END AS product_name_adjusted
 			, bsu.to_arrangementproduct_type 				AS print_or_digital -- print or digital or bundle
 			, bsu.to_arrangementstatus_name 				AS status_name-- e.g. Active, Cancelled, Pending, Payment Failure
+			, bsu.to_arrangementstatus_dkey					AS status_key
 			, bsu.to_arrangementproduct_code				AS product_code
 			, bsu.to_priceinctax
 			, bsu.to_pricegbpinctax
 			, bsu.to_offer_name
 			, bsu.to_offer_price
+			, bsu.to_offer_id
 			, COALESCE(to_offer_rrp, 9999)					AS rrp_price -- todo sometimes null
 			, bsu.to_offer_type
 			, bsu.to_offer_rrp
@@ -113,8 +105,8 @@ WITH user_facts AS (
 			, bsu.b2c_marketing_region						AS region
 			, ROW_NUMBER () OVER(PARTITION BY uf.ft_user_id, bsu.arrangement_id_dd ORDER BY bsu.arrangementevent_dtm DESC) AS row_num
 
-		FROM user_facts uf
-		LEFT JOIN b2c_subscriptions bsu ON uf.user_dkey = bsu.user_dkey
+		FROM b2c_subscriptions bsu
+		LEFT JOIN user_facts uf ON bsu.user_dkey = uf.user_dkey
 			  AND (uf.userstatus_date_dkey >= bsu.to_termstartdate_dkey)
 			  AND (uf.userstatus_date_dkey <= bsu.to_enddate_dkey)
 		WHERE
@@ -123,18 +115,32 @@ WITH user_facts AS (
 	WHERE row_num = 1
 )
 --TODO remove row num, format column names and column order
-SELECT *
+SELECT  -- *
+	  f.ft_user_id
+	, f.date_
+	, f.print_or_digital
+	, f.to_priceinctax AS current_price
+	, f.to_offer_name AS current_offer
+	, f.to_offer_id AS current_offer_id
+	, f.region
+	, f.currency_code
+	, f.product_name_adjusted
+	, f.product_term_adjusted
+	, m.new_price AS step_up_price
+	, m.offer_id AS step_up_offer_id
+	, m.percent_discount AS step_up_percent_discount
+	, CASE WHEN status_key = 3 THEN 1 ELSE 0 END AS is_cancelled
+	, CASE WHEN (to_cancelrequest_dtm IS NOT NULL OR to_cancel_dtm IS NOT NULL) THEN 1 ELSE 0 END AS has_cancel_request
+	, DATEDIFF(days, CURRENT_DATE, f.to_end_dtm) AS days_until_end_of_term
 
 FROM final_tbl f
-LEFT JOIN #stepup_matrix m ON f.product_name_adjusted = m.subs_product
-AND f.product_term_adjusted = m.subs_term
-and f.currency_code = m.currency
---and (f.to_priceinctax >= m.lower_band)
---and (f.to_priceinctax <= m.higher_band)
---where
-----and product_name_adjusted = 'standard'
---f.product_term_adjusted IN ('annual', 'monthly')
---and f.arrangement_id_dd = 8528594
-
-
+LEFT JOIN #step_up_matrix m ON f.product_name_adjusted::CHARACTER VARYING = m.subs_product::CHARACTER VARYING
+AND f.product_term_adjusted::CHARACTER VARYING = m.subs_term::CHARACTER VARYING
+AND f.currency_code::CHARACTER VARYING = m.currency::CHARACTER VARYING
+AND (f.to_priceinctax::FLOAT >= m.lower_band::FLOAT)
+AND (f.to_priceinctax::FLOAT <= m.higher_band::FLOAT)
+--WHERE
+------and product_name_adjusted = 'standard'
+-- f.product_term_adjusted IN ('annual', 'monthly')
+-- and f.arrangement_id_dd = 8528594
 ;
