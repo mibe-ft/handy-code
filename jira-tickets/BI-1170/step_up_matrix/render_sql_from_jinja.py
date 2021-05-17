@@ -3,9 +3,7 @@ from pathlib import Path
 
 p = Path(__file__).parents[0]  # set folder directory
 
-
 def extract_data_from_file(file):
-    p = Path(__file__).parents[0]  # set folder directory
 
     file = p.joinpath(file)
     with open(file) as f:
@@ -27,6 +25,6 @@ with open(p.joinpath('template.sql')) as f:
 
 rendered_sql = Template(sql).render(step_up_matrix=my_params['step_up_matrix'])
 
-with open('WIP_jinja.sql', 'w') as f:
+with open(p.joinpath('WIP_jinja.sql'), 'w') as f:
     f.write(rendered_sql)
     # TODO change extension to sql.j2
