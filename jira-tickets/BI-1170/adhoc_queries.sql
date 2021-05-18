@@ -340,9 +340,11 @@ AND product_term_adjusted IN ('annual', 'monthly')
 AND currency_code IN ('GBP', 'EUR', 'USD', 'AUD', 'HKD', 'SGD','JPY', 'CHF')
 AND current_offer != 'Unknown'
 AND step_up_price IS NULL
-AND current_offer NOT LIKE '%RRP%'
+AND (current_offer LIKE '%RRP%' OR current_offer LIKE '%Full Price%')
+--AND current_offer NOT LIKE '%RRP%' --
 )
 , unexpected_nulls AS (
+-- this query brings back nothing?? why?
 SELECT * FROM biteam.vw_step_up_automation vsua2
 WHERE ft_user_id NOT IN (SELECT ft_user_id FROM expected_nulls)
 
