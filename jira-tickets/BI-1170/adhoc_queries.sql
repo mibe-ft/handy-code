@@ -332,7 +332,7 @@ AND currency_code IN ('GBP', 'EUR', 'USD', 'AUD', 'HKD', 'SGD','JPY', 'CHF')
 AND step_up_price IS NULL
 
 WITH expected_nulls AS (
--- these are my should be nulls
+-- these are my should be nulls, filter should include cases where I expect nulls
 SELECT *
 FROM biteam.vw_step_up_automation vsua
 WHERE product_name_adjusted = 'standard'
@@ -343,12 +343,17 @@ AND step_up_price IS NULL
 AND (current_offer LIKE '%RRP%' OR current_offer LIKE '%Full Price%')
 --AND current_offer NOT LIKE '%RRP%' --
 )
+, unknowns AS (
+SELECT * FROM biteam.vw_step_up_automation vsua
+WHERE current_offer = 'Unknown'
+)
 , unexpected_nulls AS (
--- this query brings back nothing?? why?
 SELECT * FROM biteam.vw_step_up_automation vsua2
-WHERE ft_user_id NOT IN (SELECT ft_user_id FROM expected_nulls)
-
+WHERE  step_up_price IS NULL
+--ft_user_id NOT IN (SELECT ft_user_id FROM expected_nulls
 )
 SELECT
 (SELECT COUNT(ft_user_id) FROM expected_nulls) AS expected_nulls_count,
+(SELECT COUNT(ft_user_id) FROM unknowns) AS unknown_count,
 (SELECT COUNT(ft_user_id) FROM unexpected_nulls) AS unexpected_nulls_count
+--TODO there's around 61,739 of unexplained nulls
