@@ -299,3 +299,11 @@ order by 1
 SELECT CURRENT_DATE::TIMESTAMP  - (i * interval '1 day') as date_datetime
 FROM generate_series(1,31) i
 ORDER BY 1
+
+-- investigate NULLS
+SELECT *
+FROM biteam.vw_step_up_automation vsua
+WHERE product_name_adjusted = 'standard'
+AND product_term_adjusted IN ('annual', 'monthly')
+AND currency_code IN ('GBP', 'EUR', 'USD', 'AUD', 'HKD', 'SGD','JPY', 'CHF')
+AND step_up_price IS NULL
