@@ -300,10 +300,53 @@ SELECT CURRENT_DATE::TIMESTAMP  - (i * interval '1 day') as date_datetime
 FROM generate_series(1,31) i
 ORDER BY 1
 
+
 -- investigate NULLS
 SELECT *
 FROM biteam.vw_step_up_automation vsua
 WHERE product_name_adjusted = 'standard'
 AND product_term_adjusted IN ('annual', 'monthly')
 AND currency_code IN ('GBP', 'EUR', 'USD', 'AUD', 'HKD', 'SGD','JPY', 'CHF')
+AND current_offer != 'Unknown'
 AND step_up_price IS NULL
+;
+
+-- these are my should be nulls
+SELECT *
+FROM biteam.vw_step_up_automation vsua
+WHERE product_name_adjusted = 'standard'
+AND product_term_adjusted IN ('annual', 'monthly')
+AND currency_code IN ('GBP', 'EUR', 'USD', 'AUD', 'HKD', 'SGD','JPY', 'CHF')
+AND current_offer != 'Unknown'
+AND step_up_price IS NULL
+AND current_offer NOT LIKE '%RRP%'
+;
+
+-- check offer names
+SELECT DISTINCT current_offer
+FROM biteam.vw_step_up_automation vsua
+WHERE product_name_adjusted = 'standard'
+AND product_term_adjusted IN ('annual', 'monthly')
+AND currency_code IN ('GBP', 'EUR', 'USD', 'AUD', 'HKD', 'SGD','JPY', 'CHF')
+--AND current_offer != 'Unknown'
+AND step_up_price IS NULL
+
+WITH expected_nulls AS (
+-- these are my should be nulls
+SELECT *
+FROM biteam.vw_step_up_automation vsua
+WHERE product_name_adjusted = 'standard'
+AND product_term_adjusted IN ('annual', 'monthly')
+AND currency_code IN ('GBP', 'EUR', 'USD', 'AUD', 'HKD', 'SGD','JPY', 'CHF')
+AND current_offer != 'Unknown'
+AND step_up_price IS NULL
+AND current_offer NOT LIKE '%RRP%'
+)
+, unexpected_nulls AS (
+SELECT * FROM biteam.vw_step_up_automation vsua2
+WHERE ft_user_id NOT IN (SELECT ft_user_id FROM expected_nulls)
+
+)
+SELECT
+(SELECT COUNT(ft_user_id) FROM expected_nulls) AS expected_nulls_count,
+(SELECT COUNT(ft_user_id) FROM unexpected_nulls) AS unexpected_nulls_count
