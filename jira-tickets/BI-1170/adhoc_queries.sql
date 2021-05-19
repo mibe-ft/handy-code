@@ -357,3 +357,14 @@ SELECT
 (SELECT COUNT(ft_user_id) FROM unknowns) AS unknown_count,
 (SELECT COUNT(ft_user_id) FROM unexpected_nulls) AS unexpected_nulls_count
 --TODO there's around 61,739 of unexplained nulls
+
+-- brings back current_offer TEST NC - Standard FT.com - Worldwide - 33% Discount Annual - Full Price Monthly
+-- with currencies we don't have e.g TRY, BRL, CAD, MXN
+SELECT *
+FROM biteam.vw_step_up_automation vsua
+WHERE product_name_adjusted = 'standard'
+AND product_term_adjusted IN ('annual', 'monthly')
+AND currency_code NOT IN ('GBP', 'EUR', 'USD', 'AUD', 'HKD', 'SGD','JPY', 'CHF')
+AND current_offer != 'Unknown'
+AND step_up_price IS NULL
+--AND NOT (current_offer LIKE '%RRP%' OR current_offer LIKE '%Full Price%')
