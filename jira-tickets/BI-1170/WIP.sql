@@ -117,7 +117,6 @@ WITH user_facts AS (
 --TODO remove row num, format column names and column order
 SELECT  -- *
 	  f.ft_user_id
-	, arrangement_id_dd AS arrangement_id
 	, f.date_
 	, f.print_or_digital
 	, f.to_priceinctax AS current_price
