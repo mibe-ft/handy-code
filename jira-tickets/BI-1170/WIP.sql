@@ -66,7 +66,7 @@ WITH user_facts AS (
 -- output for final table
 	SELECT * FROM (
 		SELECT
-			  uf.ft_user_id
+			  bsu.ft_user_id
 			, uf.user_dkey
 			, uf.userstatus_date_dkey
 			, uf.userstatus_dtm								AS date_
@@ -150,8 +150,9 @@ AND (f.date_::DATE <= m.valid_to)
 )
 
 -- todo change dataset and explicity select columns
+-- todo date_ sometimes appears as null - what is the fix? generate a series of dates?
 SELECT *
 FROM dataset
 WHERE product_name_adjusted = 'standard'
-
+AND step_up_price IS NULL
 ;
