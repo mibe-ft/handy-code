@@ -37,6 +37,7 @@ WITH user_facts AS (
 			 , start_dtm
 			 , to_termstart_dtm
 			 , to_end_dtm
+			 , anniversary_date
 			 , to_renewal_dtm
 			 , to_cancelrequest_dtm
 			 , to_cancel_dtm
@@ -73,6 +74,7 @@ WITH user_facts AS (
 			, bsu.start_dtm
 			, bsu.to_termstart_dtm
 			, bsu.to_end_dtm
+			, bsu.anniversary_date
 			, bsu.to_renewal_dtm
 			, bsu.to_cancelrequest_dtm
 			, bsu.to_cancel_dtm
@@ -114,6 +116,7 @@ WITH user_facts AS (
 		)
 	WHERE row_num = 1
 )
+, dataset AS (
 --TODO remove row num, format column names and column order
 SELECT  -- *
 	  f.ft_user_id
@@ -124,14 +127,17 @@ SELECT  -- *
 	, f.to_offer_id AS current_offer_id
 	, f.region
 	, f.currency_code
+	, f.product_name
 	, f.product_name_adjusted
 	, f.product_term_adjusted
-	, m.new_price AS step_up_price
+	, CASE WHEN (current_offer LIKE '%RRP%' OR current_offer LIKE '%Full Price%') THEN current_price ELSE m.new_price END AS step_up_price
 	, m.offer_id AS step_up_offer_id
 	, m.percent_discount AS step_up_percent_discount
-	, CASE WHEN status_key = 3 THEN 1 ELSE 0 END AS is_cancelled
-	, CASE WHEN (to_cancelrequest_dtm IS NOT NULL OR to_cancel_dtm IS NOT NULL) THEN 1 ELSE 0 END AS has_cancel_request
-	, DATEDIFF(days, CURRENT_DATE, f.to_end_dtm) AS days_until_end_of_term
+	, CASE WHEN f.status_key = 3 THEN 1 ELSE 0 END AS is_cancelled
+	, CASE WHEN (f.to_cancelrequest_dtm IS NOT NULL OR f.to_cancel_dtm IS NOT NULL) THEN 1 ELSE 0 END AS has_cancel_request
+	, CASE WHEN f.product_term_adjusted = 'annual' THEN DATEDIFF(days, CURRENT_DATE, f.to_end_dtm)
+		   WHEN f.product_term_adjusted = 'monthly' THEN DATEDIFF(days, CURRENT_DATE, f.anniversary_date)
+	 END AS days_until_end_of_term
 
 FROM final_tbl f
 LEFT JOIN biteam.step_up_matrix m ON f.product_name_adjusted::CHARACTER VARYING = m.product_name::CHARACTER VARYING
@@ -141,8 +147,11 @@ AND (f.to_priceinctax::FLOAT >= m.lower_band::FLOAT)
 AND (f.to_priceinctax::FLOAT <= m.higher_band::FLOAT)
 AND (f.date_::DATE >= m.valid_from)
 AND (f.date_::DATE <= m.valid_to)
---WHERE
-------and product_name_adjusted = 'standard'
--- f.product_term_adjusted IN ('annual', 'monthly')
--- and f.arrangement_id_dd = 8528594
+)
+
+-- todo change dataset and explicity select columns
+SELECT *
+FROM dataset
+WHERE product_name_adjusted = 'standard'
+
 ;
