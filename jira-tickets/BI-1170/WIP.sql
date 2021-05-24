@@ -52,7 +52,7 @@ WITH user_facts AS (
 			 , to_offer_rrp
 			 , to_offer_percent_rrp
 			 , to_cancelreason_dkey
-			 , ROW_NUMBER () OVER(PARTITION BY ft_user_id, arrangement_id_dd, DATE(arrangementevent_dtm) ORDER BY event_seq_no DESC, arrangementevent_dtm DESC) AS row_num
+			 , ROW_NUMBER () OVER(PARTITION BY ft_user_id, arrangement_id_dd ORDER BY arrangementevent_dtm DESC) AS row_num
 		FROM
 			dwabstraction.dn_arrangementevent_all daa
 		WHERE
@@ -61,6 +61,25 @@ WITH user_facts AS (
 			AND to_arrangementstatus_dkey 	IN (1,3) -- 1: Active 3:Cancelled
 			)
 		WHERE row_num = 1 -- filter out duplicate arrangement events in same day
+)
+, step_up_matrix_highest_band AS(
+	SELECT currency
+	, lower_band
+	, higher_band
+	, new_price
+	, percent_discount
+	, code
+	, offer_id
+	, valid_from
+	, valid_to
+	, product_term
+	, product_name
+	FROM (
+	SELECT *
+		, ROW_NUMBER () OVER(PARTITION BY currency, product_term, product_name ORDER BY higher_band DESC) row_num
+	FROM biteam.step_up_matrix
+	)
+	WHERE row_num = 1
 )
 , final_tbl AS (
 -- output for final table
@@ -107,14 +126,16 @@ WITH user_facts AS (
 			, bsu.b2c_marketing_region						AS region
 			, ROW_NUMBER () OVER(PARTITION BY uf.ft_user_id, bsu.arrangement_id_dd ORDER BY bsu.arrangementevent_dtm DESC) AS row_num
 
-		FROM b2c_subscriptions bsu
-		LEFT JOIN user_facts uf ON bsu.user_dkey = uf.user_dkey
+		FROM user_facts uf
+		LEFT JOIN  b2c_subscriptions bsu ON uf.user_dkey = bsu.user_dkey
 			  AND (uf.userstatus_date_dkey >= bsu.to_termstartdate_dkey)
 			  AND (uf.userstatus_date_dkey <= bsu.to_enddate_dkey)
-		WHERE
-			bsu.to_arrangementproduct_type IN ('Print', 'Digital')
+--		WHERE
+--			bsu.to_arrangementproduct_type IN ('Print', 'Digital')
+--and bsu.ft_user_id = 'f8b8b969-0e22-42c5-b4b1-79e13a7c6802' -- todo delete
 		)
-	WHERE row_num = 1
+WHERE row_num = 1
+	--and ft_user_id = 'f8b8b969-0e22-42c5-b4b1-79e13a7c6802' -- todo delete
 )
 , dataset AS (
 --TODO remove row num, format column names and column order
@@ -130,7 +151,8 @@ SELECT  -- *
 	, f.product_name
 	, f.product_name_adjusted
 	, f.product_term_adjusted
-	, CASE WHEN (current_offer LIKE '%RRP%' OR current_offer LIKE '%Full Price%') THEN current_price ELSE m.new_price END AS step_up_price
+	, COALESCE (CASE WHEN (current_offer LIKE '%RRP%' OR current_offer LIKE '%Full Price%') THEN current_price ELSE m.new_price END, current_price) AS step_up_price
+	, a.new_price
 	, m.offer_id AS step_up_offer_id
 	, m.percent_discount AS step_up_percent_discount
 	, CASE WHEN f.status_key = 3 THEN 1 ELSE 0 END AS is_cancelled
@@ -147,12 +169,20 @@ AND (f.to_priceinctax::FLOAT >= m.lower_band::FLOAT)
 AND (f.to_priceinctax::FLOAT <= m.higher_band::FLOAT)
 AND (f.date_::DATE >= m.valid_from)
 AND (f.date_::DATE <= m.valid_to)
+LEFT JOIN step_up_matrix_highest_band a ON f.product_name_adjusted::CHARACTER VARYING = a.product_name::CHARACTER VARYING
+AND f.product_term_adjusted::CHARACTER VARYING = a.product_term::CHARACTER VARYING
+AND f.currency_code::CHARACTER VARYING = a.currency::CHARACTER VARYING
+AND (f.to_priceinctax::FLOAT >= a.higher_band::FLOAT)
+AND (f.date_::DATE >= a.valid_from)
+AND (f.date_::DATE <= a.valid_to)
 )
 
--- todo change dataset and explicity select columns
--- todo date_ sometimes appears as null - what is the fix? generate a series of dates?
+/* todo change dataset and explicity select columns
+todo date_ sometimes appears as null - what is the fix? generate a series of dates */
 SELECT *
 FROM dataset
 WHERE product_name_adjusted = 'standard'
-AND step_up_price IS NULL
+AND ft_user_id = '01bd16c0-afde-4c2b-9061-bbc002d9fc2d'
+--AND step_up_price IS NULL
+--select * from final_tbl
 ;
