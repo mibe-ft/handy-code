@@ -77,3 +77,10 @@ select ft_user_id
 from final_tbl_2
 group by 1
 having count(ft_user_id)>1
+
+-- check nulls specifically for standard
+SELECT *
+FROM final_tbl_2
+WHERE step_up_price IS NULL
+and product_name_adjusted = 'standard'
+;
