@@ -9,9 +9,9 @@ WITH user_facts AS (
 	FROM
 		dwabstraction.fact_userstatus fu
 	WHERE
-	 		userstatus_date_dkey = 20210505 -- TODO question: how far back should we go
+	 		userstatus_date_dkey = 20210523 -- TODO question: how far back should we go -- get yday date: replace(CURRENT_DATE -1,'-','')::integer
 		AND is_b2c = True
-		AND user_dkey IN (SELECT user_dkey FROM dwabstraction.dn_arrangement_all WHERE to_datasource_dkey = 2)-- make sure zuora only
+		AND user_dkey IN (SELECT user_dkey FROM dwabstraction.dn_arrangement_all WHERE to_datasource_dkey = 2)-- zuora users only
 )
 , b2c_subscriptions AS (
 -- get additional info on b2c subs
@@ -62,25 +62,6 @@ WITH user_facts AS (
 			)
 		WHERE row_num = 1 -- filter out duplicate arrangement events in same day
 )
-, step_up_matrix_highest_band AS(
-	SELECT currency
-	, lower_band
-	, higher_band
-	, new_price
-	, percent_discount
-	, code
-	, offer_id
-	, valid_from
-	, valid_to
-	, product_term
-	, product_name
-	FROM (
-	SELECT *
-		, ROW_NUMBER () OVER(PARTITION BY currency, product_term, product_name ORDER BY higher_band DESC) row_num
-	FROM biteam.step_up_matrix
-	)
-	WHERE row_num = 1
-)
 , final_tbl AS (
 -- output for final table
 	SELECT * FROM (
@@ -130,59 +111,45 @@ WITH user_facts AS (
 		LEFT JOIN  b2c_subscriptions bsu ON uf.user_dkey = bsu.user_dkey
 			  AND (uf.userstatus_date_dkey >= bsu.to_termstartdate_dkey)
 			  AND (uf.userstatus_date_dkey <= bsu.to_enddate_dkey)
---		WHERE
---			bsu.to_arrangementproduct_type IN ('Print', 'Digital')
---and bsu.ft_user_id = 'f8b8b969-0e22-42c5-b4b1-79e13a7c6802' -- todo delete
 		)
-WHERE row_num = 1
-	--and ft_user_id = 'f8b8b969-0e22-42c5-b4b1-79e13a7c6802' -- todo delete
+    WHERE row_num = 1
 )
-, dataset AS (
---TODO remove row num, format column names and column order
-SELECT  -- *
-	  f.ft_user_id
-	, f.date_
-	, f.print_or_digital
-	, f.to_priceinctax AS current_price
-	, f.to_offer_name AS current_offer
-	, f.to_offer_id AS current_offer_id
-	, f.region
-	, f.currency_code
-	, f.product_name
-	, f.product_name_adjusted
-	, f.product_term_adjusted
-	, COALESCE (CASE WHEN (current_offer LIKE '%RRP%' OR current_offer LIKE '%Full Price%') THEN current_price ELSE m.new_price END, current_price) AS step_up_price
-	, a.new_price
-	, m.offer_id AS step_up_offer_id
-	, m.percent_discount AS step_up_percent_discount
-	, CASE WHEN f.status_key = 3 THEN 1 ELSE 0 END AS is_cancelled
-	, CASE WHEN (f.to_cancelrequest_dtm IS NOT NULL OR f.to_cancel_dtm IS NOT NULL) THEN 1 ELSE 0 END AS has_cancel_request
-	, CASE WHEN f.product_term_adjusted = 'annual' THEN DATEDIFF(days, CURRENT_DATE, f.to_end_dtm)
-		   WHEN f.product_term_adjusted = 'monthly' THEN DATEDIFF(days, CURRENT_DATE, f.anniversary_date)
-	 END AS days_until_end_of_term
+, final_tbl_2 AS (
 
-FROM final_tbl f
-LEFT JOIN biteam.step_up_matrix m ON f.product_name_adjusted::CHARACTER VARYING = m.product_name::CHARACTER VARYING
-AND f.product_term_adjusted::CHARACTER VARYING = m.product_term::CHARACTER VARYING
-AND f.currency_code::CHARACTER VARYING = m.currency::CHARACTER VARYING
-AND (f.to_priceinctax::FLOAT >= m.lower_band::FLOAT)
-AND (f.to_priceinctax::FLOAT <= m.higher_band::FLOAT)
-AND (f.date_::DATE >= m.valid_from)
-AND (f.date_::DATE <= m.valid_to)
-LEFT JOIN step_up_matrix_highest_band a ON f.product_name_adjusted::CHARACTER VARYING = a.product_name::CHARACTER VARYING
-AND f.product_term_adjusted::CHARACTER VARYING = a.product_term::CHARACTER VARYING
-AND f.currency_code::CHARACTER VARYING = a.currency::CHARACTER VARYING
-AND (f.to_priceinctax::FLOAT >= a.higher_band::FLOAT)
-AND (f.date_::DATE >= a.valid_from)
-AND (f.date_::DATE <= a.valid_to)
+    SELECT
+          f.ft_user_id
+        , f.arrangement_id_dd AS arrangement_id
+        , f.date_
+        , f.print_or_digital
+        , f.to_priceinctax AS current_price
+        , f.to_offer_name AS current_offer
+        , f.to_offer_id AS current_offer_id
+        , f.region
+        , f.currency_code
+        , f.product_name
+        , f.product_name_adjusted
+        , f.product_term_adjusted
+        , COALESCE (CASE WHEN (current_offer LIKE '%RRP%' OR current_offer LIKE '%Full Price%') THEN current_price ELSE m.new_price END, current_price) AS step_up_price
+        , m.offer_id AS step_up_offer_id
+        , m.percent_discount AS step_up_percent_discount
+        , CASE WHEN current_price = step_up_price THEN 0 ELSE 1 END AS is_eligible_for_step_up
+        , CASE WHEN f.status_key = 3 THEN 1 ELSE 0 END AS is_cancelled
+        , CASE WHEN (f.to_cancelrequest_dtm IS NOT NULL OR f.to_cancel_dtm IS NOT NULL) THEN 1 ELSE 0 END AS has_cancel_request
+        , CASE WHEN f.product_term_adjusted = 'annual' THEN DATEDIFF(days, CURRENT_DATE, f.to_end_dtm)
+               WHEN f.product_term_adjusted = 'monthly' THEN DATEDIFF(days, CURRENT_DATE, f.anniversary_date)
+         END AS days_until_end_of_term
+
+    FROM final_tbl f
+    LEFT JOIN biteam.step_up_matrix m ON f.product_name_adjusted::CHARACTER VARYING = m.product_name::CHARACTER VARYING
+    AND f.product_term_adjusted::CHARACTER VARYING = m.product_term::CHARACTER VARYING
+    AND f.currency_code::CHARACTER VARYING = m.currency::CHARACTER VARYING
+    AND (f.to_priceinctax::FLOAT >= m.lower_band::FLOAT)
+    AND (f.to_priceinctax::FLOAT <= m.higher_band::FLOAT)
+    AND (f.date_::DATE >= m.valid_from)
+    AND (f.date_::DATE <= m.valid_to)
 )
 
-/* todo change dataset and explicity select columns
-todo date_ sometimes appears as null - what is the fix? generate a series of dates */
 SELECT *
-FROM dataset
+FROM final_tbl_2
 WHERE product_name_adjusted = 'standard'
-AND ft_user_id = '01bd16c0-afde-4c2b-9061-bbc002d9fc2d'
---AND step_up_price IS NULL
---select * from final_tbl
 ;
