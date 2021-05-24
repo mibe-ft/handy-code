@@ -56,3 +56,24 @@ FROM dwabstraction.dn_arrangement_all daa
 WHERE to_datasource_dkey = 2
 AND to_arrangementstatus_dkey 	IN (1)
 and to_arrangementproduct_type IN ('Print', 'Digital')
+
+
+SELECT *
+FROM final_tbl_2
+WHERE --product_name_adjusted = 'standard'
+ ft_user_id = '870c359b-0aca-4753-a08b-ddfde17bb1e4'
+
+-- check dupes by arrangement
+select arrangement_id
+, count(arrangement_id)
+from final_tbl_2
+WHERE product_name_adjusted = 'standard'
+group by 1
+having count(arrangement_id)>1
+
+-- check dupes by user_id
+select ft_user_id
+, count(ft_user_id)
+from final_tbl_2
+group by 1
+having count(ft_user_id)>1
