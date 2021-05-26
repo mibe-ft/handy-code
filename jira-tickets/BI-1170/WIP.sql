@@ -1,3 +1,7 @@
+DROP VIEW IF EXISTS biteam.vw_step_up_automation;
+
+CREATE OR REPLACE VIEW biteam.vw_step_up_automation AS
+
 WITH user_facts AS (
 -- get b2c subs status for each day
 	SELECT
