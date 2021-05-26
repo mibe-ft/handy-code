@@ -81,8 +81,8 @@ WITH user_facts AS (
 			, bsu.arrangement_id_dd
 			, bsu.to_arrangementtype_name -- e.g. b2c subscription
 			, bsu.to_arrangementlength_id 					AS product_term-- length of arrangement
-			, CASE WHEN bsu.to_arrangementlength_id  = '12M' THEN 'annual'
-				   WHEN bsu.to_arrangementlength_id  = '1M' THEN 'monthly'
+			, CASE WHEN rpt.rollup_product_term  = '1 year' THEN 'annual'
+				   WHEN rpt.rollup_product_term  = '1 month / 4 weeks' THEN 'monthly'
 				   ELSE bsu.to_arrangementlength_id END AS product_term_adjusted
 			, bsu.to_arrangementproduct_name 				AS product_name -- e.g. Premium FT.com
 			, CASE WHEN bsu.to_arrangementproduct_name = 'Standard FT.com' THEN 'standard'
@@ -111,6 +111,7 @@ WITH user_facts AS (
 		LEFT JOIN  b2c_subscriptions bsu ON uf.user_dkey = bsu.user_dkey
 			  AND (uf.userstatus_date_dkey >= bsu.to_termstartdate_dkey)
 			  AND (uf.userstatus_date_dkey <= bsu.to_enddate_dkey)
+		LEFT JOIN bilayer.rollup_product_term rpt ON bsu.to_arrangementlength_id::CHARACTER VARYING = rpt.arrangementlength_id::CHARACTER VARYING
 		)
     WHERE row_num = 1
 )
