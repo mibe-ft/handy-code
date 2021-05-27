@@ -222,6 +222,7 @@ WITH step01 AS (
          , original_lead_source
          , adjusted_lead_source
          , lead_industry_sector
+         , salesforce_lead_segment_id
          , salesforce_lead_segment_id_name
          , lead_spoor_id
          , createdbyid
@@ -1486,6 +1487,7 @@ SELECT a.id
     , a.original_lead_source
     , a.adjusted_lead_source
     , a.lead_industry_sector
+    , a.salesforce_lead_segment_id
     , a.salesforce_lead_segment_id_name
     , a.lead_spoor_id
     , a.createdbyid
