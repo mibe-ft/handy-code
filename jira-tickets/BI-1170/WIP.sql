@@ -1,6 +1,6 @@
-DROP VIEW IF EXISTS biteam.vw_step_up_automation;
+DROP VIEW IF EXISTS biteam.vw_step_up_b2c_zuora;
 
-CREATE OR REPLACE VIEW biteam.vw_step_up_automation AS
+CREATE OR REPLACE VIEW biteam.vw_step_up_b2c_zuora AS
 
 WITH user_facts AS (
 -- get b2c subs status for each day
