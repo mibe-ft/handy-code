@@ -1267,3 +1267,15 @@ FROM ft-data.biteam.INFORMATION_SCHEMA.COLUMNS
 WHERE table_name = 'funnels_b2b_nnb'
 and column_name != '_PARTITIONTIME'
 AND is_nullable = 'YES'
+
+-- check columns in table - bigquery
+SELECT    table_catalog
+        , table_schema
+        , table_name
+        , column_name
+        , ordinal_position
+        , data_type
+FROM ft-data.biteam.INFORMATION_SCHEMA.COLUMNS
+WHERE table_name = 'funnels_b2b_nnb'
+
+# ft-data:biteam.funnels_b2b_nnb
