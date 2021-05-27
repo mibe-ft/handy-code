@@ -1,4 +1,4 @@
-CREATE OR REPLACE VIEW biteam.funnels_b2b_nnb_2021 AS
+--CREATE OR REPLACE VIEW biteam.funnels_b2b_nnb_2021 AS -- TODO uncomment this when you want to replace the view, need permission to change view
 SELECT
 	a.id,
 	a.current_max_stage_timestamp,
@@ -6600,6 +6600,11 @@ LEFT JOIN (
 		df.spoor_id,
 		v.campaign_id) c ON
 	b.lead_spoor_id::text = c.spoor_id::text
+WHERE original_lead_source NOT IN ('Secondary Schools', 'API Form', 'Agency', 'Unknown')
+AND original_lead_source IN ('Channel Referral', 'Contact Us Form'
+                              , 'Customer Referral', 'Email Enquiry'
+                              , 'Free Trial Request Form', 'FT Dept Referral'
+                              , 'Online Order Form', 'Phone Enquiry', 'Web chat')
 GROUP BY
 	a.id,
 	a.current_max_stage_timestamp,
@@ -6690,5 +6695,4 @@ GROUP BY
 	c.visit_segment_id,
 	c.visit_marketing_campaign_name;
 
--- Permissions
 
