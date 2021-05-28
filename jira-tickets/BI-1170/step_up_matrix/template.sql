@@ -7,15 +7,15 @@ CREATE TABLE biteam.step_up_matrix (
     percent_discount VARCHAR,
     code INT,
     offer_id VARCHAR,
-    valid_from DATE,
-    valid_to DATE,
     product_term VARCHAR,
-    product_name VARCHAR
+    product_name VARCHAR,
+    valid_from DATE,
+    valid_to DATE
 );
 
 INSERT INTO biteam.step_up_matrix VALUES
-{%- for curr, lb, hb, np, pc_disc, code, offer_id, valid_from, valid_to, term, product in step_up_matrix %}
-    ('{{curr}}', {{lb}}, {{hb}}, {{np}}, '{{pc_disc}}', {{code}}, '{{offer_id}}', '{{valid_from}}', '{{valid_to}}','{{term}}', '{{product}}')
+{%- for curr, lb, hb, np, pc_disc, code, offer_id, product_term, product_name, valid_from, valid_to in step_up_matrix %}
+    ('{{curr}}', {{lb}}, {{hb}}, {{np}}, '{{pc_disc}}', {{code}}, '{{offer_id}}', '{{product_term}}', '{{product_name}}','{{valid_from}}', '{{valid_to}}')
 {%- if not loop.last -%}
         ,
     {%- endif -%}
