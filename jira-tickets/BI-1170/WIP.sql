@@ -87,10 +87,12 @@ WITH user_facts AS (
 			, bsu.to_arrangementlength_id 					AS product_term-- length of arrangement
 			, CASE WHEN rpt.rollup_product_term  = '1 year' THEN 'annual'
 				   WHEN rpt.rollup_product_term  = '1 month / 4 weeks' THEN 'monthly'
+				   WHEN rpt.rollup_product_term  = '3 months' THEN 'quarterly'
 				   ELSE bsu.to_arrangementlength_id END AS product_term_adjusted
 			, bsu.to_arrangementproduct_name 				AS product_name -- e.g. Premium FT.com
 			, CASE WHEN bsu.to_arrangementproduct_name = 'Standard FT.com' THEN 'standard'
 	   			   WHEN bsu.to_arrangementproduct_name = 'Premium FT.com' THEN 'premium'
+	   			   WHEN bsu.to_arrangementproduct_name = 'e-Paper' THEN 'e-paper'
 	   			   ELSE bsu.to_arrangementproduct_name END AS product_name_adjusted
 			, bsu.to_arrangementproduct_type 				AS print_or_digital -- print or digital or bundle
 			, bsu.to_arrangementstatus_name 				AS status_name-- e.g. Active, Cancelled, Pending, Payment Failure
@@ -156,5 +158,5 @@ WITH user_facts AS (
 
 SELECT *
 FROM final_tbl_2
-WHERE product_name_adjusted = 'standard'
+WHERE product_name_adjusted IN ('standard' , 'premium', 'e-paper')
 ;
