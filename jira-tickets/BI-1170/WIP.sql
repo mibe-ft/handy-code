@@ -9,6 +9,7 @@ WITH user_facts AS (
 		, user_dkey
 		, userstatus_dtm
 		, userstatus_date_dkey
+		, is_standardplus
 
 	FROM
 		dwabstraction.fact_userstatus fu
@@ -74,6 +75,7 @@ WITH user_facts AS (
 			, uf.user_dkey
 			, uf.userstatus_date_dkey
 			, uf.userstatus_dtm								AS date_
+			, uf.is_standardplus
 			, bsu.arrangementevent_dtm
 			, bsu.start_dtm
 			, bsu.to_termstart_dtm
@@ -90,7 +92,8 @@ WITH user_facts AS (
 				   WHEN rpt.rollup_product_term  = '3 months' THEN 'quarterly'
 				   ELSE bsu.to_arrangementlength_id END AS product_term_adjusted
 			, bsu.to_arrangementproduct_name 				AS product_name -- e.g. Premium FT.com
-			, CASE WHEN bsu.to_arrangementproduct_name = 'Standard FT.com' THEN 'standard'
+			, CASE --WHEN bsu.to_arrangementproduct_name = 'Standard FT.com' AND uf.is_standardplus = 1 THEN 'standard plus' -- Uncomment when logic is supplied from Yuliya
+				   WHEN bsu.to_arrangementproduct_name = 'Standard FT.com' THEN 'standard'
 	   			   WHEN bsu.to_arrangementproduct_name = 'Premium FT.com' THEN 'premium'
 	   			   WHEN bsu.to_arrangementproduct_name = 'e-Paper' THEN 'e-paper'
 	   			   ELSE bsu.to_arrangementproduct_name END AS product_name_adjusted
@@ -142,12 +145,10 @@ WITH user_facts AS (
         , CASE WHEN current_price = step_up_price THEN 0 ELSE 1 END AS is_eligible_for_step_up
         , CASE WHEN f.status_key = 3 THEN 1 ELSE 0 END AS is_cancelled
         , CASE WHEN (f.to_cancelrequest_dtm IS NOT NULL OR f.to_cancel_dtm IS NOT NULL) THEN 1 ELSE 0 END AS has_cancel_request
-        , DATEDIFF(DAYS, CURRENT_DATE, DATEADD(YEAR, 1, f.anniversary_date)-1) AS days_until_end_of_term  -- still does not work e.g. '009fd1e9-4e6d-4868-92d3-4d5d2d9e732d', 00686ff7-2816-404f-b78f-e2f568f14bbe
-        /*-- TODO try calculating the difference in years between the anniversary date and current year
-         * and then add that difference +1 onto the anniversary date so that it gives next years anniversary date
-         * dont forget to subtract by 1 to get the end of term date
-         * then use that to calculate days to end of term
-          **/
+        , CASE WHEN DATEDIFF(DAYS, CURRENT_DATE, DATEADD(YEAR, ABS(DATEDIFF(YEAR, CURRENT_DATE, f.anniversary_date)), f.anniversary_date)-1) < 0
+        			THEN DATEDIFF(DAYS, CURRENT_DATE, DATEADD(YEAR, ABS(DATEDIFF(YEAR, CURRENT_DATE, f.anniversary_date))+1, f.anniversary_date)-1)
+        	   ELSE DATEDIFF(DAYS, CURRENT_DATE, DATEADD(YEAR, ABS(DATEDIFF(YEAR, CURRENT_DATE, f.anniversary_date)), f.anniversary_date)-1)
+        	   END AS days_until_end_of_term
     FROM final_tbl f
     LEFT JOIN biteam.step_up_matrix m ON f.product_name_adjusted::CHARACTER VARYING = m.product_name::CHARACTER VARYING
     AND f.product_term_adjusted::CHARACTER VARYING = m.product_term::CHARACTER VARYING
@@ -160,5 +161,5 @@ WITH user_facts AS (
 
 SELECT *
 FROM final_tbl_2
-WHERE product_name_adjusted IN ('standard' , 'premium', 'e-paper')
+WHERE product_name_adjusted IN ('standard' , 'premium', 'e-paper') -- standard plus to be added at later date
 ;
