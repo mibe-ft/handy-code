@@ -84,3 +84,5 @@ FROM final_tbl_2
 WHERE step_up_price IS NULL
 and product_name_adjusted = 'standard'
 ;
+
+-- days_until_end_of_term between 0 and 366
