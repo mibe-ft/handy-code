@@ -13,6 +13,6 @@ join information_schema.columns c
               and t.table_name = c.table_name
 where table_type = 'VIEW'
       and t.table_schema  not in ('information_schema', 'pg_catalog')
-      and t.table_name in ('vw_step_up_automation')
+      and t.table_name in ('vw_step_up_b2c_zuora') -- CHANGE VIEW NAME
 order by c.ordinal_position asc
 ;
