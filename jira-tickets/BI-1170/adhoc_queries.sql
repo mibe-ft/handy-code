@@ -368,3 +368,18 @@ AND currency_code NOT IN ('GBP', 'EUR', 'USD', 'AUD', 'HKD', 'SGD','JPY', 'CHF')
 AND current_offer != 'Unknown'
 AND step_up_price IS NULL
 --AND NOT (current_offer LIKE '%RRP%' OR current_offer LIKE '%Full Price%')
+
+-- get top price per each combo
+SELECT * FROM (
+SELECT
+	currency
+	, new_price
+	, percent_discount
+	, offer_id
+	, product_term
+	, product_name
+	, ROW_NUMBER () OVER(PARTITION BY currency, product_term, product_name ORDER BY new_price DESC) row_num
+
+FROM biteam.step_up_matrix
+)
+WHERE row_num = 1
