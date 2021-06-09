@@ -14,9 +14,9 @@ WITH user_facts AS (
 	FROM
 		dwabstraction.fact_userstatus fu
 	WHERE
-	 		userstatus_date_dkey = 20210523 -- TODO question: how far back should we go -- get yday date: replace(CURRENT_DATE -1,'-','')::integer
+	 		userstatus_date_dkey = REPLACE(CURRENT_DATE -1,'-','')::INTEGER
 		AND is_b2c = True
-		AND user_dkey IN (SELECT user_dkey FROM dwabstraction.dn_arrangement_all WHERE to_datasource_dkey = 2)-- zuora users only
+		AND user_dkey IN (SELECT user_dkey FROM dwabstraction.dn_arrangement_all WHERE to_datasource_dkey = 2) -- zuora users only
 )
 , b2c_subscriptions AS (
 -- get additional info on b2c subs
@@ -170,3 +170,4 @@ SELECT *
 FROM final_tbl_2
 WHERE product_name_adjusted IN ('standard' , 'premium', 'e-paper') -- standard plus to be added at later date
 ;
+
