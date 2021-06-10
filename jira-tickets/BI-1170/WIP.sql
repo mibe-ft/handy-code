@@ -148,10 +148,10 @@ WITH user_facts AS (
         , m.percent_discount AS step_up_percent_discount
         , CASE WHEN f.is_standardplus = TRUE THEN 1
         	   WHEN f.is_standardplus = FALSE THEN 0 END AS is_standard_plus
-        , CASE WHEN current_price = step_up_price THEN 1 ELSE 0 END AS is_renewal
-        , CASE WHEN current_price = step_up_price THEN 0 ELSE 1 END AS is_eligible_for_step_up
         , CASE WHEN f.status_key = 3 THEN 1 ELSE 0 END AS is_cancelled
         , CASE WHEN (f.to_cancelrequest_dtm IS NOT NULL OR f.to_cancel_dtm IS NOT NULL) THEN 1 ELSE 0 END AS has_cancel_request
+        , CASE WHEN current_price = step_up_price THEN 1 ELSE 0 END AS is_renewal
+        , CASE WHEN (current_price = step_up_price AND is_cancelled != 1 AND has_cancel_request != 1) THEN 0 ELSE 1 END AS is_eligible_for_step_up
         , CASE WHEN DATEDIFF(DAYS, CURRENT_DATE, DATEADD(YEAR, ABS(DATEDIFF(YEAR, CURRENT_DATE, f.anniversary_date)), f.anniversary_date)-1) < 0
         			THEN DATEDIFF(DAYS, CURRENT_DATE, DATEADD(YEAR, ABS(DATEDIFF(YEAR, CURRENT_DATE, f.anniversary_date))+1, f.anniversary_date)-1)
         	   ELSE DATEDIFF(DAYS, CURRENT_DATE, DATEADD(YEAR, ABS(DATEDIFF(YEAR, CURRENT_DATE, f.anniversary_date)), f.anniversary_date)-1)
@@ -170,4 +170,3 @@ SELECT *
 FROM final_tbl_2
 WHERE product_name_adjusted IN ('standard' , 'premium', 'e-paper') -- standard plus to be added at later date
 ;
-
