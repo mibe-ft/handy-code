@@ -383,3 +383,15 @@ SELECT
 FROM biteam.step_up_matrix
 )
 WHERE row_num = 1
+
+-- calculating sample size
+select days_until_end_of_term
+, product_term_adjusted
+, product_name_adjusted
+, round(count(arrangement_id)*.25)
+from biteam.vw_step_up_b2c_zuora vsubcz
+where days_until_end_of_term >= 28
+and days_until_end_of_term <= 30
+and is_eligible_for_step_up = 1
+group by 1, 2,3
+order by 3 desc;
