@@ -130,7 +130,7 @@ WITH user_facts AS (
           f.ft_user_id
         , f.arrangement_id_dd AS arrangement_id
         , f.date_
-        , f.print_or_digital
+        , LOWER(f.print_or_digital) AS print_or_digital
         , f.to_priceinctax AS current_price
         , f.to_offer_name AS current_offer
         , f.to_offer_id AS current_offer_id
