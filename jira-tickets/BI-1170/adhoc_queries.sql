@@ -389,7 +389,10 @@ select --days_until_end_of_term
  product_term_adjusted
 , product_name_adjusted
 , print_or_digital
+, count(arrangement_id) count_
 , round(count(arrangement_id)*.25) control_size
+, SUM(count_) OVER()
+, 100.0*count_/SUM(count_) OVER()
 from biteam.vw_step_up_b2c_zuora vsubcz
 where days_until_end_of_term >= 28
 and days_until_end_of_term <= 30
