@@ -399,3 +399,40 @@ and days_until_end_of_term <= 30
 and is_eligible_for_step_up = 1
 group by 1, 2, 3
 order by control_size desc;
+
+select --days_until_end_of_term
+round(sum(case when product_term_adjusted = 'annual' and product_name_adjusted = 'standard' and print_or_digital = 'digital' THEN 1 else 0 END) *.25) as annual_standard_digital
+, round(sum(case when product_term_adjusted = 'annual' and product_name_adjusted = 'premium' and print_or_digital = 'digital' THEN 1 else 0 END) *.25) as annual_premium_digital
+, round(sum(case when product_term_adjusted = 'monthly' and product_name_adjusted = 'standard' and print_or_digital = 'digital' THEN 1 else 0 END) *.25) as monthly_standard_digital
+, round(sum(case when product_term_adjusted = 'monthly' and product_name_adjusted = 'premium' and print_or_digital = 'digital' THEN 1 else 0 END) *.25) as monthly_premium_digital
+from biteam.vw_step_up_b2c_zuora vsubcz
+where days_until_end_of_term >= 28
+and days_until_end_of_term <= 30
+and is_eligible_for_step_up = 1
+;
+
+-- code to get stratified sample
+with a as (
+select *
+
+from
+(
+ select t.*
+  ,percent_rank()
+   over (partition by product_name_adjusted, product_term_adjusted, print_or_digital
+         order by random()) as pr
+from biteam.vw_step_up_b2c_zuora t
+where days_until_end_of_term >= 28
+and days_until_end_of_term <= 30
+and is_eligible_for_step_up = 1
+) as dt
+where pr <= 0.25
+)
+
+select
+product_name_adjusted, product_term_adjusted, print_or_digital,
+count(arrangement_id)
+from a
+group by 1,2,3
+
+;
