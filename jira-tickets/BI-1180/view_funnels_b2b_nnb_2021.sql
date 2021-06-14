@@ -6605,6 +6605,25 @@ AND original_lead_source IN ('Channel Referral', 'Contact Us Form'
                               , 'Customer Referral', 'Email Enquiry'
                               , 'Free Trial Request Form', 'FT Dept Referral'
                               , 'Online Order Form', 'Phone Enquiry', 'Web chat')
+AND lead_owner_name IN (
+                        'Alexander Anderson',
+                        'Sadie Lee',
+                        'Grace',
+                        'Pippa Langan',
+                        'Gavin Crangle',
+                        'Matthew Xia',
+                        'Mckenna Sweazey',
+                        'Sue Cassidy',
+                        'Daisy Simpson-Crew',
+                        'Tamsin Grosvenor',
+                        'Mary Jane Guzman',
+                        'Philippa Payne',
+                        'Gemma Watts',
+                        'Paula Zimmer',
+                        'Alex Isiguen',
+                        'Emily Benson',
+                        'Laura Serrato'
+)
 GROUP BY
 	a.id,
 	a.current_max_stage_timestamp,
