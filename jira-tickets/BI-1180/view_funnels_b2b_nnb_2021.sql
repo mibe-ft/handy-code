@@ -87,7 +87,38 @@ SELECT
 	b.sf_contract_number,
 	c.spoor_id,
 	c.visit_segment_id,
-	c.visit_marketing_campaign_name
+	c.visit_marketing_campaign_name,
+	CASE WHEN original_lead_source IN ('Contact Us Form',
+                                        'Email Enquiry',
+                                        'Phone Enquiry',
+                                        'Web chat',
+                                        'Free Trial Request Form',
+                                        'Online Order Form',
+                                        'Channel Referral',
+                                        'Customer Referral',
+                                        'FT Dept Referral',
+                                        'Print Customer',
+'Document Download') AND (salesforce_lead_segment_id IS NULL OR salesforce_lead_segment_id = '' OR salesforce_lead_segment_id IN ('9fbe4fe1-9315-3d67-cc6d-2bc7650c4aea', '383c7f63-abf4-b62d-cb33-4c278e6fdf61'
+, '97f89239-a1e9-81b2-7029-14ec0d40de41', '0e98e5a8-0380-84bb-6d56-13f4c806143b'
+, 'd68c23b1-f58c-b610-124a-b90590582fa2', '5aaa048e-0bbc-f3d0-7d85-f845c0d89400')) THEN 'inbound'
+WHEN original_lead_source IN ('Online Order Form',
+'Contact Us Form',
+'Email Enquiry',
+'Phone Enquiry',
+'Copyright',
+'Advocacy',
+'FT Content',
+'Trialist',
+'Lighthouse',
+'Sales Navigator',
+'Free Trial Request Form',
+'Third Party List',
+'Manila Research',
+'Event',
+'Document Download') AND (salesforce_lead_segment_id IS NOT NULL OR salesforce_lead_segment_id != '' OR salesforce_lead_segment_id NOT IN ('9fbe4fe1-9315-3d67-cc6d-2bc7650c4aea', '383c7f63-abf4-b62d-cb33-4c278e6fdf61'
+, '97f89239-a1e9-81b2-7029-14ec0d40de41', '0e98e5a8-0380-84bb-6d56-13f4c806143b'
+, 'd68c23b1-f58c-b610-124a-b90590582fa2', '5aaa048e-0bbc-f3d0-7d85-f845c0d89400')) THEN 'outbound'
+ELSE NULL END AS inbound_outbound
 FROM -- TODO From statement 1
 	(
 	SELECT
@@ -6608,7 +6639,7 @@ AND original_lead_source IN ('Channel Referral', 'Contact Us Form'
 AND lead_owner_name IN (
                         'Alexander Anderson',
                         'Sadie Lee',
-                        'Grace',
+                        'Hannah Grace Llapitan',
                         'Pippa Langan',
                         'Gavin Crangle',
                         'Matthew Xia',
