@@ -14,7 +14,7 @@ WITH user_facts AS (
 	FROM
 		dwabstraction.fact_userstatus fu
 	WHERE
-	 		userstatus_date_dkey = 20210515--REPLACE(CURRENT_DATE -1,'-','')::INTEGER
+	 		userstatus_date_dkey = 20210515--REPLACE(CURRENT_DATE -1,'-','')::INTEGER --TODO uncomment before going live
 		AND is_b2c = True
 		AND user_dkey IN (SELECT user_dkey FROM dwabstraction.dn_arrangement_all WHERE to_datasource_dkey = 2) -- zuora users only
 )
@@ -92,7 +92,7 @@ WITH user_facts AS (
 				   WHEN rpt.rollup_product_term  = '3 months' THEN 'quarterly'
 				   ELSE bsu.to_arrangementlength_id END AS product_term_adjusted
 			, bsu.to_arrangementproduct_name 				AS product_name -- e.g. Premium FT.com
-			, CASE --WHEN bsu.to_arrangementproduct_name = 'Standard FT.com' AND uf.is_standardplus = 1 THEN 'standard plus' -- Uncomment when logic is supplied from Yuliya
+			, CASE --WHEN bsu.to_arrangementproduct_name = 'Standard FT.com' AND uf.is_standardplus = 1 THEN 'standard plus' -- TODO Uncomment when logic is supplied from Yuliya
 				   WHEN bsu.to_arrangementproduct_name = 'Standard FT.com' THEN 'standard'
 	   			   WHEN bsu.to_arrangementproduct_name = 'Premium FT.com' THEN 'premium'
 	   			   WHEN bsu.to_arrangementproduct_name = 'e-Paper' THEN 'e-paper'
@@ -106,7 +106,7 @@ WITH user_facts AS (
 			, bsu.to_offer_name
 			, bsu.to_offer_price
 			, bsu.to_offer_id
-			, COALESCE(to_offer_rrp, 9999)					AS rrp_price -- todo sometimes null
+			, COALESCE(to_offer_rrp, 9999)					AS rrp_price
 			, bsu.to_offer_type
 			, bsu.to_offer_rrp
 			, bsu.to_offer_percent_rrp
