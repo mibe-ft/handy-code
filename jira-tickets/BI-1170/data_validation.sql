@@ -85,4 +85,15 @@ WHERE step_up_price IS NULL
 and product_name_adjusted = 'standard'
 ;
 
+/*-- list of checks to write--
+* this must be performed after all transformations are done but BEFORE data is transferred to AWS S3 bucket
+*/
 -- days_until_end_of_term between 0 and 366
+-- CHECK DUPES by arrangement - should be no more 1 count per arrangement id
+-- check control group does not overlap with non controls
+-- cant be is_cancelled and eligible for step up
+-- cant be is_renewal and eligible for step up
+-- can't be is_cancel request and eligible for step up
+-- is_eligible for step up AND is_control, is_cancelled, has_cancel_request and is_renewal must all be false
+-- control is 25% of total
+-- 25% control for each combination of segments
