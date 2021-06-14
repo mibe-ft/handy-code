@@ -24,8 +24,7 @@ my_params = {'metadata': extract_data_from_file('data.csv')}
 #     sql = f.read()
 print(my_params)
 # exit()
-sql = """
-CREATE TABLE `ft-bi-team.sandbox_mibe.funnels_b2b_nnb`(
+sql = """ CREATE TABLE `ft-bi-team.sandbox_mibe.funnels_b2b_nnb`(
 {%- for col_name, data_type in metadata %}
     {{col_name}} {{data_type}}
 {%- if not loop.last -%}
@@ -33,6 +32,7 @@ CREATE TABLE `ft-bi-team.sandbox_mibe.funnels_b2b_nnb`(
     {%- endif -%}
     {%- endfor %}
  )
+ 
 """
 
 rendered_sql = Template(sql).render(metadata=my_params['metadata'])

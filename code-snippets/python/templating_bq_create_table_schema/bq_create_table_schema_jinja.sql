@@ -1,5 +1,4 @@
-
-CREATE TABLE `ft-bi-team.sandbox_mibe.funnels_b2b_nnb`(
+ CREATE TABLE `ft-bi-team.sandbox_mibe.funnels_b2b_nnb`(
     id STRING,
     current_max_stage_timestamp TIMESTAMP,
     current_max_stage_name STRING,
@@ -90,3 +89,4 @@ CREATE TABLE `ft-bi-team.sandbox_mibe.funnels_b2b_nnb`(
     visit_marketing_campaign_name STRING,
     inbound_outbound STRING
  )
+ 
