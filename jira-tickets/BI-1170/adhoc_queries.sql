@@ -495,3 +495,7 @@ FROM
 WHERE pr <= 0.25
 )
 ;
+
+-- these are the products with two step up offers
+select * from prod.biteam.vw_step_up_b2c_zuora vsubcz
+where arrangement_id in (137271, 43334, 50619, 491841, 485684)
