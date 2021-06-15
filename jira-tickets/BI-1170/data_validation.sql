@@ -97,3 +97,21 @@ and product_name_adjusted = 'standard'
 -- is_eligible for step up AND is_control, is_cancelled, has_cancel_request and is_renewal must all be false
 -- control is 25% of total
 -- 25% control for each combination of segments
+
+
+-- check 25%
+select renewal_step_up
+, count(renewal_step_up)
+from
+(SELECT
+	d.*
+	, s.email_id
+	, s.send_comms
+FROM dataset_2 AS d
+LEFT JOIN #step_up_comms_logic AS s ON d.print_or_digital = s.print_or_digital
+AND d.product_term_adjusted = s.term
+AND d.renewal_step_up = s.renewal_step_up
+AND d.is_control = s.is_control
+--where d.is_control = 1
+)
+group by 1
