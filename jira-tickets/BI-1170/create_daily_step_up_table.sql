@@ -113,9 +113,15 @@ WITH step_01 AS (
 SELECT
 	d.*
 	, s.email_id
+	, CASE WHEN s.email_id = 1 THEN 'Digital - Step Up In Price'
+		   WHEN s.email_id = 2 THEN 'Digital - Renewal - No Price Change'
+		   WHEN s.email_id = 3 THEN 'Print - Step Up In Price'
+		   WHEN s.email_id = 4 THEN 'Print - Renewal - No Price Change'
+		   END AS email_type
 	, s.send_comms
 FROM step_02 AS d
 LEFT JOIN #step_up_comms_logic AS s ON d.print_or_digital = s.print_or_digital
 									AND d.product_term_adjusted = s.term
 									AND d.renewal_step_up = s.renewal_step_up
 									AND d.is_control = s.is_control
+;
