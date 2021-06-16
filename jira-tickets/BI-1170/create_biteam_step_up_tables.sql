@@ -1,0 +1,59 @@
+CREATE TABLE biteam.step_up_b2c_zuora_daily (
+	  ft_user_id CHAR(36) NOT NULL
+	, arrangement_id INTEGER
+	, date_ TIMESTAMP
+	, print_or_digital VARCHAR
+	, current_price NUMERIC(20,4)
+	, current_offer VARCHAR
+	, current_offer_id VARCHAR
+	, region VARCHAR
+	, currency_code CHAR(3)
+	, product_name VARCHAR
+	, product_name_adjusted VARCHAR
+	, product_term_adjusted VARCHAR
+	, step_up_price NUMERIC(20,4)
+	, step_up_offer_id VARCHAR
+	, step_up_percent_discount NUMERIC(10,2)
+	, is_standard_plus BOOLEAN
+	, is_cancelled BOOLEAN
+	, has_cancel_request BOOLEAN
+	, is_renewal BOOLEAN
+	, is_eligible_for_step_up BOOLEAN
+	, days_until_anniversary SMALLINT
+	, is_control BOOLEAN
+	, renewal_step_up VARCHAR
+	, email_id SMALLINT
+	, email_type_description VARCHAR
+	, send_comms BOOLEAN
+
+);
+
+CREATE TABLE biteam.stg_step_up_b2c_zuora_daily (
+	  ft_user_id CHAR(36) NOT NULL
+	, arrangement_id INTEGER
+	, date_ TIMESTAMP
+	, print_or_digital VARCHAR
+	, current_price NUMERIC(20,4)
+	, current_offer VARCHAR
+	, current_offer_id VARCHAR
+	, region VARCHAR
+	, currency_code CHAR(3)
+	, product_name VARCHAR
+	, product_name_adjusted VARCHAR
+	, product_term_adjusted VARCHAR
+	, step_up_price NUMERIC(20,4)
+	, step_up_offer_id VARCHAR
+	, step_up_percent_discount NUMERIC(10,2)
+	, is_standard_plus BOOLEAN
+	, is_cancelled BOOLEAN
+	, has_cancel_request BOOLEAN
+	, is_renewal BOOLEAN
+	, is_eligible_for_step_up BOOLEAN
+	, days_until_anniversary SMALLINT
+	, is_control BOOLEAN
+	, renewal_step_up VARCHAR
+	, email_id SMALLINT
+	, email_type_description VARCHAR
+	, send_comms BOOLEAN
+
+);
