@@ -29,7 +29,7 @@ CREATE TABLE biteam.step_up_b2c_zuora_daily (
 
 );
 
-DROP TABLE IF EXISTS biteam.stg_step_up_b2c_zuora_daily; -- TODO Uncomment if necessary
+--DROP TABLE IF EXISTS biteam.stg_step_up_b2c_zuora_daily; -- TODO Uncomment if necessary
 CREATE TABLE biteam.stg_step_up_b2c_zuora_daily (
 	  ft_user_id CHAR(36) NOT NULL
 	, arrangement_id INTEGER
