@@ -105,14 +105,14 @@ WITH step_01 AS (
 		, CASE WHEN is_control = 0 AND is_eligible_for_step_up = 1 THEN 'step up'
 			   WHEN is_control = 1 AND is_eligible_for_step_up = 1 THEN 'step up - control'
 			   WHEN is_control IS NULL AND is_renewal = 1 AND is_eligible_for_step_up = 0 THEN 'renewal'
-			   WHEN is_cancelled OR has_cancel_request THEN 'cancelled/cancel request'
+			   WHEN is_cancelled OR has_cancel_request THEN 'cancelled or cancel request'
 			   END AS renewal_step_up
 	FROM step_01
 )
 
 SELECT
 	d.*
-	, s.email_id
+	, CASE WHEN s.email_id IS NULL THEN -9999 ELSE s.email_id END AS email_id
 	, CASE WHEN s.email_id = 1 THEN 'Digital - Step Up In Price'
 		   WHEN s.email_id = 2 THEN 'Digital - Renewal - No Price Change'
 		   WHEN s.email_id = 3 THEN 'Print - Step Up In Price'
