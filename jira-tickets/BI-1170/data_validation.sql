@@ -85,20 +85,6 @@ WHERE step_up_price IS NULL
 and product_name_adjusted = 'standard'
 ;
 
-/*-- list of checks to write--
-* this must be performed after all transformations are done but BEFORE data is transferred to AWS S3 bucket
-*/
--- days_until_end_of_term between 0 and 366
--- CHECK DUPES by arrangement - should be no more 1 count per arrangement id
--- check control group does not overlap with non controls
--- cant be is_cancelled and eligible for step up
--- cant be is_renewal and eligible for step up
--- can't be is_cancel request and eligible for step up
--- is_eligible for step up AND is_control, is_cancelled, has_cancel_request and is_renewal must all be false
--- control is 25% of total
--- 25% control for each combination of segments
-
-
 -- check 25%
 select renewal_step_up
 , count(renewal_step_up)
@@ -115,3 +101,27 @@ AND d.is_control = s.is_control
 --where d.is_control = 1
 )
 group by 1
+;
+
+--biteam.vw_step_up_data_validation
+
+/*-- list of checks to write--
+* this must be performed after all transformations are done but BEFORE data is transferred to AWS S3 bucket
+* cols: success, assert_name, records
+*/
+-- days_until_anniversary 0 and 366
+-- CHECK DUPES by arrangement - should be no more 1 count per arrangement id
+-- check control group does not overlap with non controls
+-- cant be is_cancelled and eligible for step up
+-- cant be is_renewal and eligible for step up
+-- can't be is_cancel request and eligible for step up
+-- is_eligible for step up AND is_control, is_cancelled, has_cancel_request and is_renewal must all be false
+-- control is 25% of total
+-- 25% control for each combination of segments
+-- check yesterday's date, as its supposed to be daily
+
+WITH check_01 AS (
+SELECT SUM(CASE WHEN days_until_anniversary >= 0 AND days_until_anniversary <= 366 THEN 1 ELSE 0 END) col
+FROM biteam.vw_step_up_data_validation
+)
+SELECT * FROM check_01
