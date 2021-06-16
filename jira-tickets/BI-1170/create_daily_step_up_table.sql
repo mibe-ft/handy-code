@@ -52,7 +52,7 @@ SELECT
 FROM
     (
         SELECT   t.*
-            , PERCENT_RANK() OVER (PARTITION BY product_name_adjusted, product_term_adjusted, print_or_digital ORDER BY RANDOM()) AS pr
+            , PERCENT_RANK() OVER (PARTITION BY product_name_adjusted, product_term_adjusted, print_or_digital, days_until_anniversary ORDER BY RANDOM()) AS pr
         FROM biteam.vw_step_up_b2c_zuora t
         WHERE days_until_anniversary = 30
           AND is_eligible_for_step_up = 1
@@ -117,7 +117,7 @@ SELECT
 		   WHEN s.email_id = 2 THEN 'Digital - Renewal - No Price Change'
 		   WHEN s.email_id = 3 THEN 'Print - Step Up In Price'
 		   WHEN s.email_id = 4 THEN 'Print - Renewal - No Price Change'
-		   END AS email_type
+		   END AS email_type_description
 	, s.send_comms
 FROM step_02 AS d
 LEFT JOIN #step_up_comms_logic AS s ON d.print_or_digital = s.print_or_digital
