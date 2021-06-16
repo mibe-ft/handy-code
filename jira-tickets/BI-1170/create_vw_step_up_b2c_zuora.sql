@@ -145,7 +145,9 @@ WITH user_facts AS (
         	   ELSE current_price
         	   END AS step_up_price
         , m.offer_id AS step_up_offer_id
-        , REPLACE(m.percent_discount, '%','')::NUMERIC(8,2) AS step_up_percent_discount
+        , CASE WHEN REPLACE(m.percent_discount, '%','')::NUMERIC(8,2) IS NULL THEN -1
+               ELSE REPLACE(m.percent_discount, '%','')::NUMERIC(8,2)
+               END AS step_up_percent_discount
         , CASE WHEN f.is_standardplus = TRUE THEN 1
         	   WHEN f.is_standardplus = FALSE THEN 0 END AS is_standard_plus
         , CASE WHEN f.status_key = 3 THEN 1 ELSE 0 END AS is_cancelled
