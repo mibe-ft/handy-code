@@ -103,25 +103,30 @@ AND d.is_control = s.is_control
 group by 1
 ;
 
---biteam.vw_step_up_data_validation
-
-/*-- list of checks to write--
-* this must be performed after all transformations are done but BEFORE data is transferred to AWS S3 bucket
-* cols: success, assert_name, records
-*/
--- days_until_anniversary 0 and 366
--- CHECK DUPES by arrangement - should be no more 1 count per arrangement id
--- check control group does not overlap with non controls
--- cant be is_cancelled and eligible for step up
--- cant be is_renewal and eligible for step up
--- can't be is_cancel request and eligible for step up
--- is_eligible for step up AND is_control, is_cancelled, has_cancel_request and is_renewal must all be false
--- control is 25% of total
--- 25% control for each combination of segments
--- check yesterday's date, as its supposed to be daily
-
 WITH check_01 AS (
-SELECT SUM(CASE WHEN days_until_anniversary >= 0 AND days_until_anniversary <= 366 THEN 1 ELSE 0 END) col
-FROM biteam.vw_step_up_data_validation
+	SELECT
+		  SUM(CASE WHEN days_until_anniversary >= 0 AND days_until_anniversary <= 366 THEN 1 ELSE 0 END) = COUNT(1) AS success
+		, 'check 01: days_until_anniversary field is between 0 and 366' AS assert
+	FROM biteam.stg_step_up_b2c_zuora_daily
+
+), check_02 AS (
+	SELECT
+		  count_ = 1 AS success
+		, 'check 02: check for duplicates in data by arrangement' AS assert
+	FROM
+	(	SELECT
+			  arrangement_id
+			, COUNT(arrangement_id) count_
+		FROM biteam.stg_step_up_b2c_zuora_daily
+		GROUP BY 1
+		ORDER BY 2 DESC
+		LIMIT 1)
+
 )
 SELECT * FROM check_01
+
+UNION ALL
+
+SELECT * FROM check_02
+
+ORDER BY assert
