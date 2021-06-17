@@ -6747,4 +6747,5 @@ GROUP BY
 	c.visit_segment_id,
 	c.visit_marketing_campaign_name;
 
-CALL bilayer.sp_give_to_schema_owner('biteam', 'funnels_b2b_nnb_2021');
+--CALL bilayer.sp_give_to_schema_owner('biteam', 'funnels_b2b_nnb_2021');
+GRANT ALL ON biteam.funnels_b2b_nnb_2021 to group biteam;
