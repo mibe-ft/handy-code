@@ -103,21 +103,21 @@ AND d.is_control = s.is_control
 group by 1
 ;
 
--- biteam.stg_step_up_b2c_zuora_daily
-
 /*-- list of checks to write--
 * this must be performed after all transformations are done but BEFORE data is transferred to AWS S3 bucket
 * cols: success, assert_name, records
 */
--- days_until_anniversary 0 and 366
--- CHECK DUPES by arrangement - should be no more 1 count per arrangement id
+-- days_until_anniversary 0 and 366 xx
+-- CHECK DUPES by arrangement - should be no more 1 count per arrangement id xx
+
+-- control is 25% of total
+-- 25% control for each combination of segments
+
 -- check control group does not overlap with non controls
 -- cant be is_cancelled and eligible for step up
 -- cant be is_renewal and eligible for step up
 -- can't be is_cancel request and eligible for step up
 -- is_eligible for step up AND is_control, is_cancelled, has_cancel_request and is_renewal must all be false
--- control is 25% of total
--- 25% control for each combination of segments
 -- check yesterday's date, as its supposed to be daily
 -- check query for two files match for consistency -- same ft_ids, same number of ft_ids
 -- create step in airflow for dependency on freshest data
@@ -131,7 +131,7 @@ WITH check_01 AS (
 ), check_02 AS (
 	SELECT
 		  count_ = 1 AS success
-		, 'check 02: check for duplicates in data by arrangement' AS assert
+		, 'check 02: no duplicates in data by arrangement' AS assert
 	FROM
 	(	SELECT
 			  arrangement_id
@@ -141,11 +141,34 @@ WITH check_01 AS (
 		ORDER BY 2 DESC
 		LIMIT 1)
 
+), check_03 AS (
+	SELECT
+		  control_percent = 1 AS success
+		, 'check 03: control is 25% of total' AS assert
+	FROM (
+			SELECT ROUND(100.0 * sum(CASE WHEN is_control IS TRUE THEN 1 END)/sum(CASE WHEN is_eligible_for_step_up IS TRUE THEN 1 END))=25 AS control_percent
+			FROM biteam.stg_step_up_b2c_zuora_daily)
 )
+
+
 SELECT * FROM check_01
 
 UNION ALL
 
 SELECT * FROM check_02
 
+UNION ALL
+
+SELECT * FROM check_03
+
 ORDER BY assert
+
+--SELECT is_control
+--, count(case when is_control is null then 'a'
+--			 when is_control is true then 'b'
+--			 when is_control is false then 'c' end) count_
+--FROM biteam.stg_step_up_b2c_zuora_daily
+--group by 1
+
+
+;;
