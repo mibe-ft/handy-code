@@ -103,15 +103,14 @@ AND d.is_control = s.is_control
 group by 1
 ;
 
-/*-- list of checks to write--
+/*-- list of checks to write--------------------------------------------------------------------------
 * this must be performed after all transformations are done but BEFORE data is transferred to AWS S3 bucket
 * cols: success, assert_name, records
-*/
--- days_until_anniversary 0 and 366 xx
--- CHECK DUPES by arrangement - should be no more 1 count per arrangement id xx
 
--- control is 25% of total
--- 25% control for each combination of segments
+-- 1: days_until_anniversary 0 and 366 xx
+-- 2: CHECK DUPES by arrangement - should be no more 1 count per arrangement id xx
+-- 3: control is 25% of total xx
+-- 4: 25% control for each combination of segments xx
 
 -- check control group does not overlap with non controls
 -- cant be is_cancelled and eligible for step up
@@ -122,11 +121,14 @@ group by 1
 -- check query for two files match for consistency -- same ft_ids, same number of ft_ids
 -- create step in airflow for dependency on freshest data
 
+*/ --------------------------------------------------------------------------------------------------
+
 WITH check_01 AS (
 	SELECT
 		  SUM(CASE WHEN days_until_anniversary >= 0 AND days_until_anniversary <= 366 THEN 1 ELSE 0 END) = COUNT(1) AS success
 		, 'check 01: days_until_anniversary field is between 0 and 366' AS assert
-	FROM biteam.stg_step_up_b2c_zuora_daily
+	FROM
+		biteam.stg_step_up_b2c_zuora_daily
 
 ), check_02 AS (
 	SELECT
@@ -136,9 +138,12 @@ WITH check_01 AS (
 	(	SELECT
 			  arrangement_id
 			, COUNT(arrangement_id) count_
-		FROM biteam.stg_step_up_b2c_zuora_daily
-		GROUP BY 1
-		ORDER BY 2 DESC
+		FROM
+			biteam.stg_step_up_b2c_zuora_daily
+		GROUP BY
+				 1
+		ORDER BY
+				 2 DESC
 		LIMIT 1)
 
 ), check_03 AS (
@@ -146,11 +151,35 @@ WITH check_01 AS (
 		  control_percent = 1 AS success
 		, 'check 03: control is 25% of total' AS assert
 	FROM (
-			SELECT ROUND(100.0 * sum(CASE WHEN is_control IS TRUE THEN 1 END)/sum(CASE WHEN is_eligible_for_step_up IS TRUE THEN 1 END))=25 AS control_percent
-			FROM biteam.stg_step_up_b2c_zuora_daily)
+			SELECT
+				ROUND(100.0 * SUM(CASE WHEN is_control IS TRUE THEN 1 END)/SUM(CASE WHEN is_eligible_for_step_up IS TRUE THEN 1 END))IN (25,26) AS control_percent
+			FROM
+				biteam.stg_step_up_b2c_zuora_daily)
+), check_04 AS (
+	SELECT
+		  MIN(check_) = 1 AS success
+		, 'check_04: 25% control for each combination of segments' AS assert
+	FROM (
+	SELECT
+		  product_name_adjusted
+		, product_term_adjusted
+		, print_or_digital
+		, days_until_anniversary
+		, SUM(CASE WHEN is_control = TRUE THEN 1 END ) AS controls
+		, SUM(CASE WHEN is_control = FALSE THEN 1 END ) AS non_controls
+		, controls + non_controls AS total
+		, ROUND(100.00 * controls/total) AS controls_percent
+		, CASE WHEN controls_percent IN (25,26) OR (controls_percent IS NULL AND controls IS NULL AND non_controls IS NULL) THEN 1 ELSE 0 END AS check_
+	FROM
+		biteam.stg_step_up_b2c_zuora_daily
+	GROUP BY
+			  product_name_adjusted
+			, product_term_adjusted
+			, print_or_digital
+			, days_until_anniversary )
 )
 
-
+--select min(success::integer) from (
 SELECT * FROM check_01
 
 UNION ALL
@@ -161,14 +190,15 @@ UNION ALL
 
 SELECT * FROM check_03
 
+UNION ALL
+
+SELECT * FROM check_04
+
+--union all
+--select false as success
+--, 'dummy' as assert
+
 ORDER BY assert
+--)-- for final query that can be used in airflow, if all checks are complete it should expected result should be 1
 
---SELECT is_control
---, count(case when is_control is null then 'a'
---			 when is_control is true then 'b'
---			 when is_control is false then 'c' end) count_
---FROM biteam.stg_step_up_b2c_zuora_daily
---group by 1
-
-
-;;
+;
