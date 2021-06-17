@@ -106,20 +106,24 @@ group by 1
 /*-- list of checks to write--------------------------------------------------------------------------
 * this must be performed after all transformations are done but BEFORE data is transferred to AWS S3 bucket
 * cols: success, assert_name, records
-
+	staging checks before move to actual table
 -- 1: days_until_anniversary 0 and 366 xx
 -- 2: CHECK DUPES by arrangement - should be no more 1 count per arrangement id xx
 -- 3: control is 25% of total xx
 -- 4: 25% control for each combination of segments xx
 -- 5: check control group does not overlap with non controls
+-- 6: cannot be is_cancelled and eligible for step up
 --
--- cant be is_cancelled and eligible for step up
--- cant be is_renewal and eligible for step up
--- can't be is_cancel request and eligible for step up
+-- cannot be is_renewal and eligible for step up
+-- cannot be is_cancel request and eligible for step up
 -- is_eligible for step up AND is_control, is_cancelled, has_cancel_request and is_renewal must all be false
--- check yesterday's date, as its supposed to be daily
--- check query for two files match for consistency -- same ft_ids, same number of ft_ids
+
+pre start dag checks
+-- check yesterdays/todays date, as its supposed to be daily
 -- create step in airflow for dependency on freshest data
+
+post dag
+-- check query for two files match for consistency -- same ft_ids, same number of ft_ids
 
 */ --------------------------------------------------------------------------------------------------
 
@@ -195,32 +199,48 @@ WITH check_01 AS (
 					WHERE   is_control IS FALSE
 						AND a.ft_user_id = b.ft_user_id)
 						)
+), check_06 AS (
+	SELECT
+		  check_ = 0 AS success
+		, 'check 06: cannot be is_cancelled and is_eligible_for_step_up ' AS assert
+	FROM
+	(SELECT COUNT(CASE WHEN is_cancelled IS TRUE AND is_eligible_for_step_up IS TRUE THEN 0 END) AS check_
+	FROM biteam.stg_step_up_b2c_zuora_daily)
+), all_checks AS (
+	SELECT * FROM check_01
+
+	UNION ALL
+
+	SELECT * FROM check_02
+
+	UNION ALL
+
+	SELECT * FROM check_03
+
+	UNION ALL
+
+	SELECT * FROM check_04
+
+	UNION ALL
+
+	SELECT * FROM check_05
+
+	UNION ALL
+
+	SELECT * FROM check_06
+
+	--union all
+	--select false as success
+	--, 'dummy' as assert
+
+
+	ORDER BY assert
 )
 
---select min(success::integer) from (
-SELECT * FROM check_01
+SELECT * FROM all_checks
 
-UNION ALL
 
-SELECT * FROM check_02
-
-UNION ALL
-
-SELECT * FROM check_03
-
-UNION ALL
-
-SELECT * FROM check_04
-
-UNION ALL
-
-SELECT * FROM check_05
-
---union all
---select false as success
---, 'dummy' as assert
-
-ORDER BY assert
---)-- for final query that can be used in airflow, if all checks are complete it should expected result should be 1
-
+-- for final query that can be used in airflow, if all checks are complete it should expected result should be 1
+--SELECT MIN(success::INTEGER)
+--FROM all_checks
 ;
