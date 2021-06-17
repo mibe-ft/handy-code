@@ -111,8 +111,8 @@ group by 1
 -- 2: CHECK DUPES by arrangement - should be no more 1 count per arrangement id xx
 -- 3: control is 25% of total xx
 -- 4: 25% control for each combination of segments xx
-
--- check control group does not overlap with non controls
+-- 5: check control group does not overlap with non controls
+--
 -- cant be is_cancelled and eligible for step up
 -- cant be is_renewal and eligible for step up
 -- can't be is_cancel request and eligible for step up
@@ -158,7 +158,7 @@ WITH check_01 AS (
 ), check_04 AS (
 	SELECT
 		  MIN(check_) = 1 AS success
-		, 'check_04: 25% control for each combination of segments' AS assert
+		, 'check 04: 25% control for each combination of segments' AS assert
 	FROM (
 	SELECT
 		  product_name_adjusted
@@ -177,6 +177,24 @@ WITH check_01 AS (
 			, product_term_adjusted
 			, print_or_digital
 			, days_until_anniversary )
+), check_05 AS (
+--check control group does not overlap with non controls
+	SELECT
+		  overlap = 0 AS success
+		, 'check 05: control group does not overlap with non controls' AS assert
+	FROM
+		(SELECT
+			  COUNT(ft_user_id) AS overlap
+		FROM
+			biteam.stg_step_up_b2c_zuora_daily a
+		WHERE is_control IS TRUE
+		AND EXISTS (SELECT
+						ft_user_id AS overlap
+					FROM
+						biteam.stg_step_up_b2c_zuora_daily b
+					WHERE   is_control IS FALSE
+						AND a.ft_user_id = b.ft_user_id)
+						)
 )
 
 --select min(success::integer) from (
@@ -193,6 +211,10 @@ SELECT * FROM check_03
 UNION ALL
 
 SELECT * FROM check_04
+
+UNION ALL
+
+SELECT * FROM check_05
 
 --union all
 --select false as success
