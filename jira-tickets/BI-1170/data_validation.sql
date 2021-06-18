@@ -114,6 +114,7 @@ group by 1
 -- 5: cannot be is_cancelled and eligible for step up
 -- 6: cannot be is_renewal and eligible for step up
 -- 7: cannot be has cancel request and eligible for step up
+-- 8: step up price does not contain any nulls
 
 post dag
 -- check query for two files match for consistency -- same ft_ids, same number of ft_ids
@@ -183,7 +184,7 @@ WITH check_01 AS (
 ), check_05 AS (
 	SELECT
 		  check_ = 0 AS success
-		, 'check 06: cannot be is_cancelled and is_eligible_for_step_up' AS assert
+		, 'check 05: cannot be is_cancelled and is_eligible_for_step_up' AS assert
 	FROM
 	(SELECT COUNT(CASE WHEN is_cancelled IS TRUE AND is_eligible_for_step_up IS TRUE THEN 0 END) AS check_
 	FROM biteam.stg_step_up_b2c_zuora_daily)
@@ -191,19 +192,25 @@ WITH check_01 AS (
 
 	SELECT
 	  	  check_ = 0 AS success
-		, 'check 07: cannot be is_renewal and eligible for step up' AS assert
+		, 'check 06: cannot be is_renewal and eligible for step up' AS assert
 	FROM
 	(SELECT COUNT(CASE WHEN is_renewal IS TRUE AND is_eligible_for_step_up IS TRUE THEN 0 END) AS check_
 	FROM biteam.stg_step_up_b2c_zuora_daily)
 
 ), check_07 AS (
---
+
 	SELECT
 	  	  check_ = 0 AS success
-		, 'check 08: cannot be has cancel request and eligible for step up' AS assert
+		, 'check 07: cannot be has cancel request and eligible for step up' AS assert
 	FROM
 	(SELECT COUNT(CASE WHEN has_cancel_request IS TRUE AND is_eligible_for_step_up IS TRUE THEN 0 END) AS check_
 	FROM biteam.stg_step_up_b2c_zuora_daily)
+
+), check_08 AS (
+	SELECT
+		  SUM(CASE WHEN step_up_price IS NULL THEN 1 ELSE 0 END) = 0 AS success
+		, 'check 08: step up price does not contain any nulls'
+	FROM biteam.stg_step_up_b2c_zuora_daily ssubczd
 
 ), all_checks AS (
 	SELECT * FROM check_01
@@ -231,6 +238,10 @@ WITH check_01 AS (
 	UNION ALL
 
 	SELECT * FROM check_07
+
+	UNION ALL
+
+	SELECT * FROM check_08
 
 	ORDER BY assert
 )
