@@ -110,11 +110,10 @@ group by 1
 -- 1: days_until_anniversary 0 and 366 xx
 -- 2: CHECK DUPES by arrangement - should be no more 1 count per arrangement id xx
 -- 3: control is 25% of total xx
--- 4: 25% control for each combination of segments xx
--- 5: check control group does not overlap with non controls
--- 6: cannot be is_cancelled and eligible for step up
--- 7: cannot be is_renewal and eligible for step up
--- 8: cannot be has cancel request and eligible for step up
+-- 4: check control group does not overlap with non controls
+-- 5: cannot be is_cancelled and eligible for step up
+-- 6: cannot be is_renewal and eligible for step up
+-- 7: cannot be has cancel request and eligible for step up
 
 pre start dag checks
 -- check yesterdays/todays date, as its supposed to be daily
@@ -165,33 +164,8 @@ WITH check_01 AS (
 			)
 ), check_04 AS (
 	SELECT
-		  MIN(check_) = 1 AS success
-		, 'check 04: 25% control for each combination of segments' AS assert
-	FROM (
-	SELECT
-		  date_
-		, product_name_adjusted
-		, product_term_adjusted
-		, print_or_digital
-		, days_until_anniversary
-		, SUM(CASE WHEN is_control = TRUE THEN 1 END ) AS controls
-		, SUM(CASE WHEN is_control = FALSE THEN 1 END ) AS non_controls
-		, controls + non_controls AS total
-		, ROUND(100.00 * controls/total) AS controls_percent
-		, CASE WHEN controls_percent IN (25,26) OR (controls_percent IS NULL AND controls IS NULL AND non_controls IS NULL) THEN 1 ELSE 0 END AS check_
-	FROM
-		biteam.stg_step_up_b2c_zuora_daily
-	GROUP BY
-			  date_
-			, product_name_adjusted
-			, product_term_adjusted
-			, print_or_digital
-			, days_until_anniversary
-			)
-), check_05 AS (
-	SELECT
 		  COUNT(overlap) = 0 AS success
-		, 'check 05: control group does not overlap with non controls per day' AS assert
+		, 'check 04: control group does not overlap with non controls per day' AS assert
 	FROM
 		(SELECT
 			  date_
@@ -210,14 +184,14 @@ WITH check_01 AS (
 			ORDER BY 2 DESC
 			LIMIT 1)
 
-), check_06 AS (
+), check_05 AS (
 	SELECT
 		  check_ = 0 AS success
 		, 'check 06: cannot be is_cancelled and is_eligible_for_step_up' AS assert
 	FROM
 	(SELECT COUNT(CASE WHEN is_cancelled IS TRUE AND is_eligible_for_step_up IS TRUE THEN 0 END) AS check_
 	FROM biteam.stg_step_up_b2c_zuora_daily)
-), check_07 AS (
+), check_06 AS (
 
 	SELECT
 	  	  check_ = 0 AS success
@@ -226,7 +200,7 @@ WITH check_01 AS (
 	(SELECT COUNT(CASE WHEN is_renewal IS TRUE AND is_eligible_for_step_up IS TRUE THEN 0 END) AS check_
 	FROM biteam.stg_step_up_b2c_zuora_daily)
 
-), check_08 AS (
+), check_07 AS (
 --
 	SELECT
 	  	  check_ = 0 AS success
@@ -262,20 +236,12 @@ WITH check_01 AS (
 
 	SELECT * FROM check_07
 
-	UNION
-
-	SELECT * FROM check_08
-	--union all
-	--select false as success
-	--, 'dummy' as assert
-
-
 	ORDER BY assert
 )
 
-SELECT * FROM all_checks
+-- SELECT * FROM all_checks -- Uncomment if you want to know which checks have failed/completed
 
--- for final query that can be used in airflow, if all checks are complete it should expected result should be 1
---SELECT MIN(success::INTEGER)
---FROM all_checks
+-- If all checks are complete,  the expected result should be 1 -- this is to be used with the SqlSensorOperator()
+SELECT MIN(success::INTEGER)
+FROM all_checks
 ;
