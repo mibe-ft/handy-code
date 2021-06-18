@@ -1,0 +1,10 @@
+CREATE OR REPLACE PROCEDURE test()
+AS $$
+BEGIN
+  EXECUTE ' SELECT 1 AS a';
+END;
+$$
+LANGUAGE plpgsql
+;
+
+CALL test();
