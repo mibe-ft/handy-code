@@ -135,35 +135,42 @@ WITH check_01 AS (
 ), check_02 AS (
 	SELECT
 		  count_ = 1 AS success
-		, 'check 02: no duplicates in data by arrangement' AS assert
+		, 'check 02: no duplicates in data by arrangement per day' AS assert
 	FROM
 	(	SELECT
-			  arrangement_id
+			  date_
+			, arrangement_id
 			, COUNT(arrangement_id) count_
 		FROM
 			biteam.stg_step_up_b2c_zuora_daily
 		GROUP BY
-				 1
+				 1,2
 		ORDER BY
-				 2 DESC
-		LIMIT 1)
+				 count_ DESC
+		LIMIT 1
+		)
 
 ), check_03 AS (
 	SELECT
-		  control_percent = 1 AS success
-		, 'check 03: control is 25% of total' AS assert
+		  MIN(check_::INTEGER) = 1 AS success
+		, 'check 03: control is 25% of total per day' AS assert
 	FROM (
 			SELECT
-				ROUND(100.0 * SUM(CASE WHEN is_control IS TRUE THEN 1 END)/SUM(CASE WHEN is_eligible_for_step_up IS TRUE THEN 1 END))IN (25,26) AS control_percent
+				  date_
+				, ROUND(100.0 * SUM(CASE WHEN is_control IS TRUE THEN 1 END)/SUM(CASE WHEN is_eligible_for_step_up IS TRUE THEN 1 END))IN (25,26) AS check_
 			FROM
-				biteam.stg_step_up_b2c_zuora_daily)
+				biteam.stg_step_up_b2c_zuora_daily
+			GROUP BY 1
+			ORDER BY check_ DESC
+			)
 ), check_04 AS (
 	SELECT
 		  MIN(check_) = 1 AS success
 		, 'check 04: 25% control for each combination of segments' AS assert
 	FROM (
 	SELECT
-		  product_name_adjusted
+		  date_
+		, product_name_adjusted
 		, product_term_adjusted
 		, print_or_digital
 		, days_until_anniversary
@@ -175,18 +182,20 @@ WITH check_01 AS (
 	FROM
 		biteam.stg_step_up_b2c_zuora_daily
 	GROUP BY
-			  product_name_adjusted
+			  date_
+			, product_name_adjusted
 			, product_term_adjusted
 			, print_or_digital
-			, days_until_anniversary )
+			, days_until_anniversary
+			)
 ), check_05 AS (
---check control group does not overlap with non controls
 	SELECT
-		  overlap = 0 AS success
-		, 'check 05: control group does not overlap with non controls' AS assert
+		  COUNT(overlap) = 0 AS success
+		, 'check 05: control group does not overlap with non controls per day' AS assert
 	FROM
 		(SELECT
-			  COUNT(ft_user_id) AS overlap
+			  date_
+			   ,COUNT(ft_user_id) AS overlap
 		FROM
 			biteam.stg_step_up_b2c_zuora_daily a
 		WHERE is_control IS TRUE
@@ -195,8 +204,12 @@ WITH check_01 AS (
 					FROM
 						biteam.stg_step_up_b2c_zuora_daily b
 					WHERE   is_control IS FALSE
-						AND a.ft_user_id = b.ft_user_id)
-						)
+						AND a.ft_user_id = b.ft_user_id
+						AND a.date_ = b.date_)
+			GROUP BY 1
+			ORDER BY 2 DESC
+			LIMIT 1)
+
 ), check_06 AS (
 	SELECT
 		  check_ = 0 AS success
