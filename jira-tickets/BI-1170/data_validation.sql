@@ -115,10 +115,6 @@ group by 1
 -- 6: cannot be is_renewal and eligible for step up
 -- 7: cannot be has cancel request and eligible for step up
 
-pre start dag checks
--- check yesterdays/todays date, as its supposed to be daily
--- create step in airflow for dependency on freshest data
-
 post dag
 -- check query for two files match for consistency -- same ft_ids, same number of ft_ids
 
@@ -245,3 +241,33 @@ WITH check_01 AS (
 SELECT MIN(success::INTEGER)
 FROM all_checks
 ;
+
+-- pre start dag checks
+-- check todays date for dependencies: dwabstraction.fact_userstatus fu, dwabstraction.dn_arrangementevent_all daa
+
+WITH check_01 AS (
+	SELECT
+		  MAX(userstatus_date_dkey) = REPLACE(CURRENT_DATE, '-', '')::INTEGER AS success
+		, 'check 01: todays data for dwabstraction.fact_userstatus - VIEW' AS assert
+	FROM dwabstraction.fact_userstatus
+
+), check_02 AS (
+	SELECT
+		   REPLACE(DATE(MAX(dw_updated_date)), '-', '')::INTEGER = REPLACE(CURRENT_DATE, '-', '')::INTEGER AS success
+		 , 'check 02: todays data for dwabstraction.dn_arrangementevent_all - TABLE' AS assert
+	FROM dwabstraction.dn_arrangementevent_all
+
+), all_checks AS (
+	SELECT * FROM check_01
+
+	UNION ALL
+
+	SELECT * FROM check_02
+
+	ORDER BY assert
+)
+
+-- SELECT * FROM all_checks -- Uncomment if you want to know which checks have failed/completed
+-- If all checks are complete,  the expected result should be 1 -- this is to be used with the SqlSensorOperator()
+SELECT MIN(success::INTEGER)
+FROM all_checks
