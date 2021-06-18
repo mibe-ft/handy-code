@@ -113,10 +113,8 @@ group by 1
 -- 4: 25% control for each combination of segments xx
 -- 5: check control group does not overlap with non controls
 -- 6: cannot be is_cancelled and eligible for step up
---
--- cannot be is_renewal and eligible for step up
--- cannot be is_cancel request and eligible for step up
--- is_eligible for step up AND is_control, is_cancelled, has_cancel_request and is_renewal must all be false
+-- 7: cannot be is_renewal and eligible for step up
+-- 8: cannot be has cancel request and eligible for step up
 
 pre start dag checks
 -- check yesterdays/todays date, as its supposed to be daily
@@ -202,10 +200,28 @@ WITH check_01 AS (
 ), check_06 AS (
 	SELECT
 		  check_ = 0 AS success
-		, 'check 06: cannot be is_cancelled and is_eligible_for_step_up ' AS assert
+		, 'check 06: cannot be is_cancelled and is_eligible_for_step_up' AS assert
 	FROM
 	(SELECT COUNT(CASE WHEN is_cancelled IS TRUE AND is_eligible_for_step_up IS TRUE THEN 0 END) AS check_
 	FROM biteam.stg_step_up_b2c_zuora_daily)
+), check_07 AS (
+
+	SELECT
+	  	  check_ = 0 AS success
+		, 'check 07: cannot be is_renewal and eligible for step up' AS assert
+	FROM
+	(SELECT COUNT(CASE WHEN is_renewal IS TRUE AND is_eligible_for_step_up IS TRUE THEN 0 END) AS check_
+	FROM biteam.stg_step_up_b2c_zuora_daily)
+
+), check_08 AS (
+--
+	SELECT
+	  	  check_ = 0 AS success
+		, 'check 08: cannot be has cancel request and eligible for step up' AS assert
+	FROM
+	(SELECT COUNT(CASE WHEN has_cancel_request IS TRUE AND is_eligible_for_step_up IS TRUE THEN 0 END) AS check_
+	FROM biteam.stg_step_up_b2c_zuora_daily)
+
 ), all_checks AS (
 	SELECT * FROM check_01
 
@@ -229,6 +245,13 @@ WITH check_01 AS (
 
 	SELECT * FROM check_06
 
+	UNION ALL
+
+	SELECT * FROM check_07
+
+	UNION
+
+	SELECT * FROM check_08
 	--union all
 	--select false as success
 	--, 'dummy' as assert
@@ -238,7 +261,6 @@ WITH check_01 AS (
 )
 
 SELECT * FROM all_checks
-
 
 -- for final query that can be used in airflow, if all checks are complete it should expected result should be 1
 --SELECT MIN(success::INTEGER)
