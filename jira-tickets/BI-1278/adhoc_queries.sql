@@ -19,3 +19,11 @@ DROP TABLE IF EXISTS bilayer.rfv_weekly_stg;
 
 -- check there is data in staging
 select * from bilayer.rfv_weekly_stg;
+
+
+-- workings for date
+SELECT cast(first_date_to_process as date) FROM bilayer.job_date_config WHERE table_name = 'bilayer.rfv_weekly';
+
+select max(rfv_date) from bilayer.rfv_weekly rw ;
+select cast(max(rfv_date)+1 as date) from bilayer.rfv_weekly rw ;
+select cast('2021-06-21' as date) d1, cast(d1+6 as date)
