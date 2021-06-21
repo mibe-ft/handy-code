@@ -27,3 +27,8 @@ SELECT cast(first_date_to_process as date) FROM bilayer.job_date_config WHERE ta
 select max(rfv_date) from bilayer.rfv_weekly rw ;
 select cast(max(rfv_date)+1 as date) from bilayer.rfv_weekly rw ;
 select cast('2021-06-21' as date) d1, cast(d1-7 as date), cast(d1-1 as date);
+
+-- bigquery
+select min(visit_date), max(visit_date) from `ft-bi-team.BI_Layer.visits`;
+SELECT min(rfv_date), max(rfv_date)  FROM `ft-bi-team.Sandbox_bilayer_integration.rfv_weekly`; --WHERE DATE(_PARTITIONTIME) = "2021-06-20" LIMIT 1000
+SELECT * FROM `ft-bi-team.Sandbox_bilayer_integration.rfv_weekly`;
