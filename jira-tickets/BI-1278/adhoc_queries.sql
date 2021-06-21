@@ -3,7 +3,7 @@ INSERT INTO bilayer.job_date_config (job_name, table_name, load_status, first_da
 SELECT * FROM bilayer.job_date_config where table_name = 'bilayer.rfv_weekly';
 
 UPDATE bilayer.job_date_config
-SET load_status = 'complete', record_modified_date = GETDATE()
+SET first_date_to_process = '2021-05-30' , last_date_to_process = '2021-05-30'
 WHERE job_name = 'rs_to_bq_bilayer_rfv_weekly';
 
 -- check there is data
@@ -27,6 +27,42 @@ SELECT cast(first_date_to_process as date) FROM bilayer.job_date_config WHERE ta
 select max(rfv_date) from bilayer.rfv_weekly rw ;
 select cast(max(rfv_date)+1 as date) from bilayer.rfv_weekly rw ;
 select cast('2021-06-21' as date) d1, cast(d1-7 as date), cast(d1-1 as date);
+
+-- grant priviledges
+grant all privileges on bilayer.rfv_weekly_stg to airflow_biteam;
+
+SELECT 'GO' FROM bilayer.job_date_config
+                  WHERE job_name = 'rs_to_bq_bilayer_rfv_weekly'
+                  AND load_status = 'complete'
+;
+
+SELECT GETDATE(),DATE_TRUNC('d',getdate()) ;
+
+-- create check for previous dag run and rfv_weekly has been completed
+SELECT (COUNT(CASE WHEN check_ = 'GO' THEN 1 END) = 2)::INTEGER
+FROM (
+SELECT 1 AS check_ FROM bilayer.job_date_config
+WHERE job_name = 'rs_to_bq_bilayer_rfv_weekly'
+AND load_status = 'complete'
+
+UNION ALL
+
+SELECT DISTINCT 1 AS check_
+FROM biteam.rfv_weekly
+WHERE TRUNC(insert_dtm) = DATE_TRUNC('d',getdate())
+)
+;
+
+select distinct 'GO' from biteam.rfv_weekly where insert_dtm = date_trunc('d',getdate());
+select insert_dtm from biteam.rfv_weekly;
+
+
+select distinct 'GO' from biteam.rfv_weekly where TRUNC(insert_dtm) = trunc(getdate());
+select * from biteam.rfv_weekly where insert_dtm is not null LIMIT 10;
+
+insert into biteam.rfv_weekly(insert_dtm) values
+(getdate());
+
 
 -- bigquery
 select min(visit_date), max(visit_date) from `ft-bi-team.BI_Layer.visits`;
