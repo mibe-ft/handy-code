@@ -144,9 +144,9 @@ WITH user_facts AS (
         				 			   AND (m.new_price >= current_price) THEN m.new_price
         	   ELSE current_price
         	   END AS step_up_price
-        , m.offer_id AS step_up_offer_id
-        , CASE WHEN REPLACE(m.percent_discount, '%','')::NUMERIC(8,2) IS NULL THEN -9999
-               ELSE REPLACE(m.percent_discount, '%','')::NUMERIC(8,2)
+        , COALESCE(m.offer_id, current_offer_id) AS step_up_offer_id
+        , CASE WHEN ABS(REPLACE(m.percent_discount, '%','')::NUMERIC(8,2)) IS NULL THEN 0
+               ELSE ABS(REPLACE(m.percent_discount, '%','')::NUMERIC(8,2))
                END AS step_up_percent_discount
         , CASE WHEN f.is_standardplus = TRUE THEN 1
         	   WHEN f.is_standardplus = FALSE THEN 0 END AS is_standard_plus
