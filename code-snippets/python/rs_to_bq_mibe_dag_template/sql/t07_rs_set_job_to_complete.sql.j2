@@ -1,0 +1,6 @@
+UPDATE bilayer.job_date_config
+SET first_date_to_process = current_date - 7,
+    last_date_to_process = current_date - 1,
+    load_status = 'complete',
+    record_modified_date = GETDATE()
+WHERE job_name = 'rs_to_bq_bilayer_rfv_weekly' ;

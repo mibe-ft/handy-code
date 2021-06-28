@@ -1,0 +1,12 @@
+SELECT (COUNT(CASE WHEN check_ = 'GO' THEN 1 END) = 2)::INTEGER
+FROM (
+        SELECT 'GO' AS check_ FROM bilayer.job_date_config
+        WHERE job_name = 'rs_to_bq_bilayer_rfv_weekly'
+        AND load_status = 'complete'
+        UNION ALL
+        SELECT DISTINCT 'GO' AS check_
+        FROM biteam.rfv_weekly
+        WHERE reportdate >= (SELECT cast(first_date_to_process as date) FROM bilayer.job_date_config WHERE table_name = 'bilayer.rfv_weekly')
+        AND reportdate <= (SELECT cast(last_date_to_process as date) FROM bilayer.job_date_config WHERE table_name = 'bilayer.rfv_weekly')
+      )
+;

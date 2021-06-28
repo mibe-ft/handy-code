@@ -1,0 +1,31 @@
+SELECT
+      REPLACE(b2b_b2c, '"', '""')       AS b2b_b2c
+    , rfv_date
+    , onsite_recency
+    , onsite_frequency
+    , onsite_volume
+    , onsite_rfv
+    , onsite_engaged
+    , email_recency
+    , email_frequency
+    , email_volume
+    , email_rfv
+    , email_engaged
+    , recency
+    , frequency
+    , volume
+    , rfv_score
+    , user_engaged
+    , REPLACE(cluster, '"', '""')         AS cluster
+    , REPLACE(top_cluster, '"', '""')     AS top_cluster
+    , days_since_activation
+    , weeks_since_activation
+    , sustained_engaged
+    , REPLACE(mission_status, '"', '""')  AS mission_status
+    , REPLACE(mission, '"', '""')         AS mission
+    , mission_status_tenure_weeks
+    , mission_tenure_weeks
+    , REPLACE(rfv_weekly_pk, '"', '""')   AS rfv_weekly_pk
+    , REPLACE(user_dkey_arrangement_id_date_fk, '"', '""') AS user_dkey_arrangement_id_date_fk
+FROM bilayer.rfv_weekly_stg
+;

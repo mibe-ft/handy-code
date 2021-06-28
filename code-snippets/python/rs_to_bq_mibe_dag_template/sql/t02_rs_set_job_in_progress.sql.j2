@@ -1,0 +1,4 @@
+UPDATE bilayer.job_date_config
+SET load_status = 'in_progress', record_modified_date = GETDATE()
+WHERE job_name = 'rs_to_bq_bilayer_rfv_weekly'
+;

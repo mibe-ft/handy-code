@@ -1,0 +1,6 @@
+DROP TABLE IF EXISTS bilayer.rfv_weekly_stg;
+CREATE TABLE bilayer.rfv_weekly_stg as (
+SELECT * FROM bilayer.rfv_weekly
+WHERE rfv_date >= (SELECT cast(first_date_to_process as date) FROM bilayer.job_date_config WHERE table_name = 'bilayer.rfv_weekly')
+AND rfv_date <= (SELECT cast(last_date_to_process as date) FROM bilayer.job_date_config WHERE table_name = 'bilayer.rfv_weekly')
+)

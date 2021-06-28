@@ -1,0 +1,15 @@
+delete `{{rfv_weekly_del}}` t
+where rfv_date >= (
+    select min(rfv_date)
+    from `{{rfv_weekly_stg_0}}`
+ )
+and rfv_date <= (
+    select max(rfv_date)
+    from `{{rfv_weekly_stg_1}}`
+)
+;
+
+insert into `{{rfv_weekly_ins}}`
+select *
+from `{{rfv_weekly_stg_2}}`
+;
