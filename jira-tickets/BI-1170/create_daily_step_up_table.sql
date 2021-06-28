@@ -1,3 +1,4 @@
+BEGIN;
 -- Step 1: Create table for comms logic
 DROP TABLE IF EXISTS #step_up_comms_logic;
 CREATE TABLE #step_up_comms_logic(
@@ -6,21 +7,21 @@ CREATE TABLE #step_up_comms_logic(
 	auto_renewal_single_term VARCHAR,
 	renewal_step_up VARCHAR,
 	is_control INTEGER,
-	email_id INTEGER,
+	email_id VARCHAR,
 	send_comms INTEGER
 )
 ;
 INSERT INTO #step_up_comms_logic VALUES
-	('digital','monthly','ar','renewal',NULL,2,0),
-	('digital','annual','ar','renewal',NULL,2,1),
-	('digital','monthly','ar','step up',0,1,1),
-	('digital','monthly','ar','step up - control',1,2,0),
-	('digital','annual','ar','step up',0,1,1),
-	('digital','annual','ar','step up - control',1,2,1),
-	('print','all','ar','renewal',NULL,4,1),
-	('print','all','st','renewal',NULL,4,1),
-	('print','all','ar','step up',NULL,3,1),
-	('print','all','st','step up',NULL,3,1)
+	('digital','monthly','ar','renewal',NULL,'2',0),
+	('digital','annual','ar','renewal',NULL,'2',1),
+	('digital','monthly','ar','step up',0,'1',1),
+	('digital','monthly','ar','step up - control',1,'2',0),
+	('digital','annual','ar','step up',0,'1',1),
+	('digital','annual','ar','step up - control',1,'2',1),
+	('print','all','ar','renewal',NULL,'4',1),
+	('print','all','st','renewal',NULL,'4',1),
+	('print','all','ar','step up',NULL,'3',1),
+	('print','all','st','step up',NULL,'3',1)
 	;
 
 -- Step 2: Create table for subs in control group
@@ -112,11 +113,11 @@ WITH step_01 AS (
 
 	SELECT
 		d.*
-		, CASE WHEN s.email_id IS NULL THEN -9999 ELSE s.email_id END AS email_id
-		, CASE WHEN s.email_id = 1 THEN 'Digital - Step Up In Price'
-			   WHEN s.email_id = 2 THEN 'Digital - Renewal - No Price Change'
-			   WHEN s.email_id = 3 THEN 'Print - Step Up In Price'
-			   WHEN s.email_id = 4 THEN 'Print - Renewal - No Price Change'
+		, CASE WHEN s.email_id IS NULL THEN '' ELSE s.email_id END AS email_id
+		, CASE WHEN s.email_id = '1' THEN 'Digital - Step Up In Price'
+			   WHEN s.email_id = '2' THEN 'Digital - Renewal - No Price Change'
+			   WHEN s.email_id = '3' THEN 'Print - Step Up In Price'
+			   WHEN s.email_id = '4' THEN 'Print - Renewal - No Price Change'
 			   ELSE 'Not Applicable'
 			   END AS email_type_description
 		, s.send_comms
@@ -143,30 +144,17 @@ SELECT
 	, step_up_price
 	, step_up_offer_id
 	, step_up_percent_discount
-	, CASE WHEN is_standard_plus = 1 THEN TRUE
-		   WHEN is_standard_plus = 0 THEN FALSE
-		   ELSE NULL END AS is_standard_plus
-	, CASE WHEN is_cancelled = 1 THEN TRUE
-		   WHEN is_cancelled = 0 THEN FALSE
-		   ELSE NULL END AS is_cancelled
-	, CASE WHEN has_cancel_request = 1 THEN TRUE
-		   WHEN has_cancel_request = 0 THEN FALSE
-		   ELSE NULL END AS has_cancel_request
-	, CASE WHEN is_renewal = 1 THEN TRUE
-		   WHEN is_renewal = 0 THEN FALSE
-		   ELSE NULL END AS is_renewal
-	, CASE WHEN is_eligible_for_step_up = 1 THEN TRUE
-		   WHEN is_eligible_for_step_up = 0 THEN FALSE
-		   ELSE NULL END AS is_eligible_for_step_up
+	, is_standard_plus
+	, is_cancelled
+	, has_cancel_request
+	, is_renewal
+	, is_eligible_for_step_up
 	, days_until_anniversary
-	, CASE WHEN is_control = 1 THEN TRUE
-		   WHEN is_control = 0 THEN FALSE
-		   ELSE NULL END AS is_control
+	, CASE WHEN is_control IS NULL THEN 0 ELSE is_control END AS is_control
 	, renewal_step_up
 	, email_id
 	, email_type_description
-	, CASE WHEN send_comms = 1 THEN TRUE
-		   WHEN send_comms = 0 THEN FALSE
-		   ELSE NULL END AS send_comms
+	, CASE WHEN send_comms IS NULL THEN 0 ELSE send_comms END AS send_comms
 FROM step_03
 ;
+END;
