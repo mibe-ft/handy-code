@@ -4887,8 +4887,8 @@ END, d.industry_sector, d.segment_id, de.marketing_campaign__r_name, d.spoor_id,
 
 -- Permissions
 
-GRANT INSERT, SELECT, UPDATE, DELETE, RULE, REFERENCES, TRIGGER ON TABLE biteam.funnels_b2b_nnb_2021 TO biteam_schemaowner;
-GRANT SELECT ON TABLE biteam.funnels_b2b_nnb_2021 TO bigquery;
-GRANT SELECT ON TABLE biteam.funnels_b2b_nnb_2021 TO "group biteam";
-GRANT SELECT ON TABLE biteam.funnels_b2b_nnb_2021 TO "group data_platform";
-GRANT SELECT ON TABLE biteam.funnels_b2b_nnb_2021 TO "group data_strategy";
+--GRANT INSERT, SELECT, UPDATE, DELETE, RULE, REFERENCES, TRIGGER ON TABLE biteam.funnels_b2b_nnb_2021 TO biteam_schemaowner;
+--GRANT SELECT ON TABLE biteam.funnels_b2b_nnb_2021 TO bigquery;
+--GRANT SELECT ON TABLE biteam.funnels_b2b_nnb_2021 TO group biteam;
+--GRANT SELECT ON TABLE biteam.funnels_b2b_nnb_2021 TO group data_platform;
+--GRANT SELECT ON TABLE biteam.funnels_b2b_nnb_2021 TO group data_strategy;
