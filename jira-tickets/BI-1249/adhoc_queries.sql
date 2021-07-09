@@ -26,11 +26,12 @@ from lighthouse_job_titles a
 left join b2b_job_titles b on a.job_title = b.job_title
 where b.job_title is not null
 order by a.users desc
-)
+), numbers as (
 select
 (select sum(users) from jobs_without_nulls) as joined_without_nulls_sum,
-(select sum(users) from lighthouse_job_titles) as original
---select * from jobs_without_nulls
---select sum(users)
+(select sum(users) from lighthouse_job_titles) as original)
+select * from jobs_without_nulls
+;
 
+--(29622/766127)*100
 ;
