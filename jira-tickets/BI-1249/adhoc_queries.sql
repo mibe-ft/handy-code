@@ -35,3 +35,23 @@ select * from jobs_without_nulls
 
 --(29622/766127)*100
 ;
+
+select lower(job_title) job_title, position, industry, count(distinct ft_user_id) users
+, SUM(users) OVER() sum_users
+, Round((1.0 * users)/ (1.0* sum_users)*100.00, 2) percentage_of_total
+from ftlighthousedb.dim_user
+where job_title is not null
+group by 1,2,3
+order by 4 desc
+;
+
+-- calculating running total
+select lower(job_title) job_title, position, industry, count(distinct ft_user_id) users
+, SUM(users) OVER() sum_users
+, Round((1.0 * users)/ (1.0* sum_users)*100.00, 2) percentage_of_total
+, SUM(users) OVER(order by users desc rows between unbounded preceding and current row) running_total
+from ftlighthousedb.dim_user
+where job_title is not null
+group by 1,2,3
+order by 4 desc
+;
