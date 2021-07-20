@@ -56,3 +56,35 @@ where job_title is not null
 group by 1,2,3
 order by 4 desc
 ;
+
+
+	with b2b_job_titles as (
+	select lower(job_title) job_title , lower(job_type) job_type from biteam.b2b_job_titles),
+	lighthouse_job_titles as (
+	select lower(job_title) job_title, position, industry, count(distinct ft_user_id) users from ftlighthousedb.dim_user
+	where job_title is not null
+	group by 1,2,3
+	order by 4 desc
+	), jobs_without_nulls as (
+	select a.job_title
+	, a.users
+	, b.job_title as job_title_a
+	, b.job_type
+	from lighthouse_job_titles a
+	left join b2b_job_titles b on a.job_title = b.job_title
+	where b.job_title is not null
+	order by a.users desc
+	), numbers as (
+	select
+	(select count(distinct job_title) from b2b_job_titles) ,
+	(select count(distinct job_title) from lighthouse_job_titles)
+	)
+	select * from numbers
+	;
+
+select sum(users) from (
+select lower(job_title) job_title, position, industry, count(distinct ft_user_id) users from ftlighthousedb.dim_user
+where job_title is not null
+group by 1,2,3
+order by 4 desc)
+;
