@@ -86,9 +86,18 @@ select
 SELECT
 SUM(CASE WHEN job_title_a IS NULL THEN 1 ELSE 0 END) null_count
 , SUM(CASE WHEN job_title_a IS NOT NULL THEN 1 ELSE 0 END) non_null_count
-, SUM(CASE WHEN job_title_a IS NULL THEN users ELSE 0 END)
-, SUM(CASE WHEN job_title_a IS NOT NULL THEN users ELSE 0 END)
+, SUM(CASE WHEN job_title_a IS NULL THEN users ELSE 0 END) sum_users_null
+, SUM(CASE WHEN job_title_a IS NOT NULL THEN users ELSE 0 END) sum_users_not_null
+, SUM(users) total_users
+, ((1.0*sum_users_null)/(1.0*total_users))*100.0
+, ((1.0*sum_users_not_null)/(1.0*total_users))*100.0
 FROM joined_titles
+--SELECT
+--'Null Count: '||SUM(CASE WHEN job_title_a IS NULL THEN 1 ELSE 0 END)||' Sum of users: '||SUM(CASE WHEN job_title_a IS NULL THEN users ELSE 0 END) null_count
+--, 'Non-null Count: '||SUM(CASE WHEN job_title_a IS NOT NULL THEN 1 ELSE 0 END)||' Sum of users: '||SUM(CASE WHEN job_title_a IS NOT NULL THEN users ELSE 0 END) non_null_count
+----, SUM(CASE WHEN job_title_a IS NULL THEN users ELSE 0 END)
+----, SUM(CASE WHEN job_title_a IS NOT NULL THEN users ELSE 0 END)
+--FROM joined_titles
 ;
 
 select sum(users) from (
