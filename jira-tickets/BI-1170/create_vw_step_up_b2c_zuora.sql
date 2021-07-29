@@ -57,6 +57,15 @@ WITH user_facts AS (
 			 , to_offer_rrp
 			 , to_offer_percent_rrp
 			 , to_cancelreason_dkey
+			 , email
+			 , to_offer_main_product_name
+			 , to_offer_main_product_code
+			 , title
+			 , first_name
+			 , last_name
+			 , country_code
+			 , campaigns_region
+			 , industry_name
 			 , ROW_NUMBER () OVER(PARTITION BY ft_user_id, arrangement_id_dd ORDER BY arrangementevent_dtm DESC) AS row_num
 		FROM
 			dwabstraction.dn_arrangementevent_all daa
@@ -113,7 +122,16 @@ WITH user_facts AS (
 			, 100-COALESCE(to_offer_percent_rrp, 9999)		AS current_discount
 			, bsu.to_currency_code							AS currency_code
 			, bsu.to_currency_name							AS currency_name
-			, bsu.b2c_marketing_region						AS region
+			, bsu.b2c_marketing_region						AS marketing_region
+			, bsu.email                                     AS email_address
+			, bsu.to_offer_main_product_name                AS subs_product
+			, bsu.to_offer_main_product_code                AS product
+			, bsu.title
+			, bsu.first_name                                AS firstname
+			, bsu.last_name                                 AS surname
+			, bsu.country_code                              AS current_country_name
+			, bsu.campaigns_region                          AS campaign_region
+			, bsu.industry_name			                    AS industry
 			, ROW_NUMBER () OVER(PARTITION BY uf.ft_user_id, bsu.arrangement_id_dd ORDER BY bsu.arrangementevent_dtm DESC) AS row_num
 
 		FROM user_facts uf
@@ -130,11 +148,12 @@ WITH user_facts AS (
           f.ft_user_id
         , f.arrangement_id_dd AS arrangement_id
         , f.date_
+        , INITCAP(TO_CHAR(date_, 'month')) AS step_up_month
         , LOWER(f.print_or_digital) AS print_or_digital
         , f.to_priceinctax AS current_price
         , f.to_offer_name AS current_offer
         , f.to_offer_id AS current_offer_id
-        , f.region
+        , f.marketing_region
         , f.currency_code
         , f.product_name
         , f.product_name_adjusted
@@ -158,6 +177,16 @@ WITH user_facts AS (
         			THEN DATEDIFF(DAYS, CURRENT_DATE, DATEADD(YEAR, ABS(DATEDIFF(YEAR, CURRENT_DATE, f.anniversary_date))+1, f.anniversary_date)-1)
         	   ELSE DATEDIFF(DAYS, CURRENT_DATE, DATEADD(YEAR, ABS(DATEDIFF(YEAR, CURRENT_DATE, f.anniversary_date)), f.anniversary_date)-1)
         	   END AS days_until_anniversary
+        , f.email_address
+		, f.subs_product
+		, f.product
+		, f.title
+		, f.firstname
+		, f.surname
+		, f.current_country_name
+		, f.campaign_region
+		, f.industry
+		, f.product_term_adjusted AS subs_term
     FROM final_tbl f
     LEFT JOIN biteam.step_up_matrix m ON f.product_name_adjusted::CHARACTER VARYING = m.product_name::CHARACTER VARYING
     AND f.product_term_adjusted::CHARACTER VARYING = m.product_term::CHARACTER VARYING
