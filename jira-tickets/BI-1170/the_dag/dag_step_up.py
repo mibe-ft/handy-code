@@ -1,12 +1,12 @@
 # DAG steps
 # DAG Name rs_to_s3_SOMETHING_HERE #TODO: CHOOSE NAME
 # Step 01: Run checks for latest data in dependencies
-# Step 02: Create temp table for control group
+# Step 02: Create temp table for control group in stg_control ...
         # make sure you save the control group somewhere
 # Step 03: Load to staging table (biteam.stg_step_up_b2c_zuora_daily)- Union temp control group onto view - step_up_zuora - truncate staging table first
 # Step 04: Run checks on data quality of view, if pass then continue, if false then stop
 # Step 05: If checks pass load daily step up data into biteam.step_up_b2c_zuora_daily - should be an INSERT statement (or append)
-    # truncate biteam.stg_step_up_b2c_zuora_daily
+    # truncate biteam.stg_step_up_b2c_zuora_daily and control group_staging
 # Step 06: Pass data from actual table to s3 bucket to be picked up by membership/seslav
 
 from datetime import datetime
