@@ -1,12 +1,26 @@
-WITH checks_ AS(
-SELECT CASE WHEN MAX(DATE(dw_inserted_date)) = DATE(CURRENT_DATE) THEN 1 ELSE 0 END AS check_
-FROM dwabstraction.dn_arrangementevent_all
+WITH check_01 AS (
+	SELECT
+		  MAX(userstatus_date_dkey) = REPLACE(CURRENT_DATE, '-', '')::INTEGER AS success
+		, 'check 01: todays data for dwabstraction.fact_userstatus - VIEW' AS assert
+	FROM dwabstraction.fact_userstatus
 
-UNION ALL
+), check_02 AS (
+	SELECT
+		   REPLACE(DATE(MAX(dw_updated_date)), '-', '')::INTEGER = REPLACE(CURRENT_DATE, '-', '')::INTEGER AS success
+		 , 'check 02: todays data for dwabstraction.dn_arrangementevent_all - TABLE' AS assert
+	FROM dwabstraction.dn_arrangementevent_all
 
-SELECT CASE WHEN MAX(DATE(dw_inserted_date)) = DATE(CURRENT_DATE) THEN 1 ELSE 0 END AS check_
-FROM dwabstraction.fact_userstatus
+), all_checks AS (
+	SELECT * FROM check_01
+
+	UNION ALL
+
+	SELECT * FROM check_02
+
+	ORDER BY assert
 )
 
-SELECT MIN(check_)
-FROM checks_
+-- SELECT * FROM all_checks -- Uncomment if you want to know which checks have failed/completed
+-- If all checks are complete,  the expected result should be 1 -- this is to be used with the SqlSensorOperator()
+SELECT MIN(success::INTEGER)
+FROM all_checks
