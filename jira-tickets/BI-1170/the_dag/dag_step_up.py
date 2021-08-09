@@ -8,6 +8,7 @@
 # Step 05: If checks pass load daily step up data into biteam.step_up_b2c_zuora_daily - should be an INSERT statement (or append)
     # truncate biteam.stg_step_up_b2c_zuora_daily and control group_staging
 # Step 06: Pass data from actual table to s3 bucket to be picked up by membership/seslav
+# TRUNCATE ALL TABLES YOU DONT NEED AT THE END INSTEAD OF BETWEEN STEPS -SAFE OPTION
 
 from datetime import datetime
 
