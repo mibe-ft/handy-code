@@ -82,10 +82,10 @@ WHERE pr <= 0.25
 WITH step_01 AS (
     SELECT
     	  *
-        , CASE WHEN is_eligible_for_step_up = 1 THEN 0 ELSE NULL END AS is_control
+        , 0 AS is_control
     FROM biteam.vw_step_up_b2c_zuora vsubcz
     WHERE NOT EXISTS (SELECT ft_user_id FROM #control_group c WHERE vsubcz.ft_user_id = c.ft_user_id)
-        AND days_until_anniversary = 30
+        --AND days_until_anniversary = 30
 
     UNION ALL
 
