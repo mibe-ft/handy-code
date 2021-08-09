@@ -105,6 +105,15 @@ WITH user_facts AS (
 				   WHEN bsu.to_arrangementproduct_name = 'Standard FT.com' THEN 'standard'
 	   			   WHEN bsu.to_arrangementproduct_name = 'Premium FT.com' THEN 'premium'
 	   			   WHEN bsu.to_arrangementproduct_name = 'e-Paper' THEN 'e-paper'
+	   			   WHEN bsu.to_arrangementproduct_name = 'Newspaper - 5 weekdays' THEN 'print - monday - friday'
+	   			   WHEN bsu.to_arrangementproduct_name = 'Newspaper - 6 Days a week' THEN 'print - monday - saturday'
+	   			   WHEN bsu.to_arrangementproduct_name = 'Newspaper - Weekend Only' THEN 'print - weekend'
+	   			   WHEN bsu.to_arrangementproduct_name = 'Premium FT.com Bundle' THEN 'premium bundle'
+	   			   WHEN bsu.to_arrangementproduct_name = 'Premium FT.com with Newspaper - 5 weekdays' THEN 'bundle premium - monday - friday'
+	   			   WHEN bsu.to_arrangementproduct_name = 'Premium FT.com with Newspaper - 6 Days a week' THEN 'bundle premium - monday - saturday'
+	   			   WHEN bsu.to_arrangementproduct_name = 'Premium FT.com with Newspaper - Weekend Only' THEN 'bundle premium - weekend'
+	   			   WHEN bsu.to_arrangementproduct_name = 'Standard FT.com with Newspaper - 6 Days a week' THEN 'bundle standard - monday to saturday'
+	   			   WHEN bsu.to_arrangementproduct_name = 'Standard FT.com with Newspaper - Weekend Only' THEN 'bundle standard - weekend'
 	   			   ELSE bsu.to_arrangementproduct_name END AS product_name_adjusted
 			, bsu.to_arrangementproduct_type 				AS print_or_digital -- print or digital or bundle
 			, bsu.to_arrangementstatus_name 				AS status_name-- e.g. Active, Cancelled, Pending, Payment Failure
@@ -199,5 +208,8 @@ WITH user_facts AS (
 
 SELECT *
 FROM final_tbl_2
-WHERE product_name_adjusted IN ('standard' , 'premium', 'e-paper') -- standard plus to be added at later date
+WHERE product_name_adjusted IN ('standard' , 'premium', 'e-paper', 'print - monday - friday'
+                                , 'print - monday - saturday', 'print - weekend', 'premium bundle'
+                                , 'bundle premium - monday - friday', 'bundle premium - monday - saturday'
+                                , 'bundle premium - weekend', 'bundle standard - monday to saturday', 'bundle standard - weekend') -- standard plus to be added at later date
 ;
