@@ -191,5 +191,14 @@ INSERT INTO biteam.step_up_matrix VALUES
     ('GBP', 0.01, 167.91, 176.75, '-1', -1, '3f4a506c-c519-04fd-59e3-b9d71888ecea', 'quarterly', 'bundle standard - monday to saturday','2021-01-01', '2021-12-31'),
     ('GBP', 0.01, 55.974, 58.92, '-1', -1, '3f4a506c-c519-04fd-59e3-b9d71888ecea', 'monthly', 'bundle standard - monday to saturday','2021-01-01', '2021-12-31'),
     ('GBP', 0.01, 342, 360, '-1', -1, 'f4d91131-3d9c-045b-47fc-7b4c52ba0ced', 'annual', 'bundle standard - weekend','2021-01-01', '2021-12-31'),
-    ('GBP', 0.01, 85.5, 90, '-1', -1, 'f4d91131-3d9c-045b-47fc-7b4c52ba0ced', 'quarterly', 'bundle standard - weekend','2021-01-01', '2021-12-31')
+    ('GBP', 0.01, 85.5, 90, '-1', -1, 'f4d91131-3d9c-045b-47fc-7b4c52ba0ced', 'quarterly', 'bundle standard - weekend','2021-01-01', '2021-12-31'),
+    ('GBP', 0.01, 716.3, 754, '-1', -1, 'dd3398d2-3db6-4cfb-d92b-bc355f4e8137', 'annual', 'bundle premium - monday - saturday','2021-01-01', '2021-12-31'),
+    ('GBP', 0.01, 179.08, 188.5, '-1', -1, 'dd3398d2-3db6-4cfb-d92b-bc355f4e8137', 'quarterly', 'bundle premium - monday - saturday','2021-01-01', '2021-12-31'),
+    ('GBP', 0.01, 59.69, 62.83, '-1', -1, 'dd3398d2-3db6-4cfb-d92b-bc355f4e8137', 'monthly', 'bundle premium - monday - saturday','2021-01-01', '2021-12-31'),
+    ('GBP', 0.01, 641.25, 675, '-1', -1, 'a6196b52-2867-f3e7-b295-7e68786e1de8', 'annual', 'bundle premium - monday - friday','2021-01-01', '2021-12-31'),
+    ('GBP', 0.01, 160.31, 168.75, '-1', -1, 'a6196b52-2867-f3e7-b295-7e68786e1de8', 'quarterly', 'bundle premium - monday - friday','2021-01-01', '2021-12-31'),
+    ('GBP', 0.01, 53.44, 56.25, '-1', -1, 'a6196b52-2867-f3e7-b295-7e68786e1de8', 'monthly', 'bundle premium - monday - friday','2021-01-01', '2021-12-31'),
+    ('GBP', 0.01, 631.77, 665.02, '-1', -1, 'bb616920-4f40-ec2f-a476-7abe0d3af4a0', '', 'bundle premium - weekend','2021-01-01', '2021-12-31'),
+    ('GBP', 0.01, 157.99, 166.3, '-1', -1, 'bb616920-4f40-ec2f-a476-7abe0d3af4a0', '', 'bundle premium - weekend','2021-01-01', '2021-12-31'),
+    ('GBP', 0.01, 52.65, 55.42, '-1', -1, 'bb616920-4f40-ec2f-a476-7abe0d3af4a0', '', 'bundle premium - weekend','2021-01-01', '2021-12-31')
 ;
