@@ -1,3 +1,5 @@
+-- Only creates full table for 30 days until end of term
+-- TODO need to union to get all data so that includes all days till end of term
 BEGIN;
 -- Step 1: Create table for comms logic
 DROP TABLE IF EXISTS #step_up_comms_logic;
@@ -28,27 +30,38 @@ INSERT INTO #step_up_comms_logic VALUES
 DROP TABLE IF EXISTS #control_group;
 CREATE TABLE #control_group AS (
 SELECT
-	  ft_user_id
-	, arrangement_id
-	, date_
-	, print_or_digital
-	, current_price
-	, current_offer
-	, current_offer_id
-	, region
-	, currency_code
-	, product_name
-	, product_name_adjusted
-	, product_term_adjusted
-	, step_up_price
-	, step_up_offer_id
-	, step_up_percent_discount
-	, is_standard_plus
-	, is_cancelled
-	, has_cancel_request
-	, is_renewal
-	, is_eligible_for_step_up
-	, days_until_anniversary
+      ft_user_id
+    , arrangement_id
+    , date_
+    , step_up_month
+    , print_or_digital
+    , current_price
+    , current_offer
+    , current_offer_id
+    , marketing_region
+    , currency_code
+    , product_name
+    , product_name_adjusted
+    , product_term_adjusted
+    , step_up_price
+    , step_up_offer_id
+    , step_up_percent_discount
+    , is_standard_plus
+    , is_cancelled
+    , has_cancel_request
+    , is_renewal
+    , is_eligible_for_step_up
+    , days_until_anniversary
+    , email_address
+    , subs_product
+    , product
+    , title
+    , firstname
+    , surname
+    , current_country_name
+    , campaign_region
+    , industry
+    , subs_term
 	, 1 AS is_control
 FROM
     (
@@ -81,28 +94,39 @@ WITH step_01 AS (
 
 ), step_02 AS (
 	SELECT
-		 ft_user_id
-		, arrangement_id
-		, date_
-		, print_or_digital
-		, current_price
-		, current_offer
-		, current_offer_id
-		, region
-		, currency_code
-		, product_name
-		, product_name_adjusted
-		, product_term_adjusted
-		, step_up_price
-		, step_up_offer_id
-		, step_up_percent_discount
-		, is_standard_plus
-		, is_cancelled
-		, has_cancel_request
-		, is_renewal
-		, is_eligible_for_step_up
-		, days_until_anniversary
-		, is_control
+          ft_user_id
+        , arrangement_id
+        , date_
+        , step_up_month
+        , print_or_digital
+        , current_price
+        , current_offer
+        , current_offer_id
+        , marketing_region
+        , currency_code
+        , product_name
+        , product_name_adjusted
+        , product_term_adjusted
+        , step_up_price
+        , step_up_offer_id
+        , step_up_percent_discount
+        , is_standard_plus
+        , is_cancelled
+        , has_cancel_request
+        , is_renewal
+        , is_eligible_for_step_up
+        , days_until_anniversary
+        , email_address
+        , subs_product
+        , product
+        , title
+        , firstname
+        , surname
+        , current_country_name
+        , campaign_region
+        , industry
+        , subs_term
+        , is_control
 		, CASE WHEN is_control = 0 AND is_eligible_for_step_up = 1 THEN 'step up'
 			   WHEN is_control = 1 AND is_eligible_for_step_up = 1 THEN 'step up - control'
 			   WHEN is_control IS NULL AND is_renewal = 1 AND is_eligible_for_step_up = 0 THEN 'renewal'
@@ -129,32 +153,43 @@ WITH step_01 AS (
 )
 
 SELECT
-	  ft_user_id
-	, arrangement_id
-	, date_
-	, print_or_digital
-	, current_price
-	, current_offer
-	, current_offer_id
-	, region
-	, currency_code
-	, product_name
-	, product_name_adjusted
-	, product_term_adjusted
-	, step_up_price
-	, step_up_offer_id
-	, step_up_percent_discount
-	, is_standard_plus
-	, is_cancelled
-	, has_cancel_request
-	, is_renewal
-	, is_eligible_for_step_up
-	, days_until_anniversary
-	, CASE WHEN is_control IS NULL THEN 0 ELSE is_control END AS is_control
-	, renewal_step_up
-	, email_id
-	, email_type_description
-	, CASE WHEN send_comms IS NULL THEN 0 ELSE send_comms END AS send_comms
+          ft_user_id
+        , arrangement_id
+        , date_
+        , step_up_month
+        , print_or_digital
+        , current_price
+        , current_offer
+        , current_offer_id
+        , marketing_region
+        , currency_code
+        , product_name
+        , product_name_adjusted
+        , product_term_adjusted
+        , step_up_price
+        , step_up_offer_id
+        , step_up_percent_discount
+        , is_standard_plus
+        , is_cancelled
+        , has_cancel_request
+        , is_renewal
+        , is_eligible_for_step_up
+        , days_until_anniversary
+        , email_address
+        , subs_product
+        , product
+        , title
+        , firstname
+        , surname
+        , current_country_name
+        , campaign_region
+        , industry
+        , subs_term
+	    , CASE WHEN is_control IS NULL THEN 0 ELSE is_control END AS is_control
+	    , renewal_step_up
+	    , email_id
+	    , email_type_description
+	    , CASE WHEN send_comms IS NULL THEN 0 ELSE send_comms END AS send_comms
 FROM step_03
 ;
 END;
