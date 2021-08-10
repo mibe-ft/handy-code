@@ -129,7 +129,7 @@ WITH step_01 AS (
         , is_control
 		, CASE WHEN is_control = 0 AND is_eligible_for_step_up = 1 THEN 'step up'
 			   WHEN is_control = 1 AND is_eligible_for_step_up = 1 THEN 'step up - control'
-			   WHEN is_control IS NULL AND is_renewal = 1 AND is_eligible_for_step_up = 0 THEN 'renewal'
+			   WHEN is_renewal = 1 THEN 'renewal'
 			   WHEN is_cancelled OR has_cancel_request THEN 'cancelled or cancel request'
 			   END AS renewal_step_up
 	FROM step_01
@@ -151,8 +151,9 @@ WITH step_01 AS (
 										AND d.renewal_step_up = s.renewal_step_up
 									 	AND d.is_control = s.is_control
 )
-
+-- TODO Add date, when data gets added it should add the timestamp
 SELECT
+        -- CURRENT_TIMESTAMP AS timestamp
           ft_user_id
         , arrangement_id
         , date_
