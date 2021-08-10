@@ -153,8 +153,8 @@ WITH step_01 AS (
 )
 -- TODO Add date, when data gets added it should add the timestamp
 SELECT
-        -- CURRENT_TIMESTAMP AS timestamp
-          ft_user_id
+          CURRENT_TIMESTAMP AS timestamp_
+        , ft_user_id
         , arrangement_id
         , date_
         , step_up_month
