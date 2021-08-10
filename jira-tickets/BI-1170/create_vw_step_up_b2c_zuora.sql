@@ -108,7 +108,6 @@ WITH user_facts AS (
 	   			   WHEN bsu.to_arrangementproduct_name = 'Newspaper - 5 weekdays' THEN 'print - monday - friday'
 	   			   WHEN bsu.to_arrangementproduct_name = 'Newspaper - 6 Days a week' THEN 'print - monday - saturday'
 	   			   WHEN bsu.to_arrangementproduct_name = 'Newspaper - Weekend Only' THEN 'print - weekend'
-	   			   WHEN bsu.to_arrangementproduct_name = 'Premium FT.com Bundle' THEN 'premium bundle'
 	   			   WHEN bsu.to_arrangementproduct_name = 'Premium FT.com with Newspaper - 5 weekdays' THEN 'bundle premium - monday - friday'
 	   			   WHEN bsu.to_arrangementproduct_name = 'Premium FT.com with Newspaper - 6 Days a week' THEN 'bundle premium - monday - saturday'
 	   			   WHEN bsu.to_arrangementproduct_name = 'Premium FT.com with Newspaper - Weekend Only' THEN 'bundle premium - weekend'
