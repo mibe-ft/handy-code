@@ -79,6 +79,7 @@ WHERE pr <= 0.25
     -- Combine controls with those to be stepped up
     -- Join comms logic
     -- Output is list of renewals, step ups and controls with email/comms logic
+INSERT INTO biteam.stg_step_up_b2c_zuora_daily
 WITH step_01 AS (
     SELECT
     	  *
@@ -153,7 +154,7 @@ WITH step_01 AS (
 )
 -- TODO Add date, when data gets added it should add the timestamp
 SELECT
-          CURRENT_TIMESTAMP AS timestamp_
+          CURRENT_TIMESTAMP AS inserted_datetime
         , ft_user_id
         , arrangement_id
         , date_
