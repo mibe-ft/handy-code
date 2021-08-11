@@ -183,6 +183,8 @@ WITH user_facts AS (
         , CASE WHEN current_price = step_up_price OR is_cancelled = 1 OR has_cancel_request = 1 THEN 0 ELSE 1 END AS is_eligible_for_step_up
         , CASE WHEN DATEDIFF(DAYS, CURRENT_DATE, DATEADD(YEAR, ABS(DATEDIFF(YEAR, CURRENT_DATE, f.anniversary_date)), f.anniversary_date)-1) < 0
         			THEN DATEDIFF(DAYS, CURRENT_DATE, DATEADD(YEAR, ABS(DATEDIFF(YEAR, CURRENT_DATE, f.anniversary_date))+1, f.anniversary_date)-1)
+        	   WHEN DATEDIFF(DAYS, CURRENT_DATE, DATEADD(YEAR, ABS(DATEDIFF(YEAR, CURRENT_DATE, f.anniversary_date)), f.anniversary_date)-1) > 366
+        	        THEN DATEDIFF(DAYS, CURRENT_DATE, CAST(EXTRACT(YEAR FROM CURRENT_DATE )+1||'-'||EXTRACT(MONTH FROM f.anniversary_date)||'-'||EXTRACT(DAY FROM f.anniversary_date) AS TIMESTAMP)-1)
         	   ELSE DATEDIFF(DAYS, CURRENT_DATE, DATEADD(YEAR, ABS(DATEDIFF(YEAR, CURRENT_DATE, f.anniversary_date)), f.anniversary_date)-1)
         	   END AS days_until_anniversary
         , f.email_address
