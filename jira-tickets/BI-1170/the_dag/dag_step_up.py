@@ -1,14 +1,11 @@
 # DAG steps
-# DAG Name rs_to_s3_SOMETHING_HERE #TODO: CHOOSE NAME
+
 # Step 01: Run checks for latest data in dependencies
-# Step 02: Create temp table for control group in stg_control ...
-        # make sure you save the control group somewhere
-# Step 03: Load to staging table (biteam.stg_step_up_b2c_zuora_daily)- Union temp control group onto view - step_up_zuora - truncate staging table first
-# Step 04: Run checks on data quality of view, if pass then continue, if false then stop
-# Step 05: If checks pass load daily step up data into biteam.step_up_b2c_zuora_daily - should be an INSERT statement (or append)
-    # truncate biteam.stg_step_up_b2c_zuora_daily and control group_staging
-# Step 06: Pass data from actual table to s3 bucket to be picked up by membership/seslav
-# TRUNCATE ALL TABLES YOU DONT NEED AT THE END INSTEAD OF BETWEEN STEPS -SAFE OPTION
+# Step 02: Create daily step up table and load into staging - biteam.stg_step_up_b2c_zuora_daily
+# Step 03: Run checks on data quality of step 02, if pass then continue, if false then stop
+# Step 04: Insert data from stg into actual table biteam.step_up_b2c_zuora_daily
+# Step 05: Pass data from actual table to s3 bucket to be picked up by membership/seslav
+# Step 06: Truncate staging tables
 
 from datetime import datetime
 
@@ -31,118 +28,95 @@ default_args = DAGArgumentsBuilder.build(
     retries=0
 )
 
-with FTDAG(dag_id='rs_to_bq_bilayer_rfv_weekly', #TODO:change name
+with FTDAG(dag_id='rs_to_s3_step_up_b2c_zuora_daily',
            max_active_runs=1,
-           schedule_interval='10 6 * * MON', #TODO: Change schedule
-           tags=['bilayer', 'rs_to_bq', 'rfv_weekly'], #TODO: Change tags
+           schedule_interval='0 9 * * *',
+           tags=['step_up'],
            default_args=default_args,
            catchup=False) as dag:
 
     sql_file_reader = SqlFileReader(script_path=__file__)
-    # create dictionary with files #TODO: change files
-    sql_files = {"t01": "sql/t01_previous_runs_check.sql.j2",
-                 "t02": "sql/t02_rs_set_job_in_progress.sql.j2",
-                 "t03": "sql/t03_select_rfv_weekly_records.sql.j2",
-                 "t04": "sql/t04_rs_select_rfv_weekly.sql.j2",
-                 "t06": "sql/t06_bq_merge_rfv_weekly.sql.j2",
-                 "t07": "sql/t07_rs_set_job_to_complete.sql.j2"}
-    # Step 1. RS: Check that the previous run completed successfully
+    # Create dictionary with files
+    sql_files = {"t01": "sql/t01_check_dependencies.sql.j2",
+                 "t02": "sql/t02_create_daily_step_up_table.sql.j2",
+                 "t03": "sql/t03_step_up_stg_table_quality_checks.sql",
+                 "t04": "sql/t04_load_data_from_stg_into_table.sql.j2",
+                 "t05": "sql/t05_rs_to_s3.sql.j2",
+                 "t06": "sql/t06_truncate_table.sql.j2"
+                 }
 
+    # Step 01: Run checks for latest data in dependencies
     sql_t01 = sql_file_reader.render_query_from_template(sql_files["t01"])
 
-    check_previous_run_completed = SqlSensorOperator(
-        task_id="check_previous_run_completed",
+    t01_check_dependencies = SqlSensorOperator(
+        task_id="t01_check_dependencies",
         db_conn_id=dag.team_params.aws.connections.redshift.main.default,
         db_type=DatabaseType.REDSHIFT,
         sql_query=sql_t01,
         expected_result=[(1,)],
         poke_interval=120,  # 2 minutes
-        timeout=1800  # mark failed after 30 minutes
+        timeout=180  # mark failed after 3 minutes
     )
 
+    # Step 02: Create daily step up table and load into staging - biteam.stg_step_up_b2c_zuora_daily
     sql_t02 = sql_file_reader.render_query_from_template(sql_files["t02"])
-    # Step 2. RS: Set the job to in_progress.
-    rs_set_job_in_progress = RedshiftOperator(
-        task_id="rs_set_job_in_progress",
+
+    t02_rs_load_data_into_staging = RedshiftOperator(
+        task_id="t02_rs_load_data_into_staging",
         redshift_conn_id=dag.team_params.aws.connections.redshift.main.default,
         sql=sql_t02
 
     )
-    # Step 3. RS: Select records to be loaded.
+
+    # Step 03: Run checks on data quality of step 02, if pass then continue, if false then stop
     sql_t03 = sql_file_reader.render_query_from_template(sql_files["t03"])
-    select_rfv_weekly_records = RedshiftOperator(
-        task_id='select_rfv_weekly_records',
-        sql=sql_t03,
-        redshift_conn_id=dag.team_params.aws.connections.redshift.main.default
+
+    t03_check_stg_table_data_quality = SqlSensorOperator(
+        task_id="t03_check_stg_table_data_quality",
+        db_conn_id=dag.team_params.aws.connections.redshift.main.default,
+        db_type=DatabaseType.REDSHIFT,
+        sql_query=sql_t03,
+        expected_result=[(1,)],
+        poke_interval=120,  # 2 minutes
+        timeout=180  # mark failed after 3 minutes
     )
 
-    # Step 4.  Unload the records from the visits table to S3
+    # Step 04: Insert data from stg into actual table biteam.step_up_b2c_zuora_daily
     sql_t04 = sql_file_reader.render_query_from_template(sql_files["t04"])
 
-    unload_rfv_weekly_to_s3 = RedshiftToS3Operator(
-        task_id="unload_rfv_weekly_to_s3",
-        sql_query=sql_t04,
+    t04_rs_load_data_from_staging_into_tbl = RedshiftOperator(
+        task_id="t04_rs_load_data_from_staging_into_tbl",
+        redshift_conn_id=dag.team_params.aws.connections.redshift.main.default,
+        sql=sql_t04
+
+    )
+    # Step 05: Pass data from actual table to s3 bucket to be picked up by membership/seslav
+    # TODO replace with details given by seslav
+    sql_t05 = sql_file_reader.render_query_from_template(sql_files["t05"])
+
+    t05_unload_step_up_daily_to_s3 = RedshiftToS3Operator(
+        task_id="unload_step_up_daily_to_s3",
+        sql_query=sql_t05,
         redshift_conn_id=dag.team_params.aws.connections.redshift.main.default,
         unload_options="delimiter '|' allowoverwrite parallel off addquotes"
     )
 
-    # Step 5. Load table from S3 to Big Query (BI_Layer_integration)
-    load_s3_rfv_weekly_to_bq = S3ToBigQueryOperator(
-        task_id="load_s3_rfv_weekly_to_bq",
-        s3_input=StoragePath(task_id="unload_rfv_weekly_to_s3"),
-        big_query_conn_id=dag.team_params.google.connections.main.default,
-        aws_conn_id=dag.team_params.aws.connections.iam.main.default,
-        project=dag.team_params.google.projects.ft_bi_team.default,
-        dataset=dag.team_params.google.projects.datasets.bi_layer_integration.default,
-        table="rfv_weekly_stg",
-        skip_leading_rows=0,
-        field_delimiter=FileDelimiter.PIPE.value,
-        unload_options="delimiter '|' allowoverwrite parallel off addquotes",
-        write_disposition=WriteDisposition.WRITE_TRUNCATE.value
+    # Step 06: Truncate staging tables
+    sql_t06 = sql_file_reader.render_query_from_template(sql_files["t06"])
+
+    t06_truncate_stg = RedshiftOperator(
+        task_id="t06_truncate_stg",
+        redshift_conn_id=dag.team_params.aws.connections.redshift.main.default,
+        sql=sql_t06
+
     )
 
-    # Step 6.  Merge rfv_weekly staging into the main table
-    bq_rfv_weekly = f'{dag.team_params.google.projects.ft_bi_team.default}'\
-                    f'.{dag.team_params.google.projects.datasets.bi_layer_integration.default}'\
-                    f'.rfv_weekly'
-    bq_rfv_weekly_stg = f'{dag.team_params.google.projects.ft_bi_team.default}'\
-                        f'.{dag.team_params.google.projects.datasets.bi_layer_integration.default}'\
-                        f'.rfv_weekly_stg'
-    sql_t06 = sql_file_reader.render_query_from_template(
-        template_file=sql_files["t06"],
-        params={'rfv_weekly_del':
-                      bq_rfv_weekly,
-                  'rfv_weekly_stg_0':
-                      bq_rfv_weekly_stg,
-                  'rfv_weekly_stg_1':
-                      bq_rfv_weekly_stg,
-                  'rfv_weekly_ins':
-                      bq_rfv_weekly,
-                  'rfv_weekly_stg_2':
-                      bq_rfv_weekly_stg
-                }
-    )
-
-    bq_merge_rfv_weekly_records = BigQueryOperator(
-        task_id='bq_merge_rfv_weekly_records',
-        use_legacy_sql=False,
-        sql=sql_t06,
-        bigquery_conn_id=dag.team_params.google.connections.main.default
-    )
-
-    # Step 7. Set the job to complete
-    sql_t07 = sql_file_reader.render_query_from_template(sql_files["t07"])
-    rs_set_job_complete = RedshiftOperator(
-        task_id="rs_set_job_complete",
-        sql=sql_t07,
-        redshift_conn_id=dag.team_params.aws.connections.redshift.main.default
-    )
+    # TODO add step to transfer data into bigquery
 
     # Order Tasks
-    check_previous_run_completed >> \
-    rs_set_job_in_progress >> \
-    select_rfv_weekly_records >> \
-    unload_rfv_weekly_to_s3 >> \
-    load_s3_rfv_weekly_to_bq >> \
-    bq_merge_rfv_weekly_records >> \
-    rs_set_job_complete
+    t01_check_dependencies >> \
+    t02_rs_load_data_into_staging >> \
+    t03_check_stg_table_data_quality >> \
+    t04_rs_load_data_from_staging_into_tbl >> \
+    t05_unload_step_up_daily_to_s3 >> \
+    t06_truncate_stg
