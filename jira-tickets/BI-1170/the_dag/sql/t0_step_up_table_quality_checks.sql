@@ -2,9 +2,9 @@
 * this must be performed after all transformations are done but BEFORE data is transferred to AWS S3 bucket
 * cols: success, assert_name, records
 	staging checks before move to actual table
--- 1: days_until_anniversary 0 and 366 xx
--- 2: CHECK DUPES by arrangement - should be no more 1 count per arrangement id xx
--- 3: control is 25% of total xx
+-- 1: days_until_anniversary 0 and 366
+-- 2: CHECK DUPES by arrangement - should be no more 1 count per arrangement id
+-- 3: control is 25% of total
 -- 4: check control group does not overlap with non controls
 -- 5: cannot be is_cancelled and eligible for step up
 -- 6: cannot be is_renewal and eligible for step up
@@ -51,6 +51,7 @@ WITH check_01 AS (
 				, ROUND(100.0 * SUM(CASE WHEN is_control IS TRUE THEN 1 END)/SUM(CASE WHEN is_eligible_for_step_up IS TRUE THEN 1 END))IN (25,26) AS check_
 			FROM
 				biteam.stg_step_up_b2c_zuora_daily
+			WHERE days_until_anniversary = 30
 			GROUP BY 1
 			ORDER BY check_ DESC
 			)
