@@ -1,0 +1,41 @@
+SELECT
+	  inserted_datetime
+	, REPLACE(ft_user_id, '"', '""') AS ft_user_id
+	, arrangement_id
+	, date_
+	, REPLACE(step_up_month, '"', '""') AS step_up_month
+	, REPLACE(print_or_digital , '"', '""') AS print_or_digital
+	, current_price
+	, REPLACE(current_offer, '"', '""') AS current_offer
+	, REPLACE(current_offer_id , '"', '""') AS current_offer_id
+	, REPLACE(marketing_region, '"', '""') AS marketing_region
+	, REPLACE(currency_code , '"', '""') AS currency_code
+	, REPLACE(product_name, '"', '""') AS product_name
+	, REPLACE(product_name_adjusted , '"', '""') AS product_name_adjusted
+	, REPLACE(product_term_adjusted, '"', '""') AS product_term_adjusted
+	, step_up_price
+	, REPLACE(step_up_offer_id , '"', '""') AS step_up_offer_id
+	, step_up_percent_discount
+	, is_standard_plus
+	, is_cancelled
+	, has_cancel_request
+	, is_renewal
+	, is_eligible_for_step_up
+	, days_until_anniversary
+	, REPLACE(email_address, '"', '""') AS email_address
+	, REPLACE(subs_product, '"', '""') AS subs_product
+	, REPLACE(product, '"', '""') AS product
+	, REPLACE(title, '"', '""') AS title
+	, REPLACE(firstname, '"', '""') AS firstname
+	, REPLACE(surname, '"', '""') AS surname
+	, REPLACE(current_country_name, '"', '""') AS current_country_name
+	, REPLACE(campaign_region, '"', '""') AS campaign_region
+	, REPLACE(industry, '"', '""') AS industry
+	, REPLACE(subs_term, '"', '""') AS subs_term
+	, is_control
+	, REPLACE(renewal_step_up, '"', '""') AS renewal_step_up
+	, REPLACE(email_id, '"', '""') AS email_id
+	, REPLACE(email_type_description, '"', '""') AS email_type_description
+	, send_comms
+FROM biteam.step_up_b2c_zuora_daily
+;
