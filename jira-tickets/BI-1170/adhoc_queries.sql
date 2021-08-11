@@ -499,3 +499,14 @@ WHERE pr <= 0.25
 -- these are the products with two step up offers
 select * from prod.biteam.vw_step_up_b2c_zuora vsubcz
 where arrangement_id in (137271, 43334, 50619, 491841, 485684)
+
+-- anniversary dates that exists far far in the future
+select * from dwabstraction.dn_arrangementevent_all daa
+where arrangement_id_dd in (6815028
+,6765479
+,6701043
+,6694144
+,6915344
+,6744022
+,7006450 )
+;
