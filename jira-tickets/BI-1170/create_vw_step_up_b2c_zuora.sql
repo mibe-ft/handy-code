@@ -14,7 +14,7 @@ WITH user_facts AS (
 	FROM
 		dwabstraction.fact_userstatus fu
 	WHERE
-	 		userstatus_date_dkey IN (20210515, 20210516)--REPLACE(CURRENT_DATE -1,'-','')::INTEGER --TODO uncomment before going live
+	 		userstatus_date_dkey = REPLACE(CURRENT_DATE -1,'-','')::INTEGER
 		AND is_b2c = True
 		AND user_dkey IN (SELECT user_dkey FROM dwabstraction.dn_arrangement_all WHERE to_datasource_dkey = 2) -- zuora users only
 )
