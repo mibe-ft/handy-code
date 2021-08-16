@@ -510,3 +510,21 @@ where arrangement_id_dd in (6815028
 ,6744022
 ,7006450 )
 ;
+
+select * from biteam.vw_step_up_b2c_zuora
+where days_until_anniversary < 0 or days_until_anniversary >366;
+
+select * from biteam.stg_step_up_b2c_zuora_daily
+where days_until_anniversary < 0 or days_until_anniversary >366;
+
+
+select * from dwabstraction.dn_arrangementevent_all daa
+where arrangement_id_dd in (6698780
+,6783903
+,7006450
+,6694144
+,6701043
+,6815028
+,6915344)
+
+;
